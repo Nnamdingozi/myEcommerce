@@ -18,7 +18,7 @@ const basePath = path.basename(__filename);
 console.log('path module works:', basePath);
 
 // Test Sequelize module
-const sequelize = new Sequelize('postgres://Ngozi:postgres@0.0.0.0:5432/ecommerce'); // using SQLite for a quick test
+const sequelize = new Sequelize('postgres://Ngozi:postgres@0.0.0.0:5432/postgres'); // using SQLite for a quick test
 
 sequelize.authenticate()
   .then(() => {
