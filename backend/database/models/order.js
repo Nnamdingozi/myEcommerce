@@ -13,12 +13,16 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Order.belongsTo(models.User, {
         foreignKey: 'user_id',
-        as: 'user'
+        as: 'userorders',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
       });
 
       Order.hasMany(models.OrderItem, {
         foreignKey: 'order_id',
-        as: 'order'
+        as: 'order',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
       });
     }
   }
@@ -33,17 +37,35 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Users',
-        key: 'id'
-      },
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+        model: 'users',
+        key: 'id' 
+      }
     },
-    status: DataTypes.STRING,
-    order_date: DataTypes.DATE
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    order_date: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: sequelize.NOW
+
+    },
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: sequelize.NOW
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: sequelize.NOW
+    }
+
   }, {
     sequelize,
     modelName: 'Order',
+    tableName: 'orders'
   });
   return Order;
 };
