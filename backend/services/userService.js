@@ -1,11 +1,6 @@
-// const { DataTypes } = require('sequelize');
 
-
-// const sequelize = require('../database/models/index');
 const  { User }   = require('../database/models');
-// const User = db.User;
 
-//get all users
 
 const getAllUsers = async () => {
     const users = await User.findAll();

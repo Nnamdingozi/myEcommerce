@@ -11,6 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+    Category.hasMany(models.Product, {
+        foreignKey: 'category_id',
+        as: 'category',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+      });
     }
   }
   Category.init({
@@ -20,10 +26,24 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER,
     },
-    category_name: DataTypes.STRING
+    category_name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: sequelize.NOW
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: sequelize.NOW
+    }
   }, {
     sequelize,
     modelName: 'Category',
+    tableName: 'categories'
   });
   return Category;
 };

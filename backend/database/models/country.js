@@ -10,18 +10,24 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
-      Country.hasMany(models.Merchant, {
+      Country.hasMany(models.User, {
+
         foreignKey: 'country_code',
+        as: 'user',
         sourceKey: 'code',
-        as: 'merchants'
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
       });
 
-      Country.hasMany(models.User, {
+      Country.hasMany(models.Merchant, {
+
         foreignKey: 'country_code',
         sourceKey: 'code',
-        as: 'users'
-      })
+        as: 'merchant',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+      });
+      
     }
   }
   Country.init({
@@ -32,15 +38,32 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER
     },
     code: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+      unique: true,
     },
-    country_name: DataTypes.STRING,
-    continent_name: DataTypes.STRING
+    country_name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    continent_name: {
+      type: DataTypes.STRING
+    },
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: sequelize.NOW
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: sequelize.NOW
+    },
+   
   }, {
     sequelize,
     modelName: 'Country',
+    tableName: 'countries'
   });
   return Country;
 };
