@@ -9,6 +9,7 @@ const {sequelize } = require('./database/models/index')
 const userRoutes = require('./routes/userRoute');
 const authRoute = require('./routes/authRoute');
 const productRoute = require('./routes/productRoute');
+const cartRoute = require('./routes/cartRoute');
 // const passport = require('./database/config/passport');
 const passport = require('passport');
 const session = require('express-session')
@@ -28,6 +29,7 @@ app.use(passport.session());
 app.use('/users', userRoutes);
 app.use('/auth', authRoute);
 app.use('/product', productRoute);
+app.use('/cart', cartRoute)
 
 
 // catch 404 and forward to error handler

@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       references: {
         model: 'users',
-        key: 'id' 
+        key: 'id'
       }
     },
     status: {
@@ -48,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
     order_date: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: sequelize.NOW
+      defaultValue: DataTypes.NOW
 
     },
     createdAt: {
@@ -60,6 +60,39 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.DATE,
       defaultValue: sequelize.NOW
+    },
+    total_amount: {
+      type: DataTypes.DECIMAL,
+      allowNull: false,
+      defaultValue: 0
+    },
+    payment_status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'unpaid'
+    },
+    payment_method: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    shipping_address: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    shipping_method: {
+      type: DataTypes.STRING,
+      allowNull: true,
+
+    },
+    tracking_number: {
+      type:DataTypes.STRING,
+      allowNull: true,
+
+    },
+    currency: {
+      type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'NGN'
     }
 
   }, {
