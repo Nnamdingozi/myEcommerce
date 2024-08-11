@@ -6,12 +6,31 @@ const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const {sequelize } = require('./database/models/index')
-const app = express();
 const userRoutes = require('./routes/userRoute');
+const authRoute = require('./routes/authRoute');
+const productRoute = require('./routes/productRoute');
+const cartRoute = require('./routes/cartRoute');
+// const passport = require('./database/config/passport');
+const passport = require('passport');
+const session = require('express-session')
+const bodyParser = require('body-parser');
+const app = express();
 
+
+app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use('/users', userRoutes)
+app.use(session({ secret: 'secret', resave: false, saveUninitialized: true }));
+
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/users', userRoutes);
+app.use('/auth', authRoute);
+app.use('/product', productRoute);
+app.use('/cart', cartRoute)
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -40,13 +59,12 @@ app.use(function (err, req, res, next) {
 })
 
 // Start listening.
-sequelize.sync().then(() => {
+
   app.listen(process.env.PORT, async () => {
     console.log('Server started on http://localhost:3000')
     console.log('Press Ctrl-C to terminate...')
-})
-
 });
+
 
 
 module.exports = app
