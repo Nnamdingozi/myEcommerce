@@ -72,11 +72,43 @@ module.exports = (sequelize) => {
       type: DataTypes.DATE,
       defaultValue: sequelize.NOW
 
+    }, 
+    total: {
+      type: DataTypes.DECIMAL,
+      allowNull: false,
+      defaultValue: 0
+
     }
   }, {
     sequelize,
     modelName: 'Cart',
-    tableName: 'carts'
+    tableName: 'carts',
+    hooks: {
+
+      //calculates total before creating a cart item
+      async beforeCreate(cart, option) {
+        console.log('Before Create Hook Triggered');
+        const product = await sequelize.models.Product.findByPk(cart.product_id);
+        if(product) {
+          cart.total = product.price * cart.quantity;
+          console.log(`Calculated Total: ${cart.total}`);
+        }
+      },
+
+      async beforeUpdate (cart, options) {
+        console.log('Before update Hook Triggered');
+      const product = await sequelize.models.Product.findByPk(cart.product_id);
+      if(product) {
+        cart.total = product.price * cart.quantity;
+        console.log(`updated Total: ${cart.total}`);
+      }
+    }
+
+    }
+
+
+    //calculates total before updating a cart item
+    
   });
 
   return Cart;
