@@ -13,12 +13,16 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Order.belongsTo(models.User, {
         foreignKey: 'user_id',
-        as: 'user'
+        as: 'userorders',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
       });
 
       Order.hasMany(models.OrderItem, {
         foreignKey: 'order_id',
-        as: 'order'
+        as: 'order',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
       });
     }
   }
@@ -33,17 +37,68 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Users',
+        model: 'users',
         key: 'id'
-      },
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+      }
     },
-    status: DataTypes.STRING,
-    order_date: DataTypes.DATE
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    order_date: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW
+
+    },
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: sequelize.NOW
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: sequelize.NOW
+    },
+    total_amount: {
+      type: DataTypes.DECIMAL,
+      allowNull: false,
+      defaultValue: 0
+    },
+    payment_status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'unpaid'
+    },
+    payment_method: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    shipping_address: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    shipping_method: {
+      type: DataTypes.STRING,
+      allowNull: true,
+
+    },
+    tracking_number: {
+      type:DataTypes.STRING,
+      allowNull: true,
+
+    },
+    currency: {
+      type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'NGN'
+    }
+
   }, {
     sequelize,
     modelName: 'Order',
+    tableName: 'orders'
   });
   return Order;
 };

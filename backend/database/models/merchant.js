@@ -14,12 +14,17 @@ module.exports = (sequelize, DataTypes) => {
       Merchant.belongsTo(models.Country, {
         foreignKey: 'country_code',
         targetKey: 'code',
-        as: 'country'
+        as: 'merchant',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+    
       });
       Merchant.hasMany(models.Product, {
         foreignKey: 'merchant_id',
-        as: 'products'
-    
+        as: 'merchproducts',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+
       })
     }
   }
@@ -30,7 +35,10 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
-    merchant_name: DataTypes.STRING,
+    merchant_name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -43,16 +51,27 @@ module.exports = (sequelize, DataTypes) => {
     country_code: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: false,
       references: {
-        model: 'Countries',
-        key: 'code'
-      },
-      onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+        model: 'countries',
+        key: 'code' 
+      }
+      
+    },
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: sequelize.NOW
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: sequelize.NOW
     },
   }, {
     sequelize,
     modelName: 'Merchant',
+    tableName: 'merchants'
   });
   return Merchant;
 };

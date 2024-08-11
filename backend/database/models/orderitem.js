@@ -38,15 +38,32 @@ module.exports = (sequelize, DataTypes) => {
     order_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: 'orders',
+        key: 'id' 
+      }
     },
     product_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'products',
+        key: 'id' 
+      }
     },
-    quantity: DataTypes.INTEGER
+    quantity: {
+      type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 1, // Default value if not provided
+    validate: {
+            min: 1 // Ensure quantity is at least 1
+          }
+        },
+  
   }, {
     sequelize,
     modelName: 'OrderItem',
+    tableName: 'orderItems'
   });
   return OrderItem;
 };
