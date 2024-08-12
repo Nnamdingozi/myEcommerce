@@ -75,7 +75,33 @@ module.exports = {
       },
         { transaction }
       );
+      await queryInterface.addColumn(
+        'orderItems',
+        'createdAt',
+        {
+          allowNull: false,
+            type: Sequelize.DATE,
+            defaultValue: Sequelize.fn('now')
+        },
+        { transaction }
+      );
 
+      await queryInterface.addColumn(
+        'orderItems',
+        'updatedAt',
+        {
+          allowNull: false,
+            type: Sequelize.DATE,
+            defaultValue: Sequelize.fn('now')
+        },
+        { transaction }
+      );
+
+
+
+
+
+     
 
     });
     /**
@@ -95,6 +121,9 @@ module.exports = {
       await queryInterface.removeColumn('orders', 'shipping_method', { transaction });
       await queryInterface.removeColumn('orders', 'tracking_number', { transaction });
       await queryInterface.removeColumn('orders', 'currency', { transaction });
+      await queryInterface.removeColumn('orderItems', 'createdAt', { transaction });
+      await queryInterface.removeColumn('orderItems', 'updatedAt', { transaction });
+
     });
 
     /**
