@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       references: {
         model: 'orders',
-        key: 'id' 
+        key: 'id'
       }
     },
     product_id: {
@@ -48,18 +48,28 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       references: {
         model: 'products',
-        key: 'id' 
+        key: 'id'
       }
     },
     quantity: {
       type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 1, // Default value if not provided
-    validate: {
-            min: 1 // Ensure quantity is at least 1
-          }
-        },
-  
+      allowNull: false,
+      defaultValue: 1, // Default value if not provided
+      validate: {
+        min: 1 // Ensure quantity is at least 1
+      }
+    },
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: sequelize.NOW
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: sequelize.NOW
+    },
+
   }, {
     sequelize,
     modelName: 'OrderItem',
