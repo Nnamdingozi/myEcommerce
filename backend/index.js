@@ -10,7 +10,8 @@ const userRoutes = require('./routes/userRoute');
 const authRoute = require('./routes/authRoute');
 const productRoute = require('./routes/productRoute');
 const cartRoute = require('./routes/cartRoute');
-const orderRoute = require('./routes/orderRoute')
+const orderRoute = require('./routes/orderRoute');
+const checkoutRoute = require('./routes/checkoutRoute');
 // const passport = require('./database/config/passport');
 const passport = require('passport');
 const session = require('express-session')
@@ -32,6 +33,8 @@ app.use('/auth', authRoute);
 app.use('/product', productRoute);
 app.use('/cart', cartRoute);
 app.use('/order', orderRoute);
+app.use('/checkout',checkoutRoute);
+app.use('/payment', checkoutRoute);
 
 
 // catch 404 and forward to error handler
