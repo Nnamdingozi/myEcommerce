@@ -97,11 +97,14 @@ module.exports = {
         { transaction }
       );
 
-
-
-
-
-     
+      await queryInterface.addColumn(
+        'orders',
+        'transaction_reference', {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+        { transaction }
+      );
 
     });
     /**
@@ -121,8 +124,10 @@ module.exports = {
       await queryInterface.removeColumn('orders', 'shipping_method', { transaction });
       await queryInterface.removeColumn('orders', 'tracking_number', { transaction });
       await queryInterface.removeColumn('orders', 'currency', { transaction });
+      await queryInterface.removeColumn('orders', 'transaction_reference', { transaction });
       await queryInterface.removeColumn('orderItems', 'createdAt', { transaction });
       await queryInterface.removeColumn('orderItems', 'updatedAt', { transaction });
+      
 
     });
 
