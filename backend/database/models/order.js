@@ -93,6 +93,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
         allowNull: false,
         defaultValue: 'NGN'
+    },
+    transaction_reference: {
+      type: DataTypes.STRING,
+        allowNull: true,
     }
 
   }, {
