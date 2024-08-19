@@ -7,13 +7,30 @@ const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.js')[env];
-const db = {};
+// const swaggerEnv = process.env.SWAGGER_AUTOGEN_NODE_ENV;
+// const config = require(__dirname + '/../config/config.js')[env];
+// const db = {};
+
+let config;
+if (env === 'swagger-autogen') {
+  config = {
+    url: process.env.DATABASE_URL, 
+    dialect: 'postgres', 
+  };
+  console.log('Config URL:', config.url);
+console.log('Config Dialect:', config.dialect);
+  
+} else {
+  config = require(__dirname + '/../config/config.js')[env];
+}
+
 
 // Ensure the config has the necessary properties
-if (!config.url || !config.dialect) {
+
+if (!config.url || !config.dialect ) {
   throw new Error('Missing database configuration');
 }
+const db = {};
 
 let sequelize;
 sequelize = new Sequelize(config.url, {
@@ -49,3 +66,7 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 module.exports = db;
+
+
+
+
