@@ -6,7 +6,7 @@
 - SQL
 - NPM
 
-### description
+### Description
 
 This is an ecommerce PERN project,built using technologies that will ensure performance, 
 security and scalability. It is organized into front-end and back-end.  The back-end is 
