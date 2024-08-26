@@ -15,7 +15,7 @@ The front end  is designed with React and, user interface is made sleek and resp
 
 ### Features
 
-- Frontend: Build with React for dynamic and responsive user interface and styled with Material UI for consistent styling across application
+- Frontend: Build with Next.Js for dynamic and responsive user interface and styled with tailwind CSS for consistent styling across application
 - Backend:  Powered by Express.js and Node.js, to ensure scalable server-side infrastructure
 - Database Management: Utilizes Sequelize ORM to manage and interact with PostgreSQL database, for handling data and complex queries
 - Environment Management: Uses Dotenv to manage environment variables securely and efficiently
@@ -23,8 +23,21 @@ The front end  is designed with React and, user interface is made sleek and resp
 - Payment processing:  Secure payments handled by Paystack for seamless checkout experience
 - Containerization: Used Docker for easy deployment and scalability
 - API Documentation: Integrated Swagger for clear and interactive API documentation
-- Development Tools: Eslint for maintaining code quality and Nodemont for automatic server restarts during development
+- Development Tools: Eslint for maintaining code quality and Nodemon for automatic server restarts during development
 
   ### Skills
+  - Express.js
+  - Node.js
+  - PostgreSQL
+  - Docker
+  - Sequelize ORM
+  - Postman
+  - PGADMIN
+  - Passport.js
+  - PayStack
+  - Swagger
+  - Next.js
+  - Tailwind Css
+    
 
   
