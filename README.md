@@ -1,6 +1,11 @@
 ## Ecommerce Project
 ### Pre Requisite
 
+- React.js
+- Git/Github
+- SQL
+- NPM
+
 ### description
 
 This is an ecommerce PERN project,built using technologies that will ensure performance, 
