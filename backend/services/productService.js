@@ -1,4 +1,4 @@
-const { Product } = require('../database/models');
+const { Product, Category } = require('../database/models');
 
 const createProduct = async(productData) => {
     const newProduct = await Product.create(productData);
@@ -6,6 +6,18 @@ const createProduct = async(productData) => {
         return newProduct;
     } else {
         throw new Error('Product was not successfully created');
+    }
+};
+
+const getAllProducts = async() => {
+    const products = await Product.findAll({
+        limit: 15,
+        order: [['createdAt', 'ASC']]
+    });
+    if(products) {
+        return products
+    } else {
+        throw new Error('Product not found')
     }
 };
        
@@ -18,8 +30,25 @@ if(product) {
 }
 };
 
+const getAllCategories = async() => {
+    const categories = await Category.findAll();
+    if(categories) {
+        return categories
+    } else {
+        throw new Error('Categories not found')
+    }
+};
+
 const getProductByCategory = async(categoryId) => {
-    const products = await Product.findAll({where: {category_id: categoryId}});
+    const products = await Product.findAll({where: 
+        {category_id: categoryId},
+        include: [
+            {
+                model: Category,
+                as: 'category', // use the alias specified in your association
+            }
+        ]
+    });
     if(products) {
         return products;
     } else {
@@ -45,7 +74,9 @@ const getProductByCategory = async(categoryId) => {
 
             module.exports = {
                 createProduct,
+                getAllProducts,
                 getProductById,
+                getAllCategories,
                 getProductByCategory,
                 updateProduct,
                 deleteProduct
