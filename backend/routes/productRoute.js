@@ -2,7 +2,9 @@
 const express = require('express');
 const productRouter = express.Router();
 const {createProductHandler,
+    getAllProductsHandler,
     getProductByIdHandler,
+    getAllCategoriesHandler,
     getProductByCategoryIdHandler,
     updateProductHandler,
     deleteProductHandler
@@ -57,7 +59,9 @@ const {createProductHandler,
  *                   type: string
  */
  productRouter.post('/', createProductHandler);
-
+ productRouter.get('/', getAllProductsHandler);
+ productRouter.get('/categories', getAllCategoriesHandler);
+ productRouter.get('/categoryProduct/:id', getProductByCategoryIdHandler)
  
  /**
  * @swagger

@@ -17,8 +17,11 @@ const passport = require('passport');
 const session = require('express-session')
 const bodyParser = require('body-parser');
 const app = express();
+const cors = require('cors');
 
 
+
+app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -65,7 +68,7 @@ app.use(function (err, req, res, next) {
 // Start listening.
 
   app.listen(process.env.PORT, async () => {
-    console.log('Server started on http://localhost:3000')
+    console.log('Server started on http://localhost:5000')
     console.log('Press Ctrl-C to terminate...')
 });
 
