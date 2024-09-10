@@ -29,7 +29,7 @@ return (
       <div className='w-[40%] flex justify-between item-center '>
         <div className='flex justify-center item-center  w-[50%] border border-black-200'>
         <UserIcon className='h-6 w-6 text-red-800 '/>
-        <span className='text-sm'>{registered ? 'user Profile' : <p>Sign up/ Register</p> }</span>
+        <span className='text-sm'>{registered ? 'user Profile' : <p><Link href={'/user/register'}>Sign up</Link> / <Link href={'/user/login'}>Log In</Link></p> }</span>
         </div>
         <div  className='flex justify-center item-baseline space-x-2 w-[30%]'>
          <ChatIcon className='h-6 w-6 text-red-800' />
