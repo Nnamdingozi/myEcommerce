@@ -7,17 +7,16 @@ interface CategoryProps {
   
 
 const Categories: React.FC<CategoryProps> = ({ categories }) => {
-    console.log('received category props:', categories)
     return (
-        <>
+        <div>
         <h1>Categories</h1>
-        <ul className='space-y-2 w-[15%] h-auto mx-4 text-center text-red-800 p-4 mt-12'>
+        <ul className='space-y-2 w-full h-auto mx-4 text-center text-red-800 p-4 mt-12'>
             
             {categories.map((category) => (
                 <li key={category.id} className='border-2 border-red-800'><Link href={`/category/${category.id}`}>{category.category_name}</Link></li>
             ))}
         </ul>
-        </>
+        </div>
     )
 };
 

@@ -1,7 +1,7 @@
 
 
 const express = require('express');
-const router = express.Router();
+const authRouter = express.Router();
 const authController = require('../controllers/authController'); 
 const passport = require('passport');
 require('../database/config/passport')(passport);
@@ -39,7 +39,7 @@ require('../database/config/passport')(passport);
  *       500:
  *         description: Internal server error
  */
-router.post('/register', authController.register);
+authRouter.post('/register', authController.register);
 /**
  * @swagger
  * /login:
@@ -64,7 +64,7 @@ router.post('/register', authController.register);
  *       500:
  *         description: Internal Server Error
  */
-router.post('/login', authController.login);
+authRouter.post('/login', authController.login);
 
 /**
  * @swagger
@@ -88,9 +88,9 @@ router.post('/login', authController.login);
  *       500:
  *         description: Internal Server Error
  */
-router.get('/auth/github', passport.authenticate('github'));
-router.get('/auth/github/callback', authController.githubCallback);
+authRouter.get('/github', passport.authenticate('github'));
+authRouter.get('/github/callback', authController.githubCallback);
 
 
 
-module.exports = router;
+module.exports = authRouter;
