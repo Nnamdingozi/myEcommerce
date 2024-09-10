@@ -5,9 +5,9 @@ const authService = require('../services/authService');
 
 exports.register = async(req, res) => {
     console.log('Register endpoint hit')
-    const { username, email, phone, password, githubId, country_code,} = req.body
+    const { username, email, phone, password, country_code,} = req.body
     try {
-        const newUser = await authService.register(username, email, phone, password, githubId, country_code);
+        const newUser = await authService.register(username, email, phone, password, country_code);
         console.log('user registered', newUser)
         res.status(201).json(newUser)
     } catch(err) {

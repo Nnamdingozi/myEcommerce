@@ -54,7 +54,7 @@ const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
 
 
 return (
-<div className='relative group w-[90%] h-64 overflow-hidden border-2 border-black-800 top-8 transition-all duration-500 ease-in-out' >
+<div className='relative group h-64 overflow-hidden border-2 border-black-800 top-8 transition-all duration-500 ease-in-out mt-6 mb-3 mx-5' >
 <div className='absolute inset-0 flex items-center justify-center transition-all duration-500 group-hover: bg-opacity-70 ease-in-out w-full rounded-lg'
 style={{backgroundImage: `url(${slides[currentSlide]})`, backgroundSize: '100%', backgroundPosition: 'center'}}>
 

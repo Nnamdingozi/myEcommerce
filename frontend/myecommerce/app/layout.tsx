@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import NavBar from '@/app/ui/navabar';
-import Categories from '@/app/ui/categories';
-import { fetchCategories } from '@/app/lib/data';
-import { Category } from '@/app/lib/definition';
+
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -19,16 +17,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const categories: Category[] = await fetchCategories();
+ 
   return (
     <html lang="en">
       <body className={inter.className}  >
         <NavBar />
-        <div className="flex flex-col md:flex-row justify-center item-center border-4 border-red-800 h-auto">
-          <Categories categories={categories} />
-          <main className="flex flex-1 flex-col  p-6 md:overflow-y-auto md:p-12 z-0">{children}</main>
-        </div>
-
+          <main>{children}</main>
         </body>
     </html>
   );
