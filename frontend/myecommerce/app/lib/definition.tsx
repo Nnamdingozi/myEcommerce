@@ -11,4 +11,22 @@ export type Product = {
     category_name: string;
     
 
-  }
+  };
+
+  export type User = {
+    username: string;
+    email: string;
+    phone: string;
+    password: string;
+    country_code: string;
+  };
+
+  export type LoginRequest = {
+    username: string;
+    password: string;
+  };
+  
+  export type LoginResponse = {
+    status: number;
+    data: string
+  };
