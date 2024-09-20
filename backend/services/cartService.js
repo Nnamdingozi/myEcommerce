@@ -34,7 +34,7 @@
 
 // }
 
-const { Cart, Product } = require('../database/models');
+const { Cart, Product, } = require('../database/models');
 console.log('product, cart accessed');
 
 const addItemsToCart = async (quantity, userId, productId) => {
@@ -45,7 +45,14 @@ const addItemsToCart = async (quantity, userId, productId) => {
         }
 
         let cartItem = await Cart.findOne({
-            where: { user_id: userId, product_id: productId }
+            where: { user_id: userId, product_id: productId },
+            include: [
+                {
+                    model: Product,
+                    as: 'cartproduct',
+                    attributes: ['id', 'name', 'price', 'description', 'image_url' ]
+                }
+            ]
         });
         if (cartItem) {
             throw new Error('item exists in cart. Use  update to change the quantity');
@@ -85,7 +92,23 @@ const addItemsToCart = async (quantity, userId, productId) => {
 //     }
 // };
 
-
+const getItemByUserId = async (userId) => {
+    const userCart = await Cart.findOne({
+        where: { user_id: userId },
+        include: [
+            {
+                model: Product,
+                as: 'cartproduct',
+                attributes: ['id', 'name', 'price', 'description', 'image_url' ]
+            }
+        ]
+    });
+    if(!userCart) {
+        console.log('User has no cart Items');
+        throw new Error('Cart not found for this user')
+    }
+    return userCart;
+}
 //  get item from cart
 const getCartItemsById = async (id) => {
     const item = await Cart.findByPk(id);
@@ -107,7 +130,7 @@ const updateCartItems = async (id, quantity) => {
     } else {
         console.log('Cart found');
     }
-    
+
     cartItem.quantity = quantity;
     await cartItem.save();
 
@@ -127,6 +150,7 @@ const deleteCartItem = async (id) => {
 
 module.exports = {
     addItemsToCart,
+    getItemByUserId,
     getCartItemsById,
     updateCartItems,
     deleteCartItem

@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllUsersHandler, getUserByIdHandler, updateUserHandler, deleteUserHandler } = require('../controllers/userController');
+const { getAllUsersHandler, getUserByIdHandler, getUserByEmailHandler, updateUserHandler, deleteUserHandler } = require('../controllers/userController');
 
 const userRouter = express.Router();
 
@@ -59,6 +59,7 @@ const userRouter = express.Router();
  */
 
 userRouter.get('/', getAllUsersHandler);
+userRouter.get('/email', getUserByEmailHandler);
 
 /**
  * @swagger

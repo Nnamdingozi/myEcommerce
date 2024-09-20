@@ -1,9 +1,10 @@
-const {addItemsToCart,  getCartItemsById, updateCartItems, deleteCartItem} = require('../services/cartService');
+const {addItemsToCart, getItemByUserId, getCartItemsById, updateCartItems, deleteCartItem} = require('../services/cartService');
 
 const addItemsHandler = async (req, res) => {
     console.log( req.body)
     
-        const { quantity, user_id, product_id } = req.body;
+        const { quantity, product_id } = req.body;
+        const {user_id} = req.params;
         console.log('Controller - userId:', user_id, 'productId:', product_id, 'quantity:', quantity);
         try {
         const newItem = await addItemsToCart(quantity, user_id, product_id);
@@ -30,7 +31,17 @@ const addItemsHandler = async (req, res) => {
 //     }
 // };
     
+const getItemByUserIdHandler = async(req, res) => {
+    const {userId} = req.params;
+try {
+    const userCart = await getItemByUserId(userId);
+    console.log('Users cart found:', userCart);
+    res.status(200).json(userCart);
 
+} catch (err) {
+    res.status(500).json({error: err.message})
+}
+};
 const getCartItemsByIdHandler = async (req, res) => {
    
     try {
@@ -75,6 +86,7 @@ const deleteCartItemHandler = async (req, res) => {
 
 module.exports = {
     addItemsHandler,
+    getItemByUserIdHandler,
     getCartItemsByIdHandler,
     updateCartItemsHandler,
     deleteCartItemHandler

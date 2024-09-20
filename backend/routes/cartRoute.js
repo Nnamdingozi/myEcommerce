@@ -2,6 +2,7 @@ const express = require('express');
 const cartRoute = express.Router();
 
 const { addItemsHandler,
+   getItemByUserIdHandler,
     getCartItemsByIdHandler,
     updateCartItemsHandler,
     deleteCartItemHandler,
@@ -79,7 +80,7 @@ const { addItemsHandler,
  *                   type: string
  *                   example: Error message describing the issue
  */
-    cartRoute.post('/', addItemsHandler);
+    cartRoute.post('/:userId', addItemsHandler);
 
     /**
  * @swagger
@@ -141,6 +142,7 @@ const { addItemsHandler,
  *                   example: Error message describing the issue
  */
     cartRoute.get('/:id', getCartItemsByIdHandler);
+    cartRoute.get('/:userId', getItemByUserIdHandler )
 /**
  * @swagger
  * /cart/{id}:
