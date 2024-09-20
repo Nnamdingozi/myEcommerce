@@ -1,5 +1,5 @@
 export type Product = {
-    id: string;
+    id: number;
     name: string;
     price: number;
     description: string;
@@ -14,19 +14,30 @@ export type Product = {
   };
 
   export type User = {
+    id?: number
     username: string;
     email: string;
-    phone: string;
-    password: string;
+    phone?: string;
+    password?: string;
     country_code: string;
   };
 
   export type LoginRequest = {
-    username: string;
+    id?: number
+    username?: string
+    email: string;
     password: string;
   };
   
-  export type LoginResponse = {
-    status: number;
-    data: string
-  };
+  export type LoginStatus = 200 | 201 | 400 | 500;
+
+  export type Cart = {
+    id: number;
+    name: string;
+    quantity: number;
+    price: number;
+    description: string;
+    image_url: string;
+    total: number;
+
+  }
