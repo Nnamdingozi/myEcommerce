@@ -1,31 +1,37 @@
-import { LoginRequest } from '@/app/lib/definition';
-
+import { LoginRequest, LoginStatus } from '@/app/lib/definition';
+import { fetchByEmail } from '@/app/lib/data';
 import { useState } from 'react';
+import { useUser } from '@/app/context/userContext'
 
 interface UserLoginProps {
-    onSubmit: (user: LoginRequest) => Promise<LoginRequest | undefined>
+    onSubmit: (userInput: LoginRequest) => Promise<{data: LoginRequest, status: LoginStatus} | undefined>
 }
 
 const UserLogin : React.FC<UserLoginProps> = ({ onSubmit }) => {
-const [user, setUser] = useState({ username: '', password: ''});
+const [userInput, setUserInput] = useState({ email: '', password: ''});
 const [error, setError] = useState< string | null>(null);
+const { setUser } = useUser();
 
-const passwordCriteria = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/
 
 const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUser({...user, [e.target.name]: e.target.value});
+    setUserInput({...userInput, [e.target.name]: e.target.value});
 }
 
 const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!user.username || !user.password) {
+    if (!userInput.email|| !userInput.password) {
         setError('Both username and password are required.');
         return;
     }
     try {
-        const response = await onSubmit(user);
-        if(response) {
-            console.log('User submitted to database')
+        const response = await onSubmit(userInput);
+        if(response && response.status === 200) {
+            console.log('User submitted to database', response.data.email);
+            const fetchUser = await fetchByEmail(response.data.email);
+            if(fetchUser) {
+               setUser({ name: fetchUser.username, id: fetchUser.id, email: fetchUser.email}) 
+            } 
+            
         } else {
             setError('Login failed. Please check your credentials.');
         }
@@ -40,10 +46,10 @@ const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
 return (
     <div>
 
-        <form className='mx-auto' onSubmit={handleSubmit}>
-            <input className='h-16 w-[80%] mb-3' type="text" name="username" placeholder="Username" value={user.username} onChange={handleInputChange} required  />            
-            <input className='h-16 w-[80%] mb-3' type="password" name="password" placeholder="password" value={ user.password} onChange={handleInputChange} required  />
-            <button className='bg-rose-100 text-red-800 h-10 w-32 border-3 border-red-800' type='submit'>Log In</button>
+        <form className='mx-auto  w-[50%] rounded justify-center align-middle border-2 border-red-950 bg-gray-100 ' onSubmit={handleSubmit}>
+            <input className='h-10 w-[80%] mb-3 rounded mt-4' type="email" name="email" placeholder="email" value={userInput.email} onChange={handleInputChange} required  />            
+            <input className='h-10 w-[80%] mb-3 rounded' type="password" name="password" placeholder="password" value={ userInput.password} onChange={handleInputChange} required  />
+            <button className='bg-rose-100 text-red-800 h-8 w-32 border-3 mb-5 border-red-800 rounded focus:bg-red-800 focus:text-rose-100' type='submit'>Log In</button>
         {error && <p>Error registering User: {error}</p>}
 </form>
 </div>
