@@ -2,6 +2,7 @@
 
 const passport = require('passport');
 const authService = require('../services/authService');
+const bcrypt = require('bcrypt')
 
 exports.register = async(req, res) => {
     console.log('Register endpoint hit')
@@ -22,14 +23,15 @@ exports.login = (req, res, next) => {
             console.log('Authentication failed')
             return next(err);}
         if(!user) {
-            console.log('User not found')
+            console.log('Login failed, User not found')
             return res.status(400).json({ error: info.message});
-
         }
+
+           
 
         req.login(user, (err) => {
             if(err) return next(err);
-            res.status(200).json(user)
+            res.status(200).json({message: 'Login successful', user})
         });
     })(req, res, next);
 };

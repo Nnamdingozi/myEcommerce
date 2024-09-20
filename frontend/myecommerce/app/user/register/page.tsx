@@ -5,14 +5,16 @@ import { User } from '@/app/lib/definition';
 import {  registerUser } from '@/app/lib/data';
 import { useRouter } from 'next/navigation';
 
-const UserRegistration: React.FC = () => {
+const UserRegistration: React.FC = () =>  {
     const router = useRouter();
-    const handleRegister = async(user: User) => {
+    const handleRegister = async(user: User): Promise<{ id: number; username: string; email: string; }> => {
         try {
-await registerUser(user);
-router.push('/user/login')
+const userRegistered = await registerUser(user);
+router.push('/user/login');
+return userRegistered
         } catch (err) {
             console.error('Registration error:', err);
+            throw new Error('User Registration failed')
         }
     }
 

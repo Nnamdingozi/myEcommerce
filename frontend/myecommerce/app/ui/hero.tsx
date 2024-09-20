@@ -2,7 +2,7 @@
 
 import Link from 'next/Link';
 import { useState, useEffect } from 'react';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 
 const Hero: React.FC = () => {
 const slides: string[] = [

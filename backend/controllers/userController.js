@@ -1,6 +1,6 @@
 'use strict'
 
-const { getAllUsers, getUserById, updateUser, deleteUser, } = require('../services/userService');
+const { getAllUsers, getUserById,getUserByEmail, updateUser, deleteUser, } = require('../services/userService');
 
 //get all users
 const getAllUsersHandler = async (req, res) => {
@@ -12,6 +12,7 @@ const getAllUsersHandler = async (req, res) => {
     }
 };
 
+
 const getUserByIdHandler = async (req, res) => {
     try {
         const user = await getUserById(req.params.id);
@@ -19,7 +20,24 @@ const getUserByIdHandler = async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
-}         
+};
+const getUserByEmailHandler =  async(req, res) => {
+    try {
+        const { email } = req.query
+        const user = await getUserByEmail(email);
+        if(!user){
+            return res.status(404).json({ error: ' User not found'})
+        }
+
+        const { id, username } = user; 
+        res.status(200).json({ id, username, email: user.email });
+
+
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+
+    }
+};     
 
 const updateUserHandler = async (req, res) => {
     try {
@@ -52,6 +70,7 @@ const deleteUserHandler = async (req, res) => {
 module.exports = {
     getAllUsersHandler,
     getUserByIdHandler,
+    getUserByEmailHandler,
     updateUserHandler,
     deleteUserHandler
 
