@@ -1,7 +1,11 @@
 
-import { Product, Category, User, LoginRequest, LoginStatus, Cart} from '@/app/lib/definition';
-import axios from 'axios'
+import { Product, Category, User, LoginRequest, LoginStatus, NewCart} from '@/app/lib/definition';
+import axios from 'axios';
 //add base url later axios.defaults.baseUrl
+
+import { useState } from 'react';
+
+
 export async function fetchProducts(): Promise<Product[]> {
     // let products = [];
   try {
@@ -69,7 +73,7 @@ export async function userLogging(user: LoginRequest): Promise<{data:LoginReques
   try {
     const response = await axios.post<LoginRequest>('http://localhost:5000/auth/login', user);
     if(response.status === 200) {
-      console.log('userLoggin data authenticated:', response.data)
+      console.log('userLoggin data authenticated:', response)
       return {
         data:  response.data as LoginRequest,
         status: response.status as LoginStatus
@@ -85,9 +89,11 @@ export async function userLogging(user: LoginRequest): Promise<{data:LoginReques
 
 
 
-export async function fetchByEmail(email: string): Promise<{id: number, username: string, email: string} | undefined> {
+export async function fetchByEmail(email: string): Promise<{id: number, username: string} | undefined> {
   try {
-    const response = await axios.get(`http://localhost:5000/users/?email=${email}`);
+    const response = await axios.get(`http://localhost:5000/users/email`, {
+      params: { email }, 
+    });
     console.log('Fetch user by email endpoint hit')
     if(response.status === 200) {
       console.log('user data fetched by email:', response.data)
@@ -103,9 +109,9 @@ export async function fetchByEmail(email: string): Promise<{id: number, username
 
 
 
-export async function addToCart(userId: number, item: Cart): Promise<Cart | undefined>{
+export async function addItemsToCart(productId: number | null, quantity: number | null): Promise<NewCart | undefined>{
   try {
-    const response = await axios.post<Cart>(`http://localhost:5000/cart/${userId}`, item);
+    const response = await axios.post<NewCart>(`http://localhost:5000/cart`, {productId, quantity});
     console.log('sending cart data to database: ', response.data)
     return response.data
   }  catch (err: any) {
@@ -114,9 +120,9 @@ export async function addToCart(userId: number, item: Cart): Promise<Cart | unde
   }
 
 };
-export async function fetchUserCart(userId: number): Promise<Cart[] | undefined>{
+export async function fetchUserCart(): Promise<NewCart[] | undefined>{
   try {
-    const response = await axios.get<Cart[]>(`http://localhost:5000/cart/${userId}`);
+    const response = await axios.get<NewCart[]>(`http://localhost:5000/cart/user`);
     console.log('getting cart data from database: ', response.data)
     return response.data
   }  catch (err: any) {
@@ -126,9 +132,11 @@ export async function fetchUserCart(userId: number): Promise<Cart[] | undefined>
 
 };
 
-export async function updateCartItem(id: number, quantity: number): Promise<Cart[] | undefined>{
+
+ 
+export async function updateCartItem(id: number, quantity: number): Promise<NewCart | undefined>{
   try {
-    const response = await axios.put<Cart[]>(`http://localhost:5000/cart/${id}`, quantity);
+    const response = await axios.put<NewCart>(`http://localhost:5000/cart/${id}`, quantity);
     console.log('getting cart data from database: ', response.data)
     return response.data
   }  catch (err: any) {

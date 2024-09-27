@@ -2,26 +2,38 @@
 
 import UserLogin from '@/app/ui/userLogin';
 import { LoginRequest, LoginStatus } from '@/app/lib/definition';
-import {  userLogging } from '@/app/lib/data';
+import {  userLogging, fetchByEmail } from '@/app/lib/data';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useUser } from '@/app/context/userContext';
+
 const UserLoginForm: React.FC = () => {
     const [loginSuccess, setLoginSuccess] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const router = useRouter();
+    const { setUser } = useUser();
+
     const handleLogin = async(user: LoginRequest): Promise<{data: LoginRequest, status: LoginStatus }| undefined> => {
         try {
 const response = await userLogging(user);
 console.log('login response:', response)
 if(response && response.status === 200) {
-    console.log('Login Successful, redirect to home');
-    setLoginSuccess(true);
-    
+    console.log('Login Successful, redirect to home, fetching user details...')
+    const fetchUser = await fetchByEmail(user.email);
+    console.log('Login successful',  fetchUser);
+    if(fetchUser) {
+        setUser({id: fetchUser.id, name: fetchUser.username});
+        setLoginSuccess(true);
+        return { data: user, status: response.status };
+    }
+  
 } else {
-    console.log('Login failed or no response');
+    console.log('Unable to fetch user details with email after login ');
+setError('Login failed. Please check your credentials')
 }
         } catch (err) {
             console.error('Logging error:', err);
-        return undefined
+       setError('An error occured during login')
         }
     }
     useEffect(() => {
