@@ -31,7 +31,8 @@ exports.login = (req, res, next) => {
 
         req.login(user, (err) => {
             if(err) return next(err);
-            res.status(200).json({message: 'Login successful', user})
+            res.status(200).json({message: 'Login successful', user});
+            console.log('Login successful', user)
         });
     })(req, res, next);
 };
