@@ -9,10 +9,7 @@ import { ChatBubbleLeftIcon, UserIcon } from '@heroicons/react/24/outline';
 
 const Navbar: React.FC = () => {
   const { user, logout } = useUser();
-  console.log(' Current name: ', user.name);
-  if (!user.name) {
-    return <div>Loading...</div>;
-  }
+  
   return (
     <nav className='bg-rose-100 w-full h-[50px] fixed top-0 flex item-center z-50' >
       <div className='flex justify-between items-center h-[100%]  w-full p-2'>
@@ -34,10 +31,11 @@ const Navbar: React.FC = () => {
           <div className='flex justify-center item-center  w-[50%] border border-black-200'>
             <UserIcon className='h-6 w-6 text-red-800 ' />
             <span className='text-sm'>
-              {user ? (
+              {user && user.name? (
                 <>
-                  Welcome {user.name? user.name: 'Guest'},  <button className='bg-red-600 text-rose-100 border-2 border-rose-100' onClick={logout}>Logout</button>
-                </>) : (
+                  Welcome {user.name},  <button className='bg-red-600 text-rose-100 border-2 border-rose-100' onClick={logout}>Logout</button>
+                </>
+                ) : (
                 <>
                   <Link href={'/user/register'}>Sign up</Link> / <Link href={'/user/login'}>Log In</Link>
                 </>

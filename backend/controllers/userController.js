@@ -22,15 +22,22 @@ const getUserByIdHandler = async (req, res) => {
     }
 };
 const getUserByEmailHandler =  async(req, res) => {
+    console.log('Request query received:', req.query)
     try {
         const { email } = req.query
+        console.log('user email received from frontend:', email)
+        if(!email) {
+            return res.status(400).json({error: 'User email required'})
+        }
         const user = await getUserByEmail(email);
         if(!user){
-            return res.status(404).json({ error: ' User not found'})
+            console.log('user with this email not found')
+            return res.status(404).json({ error: ' User not found with this email'})
         }
 
-        const { id, username } = user; 
-        res.status(200).json({ id, username, email: user.email });
+        // const { id, username } = user; 
+        console.log('user details fetched by email:', user)
+        res.status(200).json(user);
 
 
     } catch (err) {

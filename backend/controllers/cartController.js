@@ -3,11 +3,11 @@ const {addItemsToCart, getItemByUserId, getCartItemsById, updateCartItems, delet
 const addItemsHandler = async (req, res) => {
     console.log( req.body)
     
-        const { quantity, product_id } = req.body;
-        const {user_id} = req.params;
-        console.log('Controller - userId:', user_id, 'productId:', product_id, 'quantity:', quantity);
+        const { quantity, product_id} = req.body;
+        const { user_id } = req.user.id;
+        console.log('Controller - userId:', user_id, 'productId:', product_id, 'quantity:', quantity, 'productdetails:', productDetails );
         try {
-        const newItem = await addItemsToCart(quantity, user_id, product_id);
+        const newItem = await addItemsToCart( user_id, product_id, quantity);
         if (newItem) {
             res.status(201).json(newItem);
         } else {
@@ -32,7 +32,7 @@ const addItemsHandler = async (req, res) => {
 // };
     
 const getItemByUserIdHandler = async(req, res) => {
-    const {userId} = req.params;
+    const {id: userId} = req.user;
 try {
     const userCart = await getItemByUserId(userId);
     console.log('Users cart found:', userCart);
@@ -58,7 +58,9 @@ const getCartItemsByIdHandler = async (req, res) => {
 
 const updateCartItemsHandler = async (req, res) => {
     try{
-        const updatedItem = await updateCartItems(req.params.id, req.body.quantity);
+        const { user } = req.user;
+        const userId = user.id;
+        const updatedItem = await updateCartItems(userId, req.params.id, req.body.quantity);
         if(updatedItem) {
             res.status(200).json(updatedItem);
         } else {

@@ -37,8 +37,8 @@
 const { Cart, Product, } = require('../database/models');
 console.log('product, cart accessed');
 
-const addItemsToCart = async (quantity, userId, productId) => {
-    console.log('Service - userId:', userId, 'productId:', productId, 'quantity:', quantity);
+const addItemsToCart = async (productId, userId, quantity) => {
+    console.log('Service - userId:', userId, 'productId:', productId);
     try {
         if (!userId || !productId) {
             throw new Error('userId and productId required');
@@ -59,9 +59,9 @@ const addItemsToCart = async (quantity, userId, productId) => {
         } else {
 
             await Cart.create({
-                quantity: quantity,
                 user_id: userId,
                 product_id: productId,
+                quantity,
             });
         }
         return 'item successuflly added';
@@ -93,15 +93,16 @@ const addItemsToCart = async (quantity, userId, productId) => {
 // };
 
 const getItemByUserId = async (userId) => {
-    const userCart = await Cart.findOne({
+    const userCart = await Cart.findAll({
         where: { user_id: userId },
         include: [
             {
                 model: Product,
                 as: 'cartproduct',
-                attributes: ['id', 'name', 'price', 'description', 'image_url' ]
+                attributes: [ 'name', 'price', 'description', 'image_url' ]
             }
-        ]
+        ],
+        attributes: ['user_id', 'product_id', 'quantity', 'total']
     });
     if(!userCart) {
         console.log('User has no cart Items');
@@ -121,7 +122,10 @@ const getCartItemsById = async (id) => {
 };
 // update cart Items
 
-const updateCartItems = async (id, quantity) => {
+const updateCartItems = async (userId, id, quantity) => {
+    if(!userId) {
+        throw new Error('UserId not authenticated')
+    }
 
     let cartItem = await Cart.findByPk(id);
 
@@ -134,7 +138,10 @@ const updateCartItems = async (id, quantity) => {
     cartItem.quantity = quantity;
     await cartItem.save();
 
-    return cartItem;
+    return {
+        id: cartItem.id,
+        quantity: cartItem.quantity
+    };
 };
 
 // delete cart items
