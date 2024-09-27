@@ -1,35 +1,41 @@
 'use client'
 import Link from 'next/link';
-import { Product, Cart } from '@/app/lib/definition';
+import { Product, ProductDetails, NewCart } from '@/app/lib/definition';
 import Image from 'next/image';
-import {addItemsToCart} from '@/app/ui/cart'
+import {addItemsToCart} from '@/app/lib/data';
+import { useRouter } from 'next/navigation';
+import { useCart } from '@/app/context/cartContext';
 
 interface ProductProps {
   products: Product[];
-  userId: number;
-  setCartItems:  React.Dispatch<React.SetStateAction<Cart[]>>;
 }
 
 
-const Products: React.FC<ProductProps> = ({ products, userId, setCartItems }) => {
-    console.log('products value in props:',  products)
-  if (!products || products.length === 0) {
+const Products: React.FC<ProductProps> = ({products}) => {
+    const { addToCart } = useCart();
+  const router = useRouter();
+  console.log('products value in props:',  products)
+ 
+    if (!products || products.length === 0) {
     return <p>No products found</p>;
   };
 
   const handleAddToCart = async(product: Product) => {
-      const cartItem: Cart = {
-        id: product.id,
-        name: product.name,
-        quantity: 1,
-        price: product.price,
-        description: product.description,
-        image_url: product.imageUrl,
-        total: product.price * 1
-      }
-      await addItemsToCart(cartItem, userId, setCartItems)
+      const quantity = 1;
+      addToCart(product.id, quantity)
 
-    };
+      };
+      // const productDetails: ProductDetails = {
+      //   id: product.id,
+      //   name: product.name,
+      //   price: product.price,
+      //   description: product.description,
+      //   image_url: product.imageUrl
+
+      // }
+      // await addItemsToCart(product.id, setCartItems)
+router.push('/cart')
+    
     
 
   return (
@@ -48,7 +54,7 @@ const Products: React.FC<ProductProps> = ({ products, userId, setCartItems }) =>
             <p className='text-gray-600'>{product.description}</p> 
             <p className='text-green-500 font-bold'>${product.price}</p>
           </div>
-          <button className='bg-red-800 text-rose-100 w-[60%] mx-auto h-6 rounded-lg hover:bg-rose-100 hover:text-red-800' onClick={() =>handleAddToCart(product)}>Add to Cart</button>
+          <button className='bg-red-800 text-rose-100 w-[60%] mx-auto h-6 rounded-lg hover:bg-rose-100 hover:text-red-800' onClick={() => handleAddToCart(product)}>Add to Cart</button>
          
         </div>
       ))}

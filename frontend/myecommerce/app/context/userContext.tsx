@@ -1,17 +1,20 @@
 'use client'
 
 import { createContext, useState, useContext } from 'react';
+import { useRouter } from 'next/navigation';
 interface UserContextProps {
-    user: { name: string | null, id: number | null, email?: string | null  };
-    setUser: React.Dispatch<React.SetStateAction<{ name: string | null , id: number | null , email?: string | null }>>;
+    user: { id: number | null, name: string | null };
+    setUser: React.Dispatch<React.SetStateAction<{ id: number | null, name: string | null}>>;
 logout: () => void
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<{ name: string | null , id: number | null, email?: string | null }>({ name: null, id: null, email: null });
+    const [user, setUser] = useState<{ id: number | null, name: string | null}>({id: null, name: null});
+    const router = useRouter();
     const logout = () => {
-        setUser({name: null, id: null, email: null});
+        setUser({ id: null, name: null});
+        router.push('/')
         console.log(' user details cleared')
 
     }

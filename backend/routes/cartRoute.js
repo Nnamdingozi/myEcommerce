@@ -80,7 +80,7 @@ const { addItemsHandler,
  *                   type: string
  *                   example: Error message describing the issue
  */
-    cartRoute.post('/:userId', addItemsHandler);
+    cartRoute.post('/', addItemsHandler);
 
     /**
  * @swagger
@@ -142,7 +142,7 @@ const { addItemsHandler,
  *                   example: Error message describing the issue
  */
     cartRoute.get('/:id', getCartItemsByIdHandler);
-    cartRoute.get('/:userId', getItemByUserIdHandler )
+    cartRoute.get('/user', getItemByUserIdHandler )
 /**
  * @swagger
  * /cart/{id}:

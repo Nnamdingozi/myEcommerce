@@ -18,15 +18,16 @@ const getUserById = async (id) => {
     if (user) {
         return user;
     }
-    throw new Error('user not found')
+    throw new Error('unable to get user by ID')
 };
 // get user by email
 const getUserByEmail = async (email) => {
     const user = await User.findOne({where:{ email} });
     if (user) {
+        console.log('user from userbyemail service:', user)
         return user;
     }
-    throw new Error('user not found')
+    throw new Error('Unable to get user by email')
 }
 
 //update a user
