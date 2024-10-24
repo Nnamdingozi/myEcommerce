@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/Link';
 import { useState, useEffect } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 

@@ -64,9 +64,20 @@ const findOrCreateUser = async (profile, provider) => {
     }
 };
 
+const getUserDetails =(user) => {
+    if(!user) {
+        throw new Error('User not found')
+    }
+    return {
+        id: user.id,
+        username: user.username,
+        email: user.email
+    }
+}
+
 module.exports = {
     register,
     findUserByEmail,
     comparePassword,
-    findOrCreateUser
+    findOrCreateUser, getUserDetails
 };

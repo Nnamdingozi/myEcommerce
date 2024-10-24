@@ -22,7 +22,7 @@ if(response && response.status === 200) {
     const fetchUser = await fetchByEmail(user.email);
     console.log('Login successful',  fetchUser);
     if(fetchUser) {
-        setUser({id: fetchUser.id, name: fetchUser.username});
+        setUser({id: fetchUser.id, username: fetchUser.username});
         setLoginSuccess(true);
         return { data: user, status: response.status };
     }

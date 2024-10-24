@@ -14,18 +14,41 @@ module.exports = {
        description: "Meet next Gen iphone product with cutting edge Technology",
        createdAt: new Date(),
        updatedAt: new Date(),
-       image_url: null
+       image_url: '/images/iphone.avif'
       },
+      {
+        name: '32 Inches televison',
+        merchant_id: 1,
+        price: 123456.90,
+        status: "in stock",
+        category_id: 1,
+        description: "Slik design with crystal clear picture quality",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        image_url: '/images/tv.jpg'
+       },
       {
         name: 'wall mirage',
         merchant_id: 1,
         price: 14700.90,
         status: "in stock",
         category_id: 2,
-        description: "Meet next Gen iphone product with cutting edge Technology",
+        description: "Beautifully crafted resin art",
         createdAt: new Date(),
         updatedAt: new Date(),
-        image_url: null
+        image_url: '/images/resinart1.jpg'
+      },
+
+      {
+        name: 'Resin Wall Art',
+        merchant_id: 1,
+        price: 14700.90,
+        status: "in stock",
+        category_id: 2,
+        description: "Beautifully crafted resin art",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        image_url: '/images/resinart2.jpg'
       },
       {
         name: 'Corporate Gown',
@@ -33,32 +56,43 @@ module.exports = {
         price: 7000.90,
         status: "in stock",
         category_id: 3,
-        description: "Meet next Gen iphone product with cutting edge Technology",
+        description: "Elegant Gown. Perfect for official assignments",
         createdAt: new Date(),
         updatedAt: new Date(),
-        image_url: null
+        image_url: '/images/red-gown.jpg'
+      },
+      {
+        name: 'Corporate Gown2',
+        merchant_id: 1,
+        price: 7000.90,
+        status: "in stock",
+        category_id: 3,
+        description: "Corporate and  stylish red gown",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        image_url: '/images/redgown2.jpg'
       },
     {
-      name: 'Wedge sandals',
+      name: 'Fancy Pen',
         merchant_id: 1,
         price: 7000.90,
         status: "in stock",
         category_id: 4,
-        description: "Meet next Gen iphone product with cutting edge Technology",
+        description: "Inscripes flawlessly",
         createdAt: new Date(),
         updatedAt: new Date(),
-        image_url: null
+        image_url: '/images/pencil.jpg'
     },
     {
-      name: 'fancy pen',
+      name: 'Sneakers',
         merchant_id: 1,
         price: 7500.90,
         status: "in stock",
         category_id: 7,
-        description: "Meet next Gen iphone product with cutting edge Technology",
+        description: " Blue Breatheable and lofty sneakers",
         createdAt: new Date(),
         updatedAt: new Date(),
-        image_url: null
+        image_url: '/images/canvas.jpg'
     },
     {
       name: 'Ladies blink blink',
@@ -66,10 +100,10 @@ module.exports = {
         price: 750.90,
         status: "in stock",
         category_id: 5,
-        description: "Meet next Gen iphone product with cutting edge Technology",
+        description: "18 carat silver chain",
         createdAt: new Date(),
         updatedAt: new Date(),
-        image_url: null
+        image_url: '/images/necklace.jpg'
     },
     {
       name: 'Mens belt',
@@ -77,31 +111,18 @@ module.exports = {
         price: 17000.90,
         status: "in stock",
         category_id: 6,
-        description: "Meet next Gen iphone product with cutting edge Technology",
+        description: "Brown leather glossy belt",
         createdAt: new Date(),
         updatedAt: new Date(),
-        image_url: null
+        image_url: '/images/belt.avif'
     }
     ], {});
-    /**
-     * Add seed commands here.
-     *
-     * Example:
-     * await queryInterface.bulkInsert('People', [{
-     *   name: 'John Doe',
-     *   isBetaMember: false
-     * }], {});
-    */
+    
   },
 
   async down (queryInterface, Sequelize) {
 
     await queryInterface.bulkDelete('products', null, {});
-    /**
-     * Add commands to revert seed here.
-     *
-     * Example:
-     * await queryInterface.bulkDelete('People', null, {});
-     */
+    await queryInterface.sequelize.query('ALTER SEQUENCE "products_id_seq" RESTART WITH 1;');
   }
 };

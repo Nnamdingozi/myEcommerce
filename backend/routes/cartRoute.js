@@ -1,5 +1,7 @@
 const express = require('express');
 const cartRoute = express.Router();
+const passport = require('passport');
+const {ensureAuthenticated} = require('../middlewares/authMiddleware')
 
 const { addItemsHandler,
    getItemByUserIdHandler,
@@ -80,7 +82,7 @@ const { addItemsHandler,
  *                   type: string
  *                   example: Error message describing the issue
  */
-    cartRoute.post('/', addItemsHandler);
+    cartRoute.post('/', ensureAuthenticated, addItemsHandler);
 
     /**
  * @swagger
@@ -142,7 +144,7 @@ const { addItemsHandler,
  *                   example: Error message describing the issue
  */
     cartRoute.get('/:id', getCartItemsByIdHandler);
-    cartRoute.get('/user', getItemByUserIdHandler )
+    cartRoute.get('/', ensureAuthenticated, getItemByUserIdHandler )
 /**
  * @swagger
  * /cart/{id}:
@@ -203,7 +205,7 @@ const { addItemsHandler,
  *                   example: Error updating cart item
  */
 
-    cartRoute.put('/:id', updateCartItemsHandler);
+    cartRoute.put('/:id', ensureAuthenticated, updateCartItemsHandler);
     /**
  * @swagger
  * /cart/{id}:
@@ -241,7 +243,7 @@ const { addItemsHandler,
  *                   type: string
  *                   example: Error deleting cart item
  */
-    cartRoute.delete('/:id', deleteCartItemHandler);
+    cartRoute.delete('/:cartItemId', ensureAuthenticated, deleteCartItemHandler);
 
     module.exports = cartRoute
 

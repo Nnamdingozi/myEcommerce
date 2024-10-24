@@ -3,7 +3,8 @@ export type Product = {
     name: string;
     price: number;
     description: string;
-    imageUrl: string;
+    image_url: string;
+    quantity: number
   };
 
   export type Category = {
@@ -58,6 +59,7 @@ export type Product = {
     price?: number;
     description?: string;
     image_url?: string;
+    cartproduct: ProductDetails
 
 
   }
