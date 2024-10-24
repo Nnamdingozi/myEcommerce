@@ -16,7 +16,7 @@ const CategoryProducts: React.FC<CategoryproductProps> = ({ categoryproducts }) 
       {categoryproducts.map((categoryproduct) => (
         <div key={categoryproduct.id} className='bg-gray-100 shadow-md rounded-lg overflow-hidden border-2 border-red-400 h-[500px] flex flex-col'>
           <Image 
-            src={categoryproduct.imageUrl || '/images/img-1.jpg'}
+            src={categoryproduct.image_url || '/images/img-1.jpg'}
             alt={categoryproduct.name}
             className='w-full h-1/2 object-cover'
             width={500}

@@ -5,6 +5,7 @@ const authRouter = express.Router();
 const authController = require('../controllers/authController'); 
 const passport = require('passport');
 require('../database/config/passport')(passport);
+const { ensureAuthenticated } = require('../middlewares/authMiddleware')
 
 
 /**
@@ -90,7 +91,7 @@ authRouter.post('/login', authController.login);
  */
 authRouter.get('/github', passport.authenticate('github'));
 authRouter.get('/github/callback', authController.githubCallback);
-
+authRouter.get('/me', ensureAuthenticated, authController.getMeHandler)
 
 
 module.exports = authRouter;

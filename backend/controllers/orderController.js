@@ -3,9 +3,9 @@ const { createOrder, getAllOrder, getOrderById } = require('../services/orderSer
 
 const createOrderHandler = async (req, res) => {
     try {
-
-        const { user_id, payment_method, shipping_address, shipping_method, currency } = req.body
-        const newOrder = await createOrder(user_id, payment_method, shipping_address, shipping_method, currency);
+const { userId } = req.user.id
+        const { paymentMtd, shippingAddy, shippingMtd, curr } = req.body
+        const newOrder = await createOrder(userId, paymentMtd, shippingAddy, shippingMtd, curr);
         if (newOrder) {
             res.status(200).json(newOrder);
         } else {

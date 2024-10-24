@@ -14,11 +14,15 @@ const getAllUsers = async () => {
 // get a user by id
 
 const getUserById = async (id) => {
+    if(!id) {
+        throw new Error('Invalid ID provided')
+    }
+
     const user = await User.findByPk(id);
     if (user) {
         return user;
     }
-    throw new Error('unable to get user by ID')
+    throw new Error(`user with Id ${id} not found`)
 };
 // get user by email
 const getUserByEmail = async (email) => {

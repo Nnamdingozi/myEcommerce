@@ -9,24 +9,12 @@ module.exports = {
         email: 'finias@gmail.com',
         country_code: '+234'
      }], {});
-    /**
-     * Add seed commands here.
-     *
-     * Example:
-     * await queryInterface.bulkInsert('People', [{
-     *   name: 'John Doe',
-     *   isBetaMember: false
-     * }], {});
-    */
+    
   },
 
   async down (queryInterface, Sequelize) {
     await queryInterface.bulkDelete('merchants', null, {});
-    /**
-     * Add commands to revert seed here.
-     *
-     * Example:
-     * await queryInterface.bulkDelete('People', null, {});
-     */
+    await queryInterface.sequelize.query('ALTER SEQUENCE "merchants_id_seq" RESTART WITH 1;');
+    
   }
 };
