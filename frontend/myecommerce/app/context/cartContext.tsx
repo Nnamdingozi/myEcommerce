@@ -85,15 +85,19 @@ interface CartContextType  {
   addToCart: (productId: number, quantity?: number) => Promise<NewCart | null | undefined>;
   removeItemFromCart: (cartItemId: number) => Promise<void>;
   newQuantity: (cartItemId: number, newqty: number) => Promise<void>;
-  getUserCart: () => Promise<Ne>
-  
+  getUserCart: () => Promise<void>;
+ 
 };
 
-
+interface CartProviderProps {
+  initialCart?: NewCart[];
+  children: React.ReactNode
+  
+}
 
 const CartContext = createContext<CartContextType | null>(null);
 
-export const CartProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+export const CartProvider: React.FC<CartProviderProps> = ({ children, initialCart }) => {
   const [cart, setCart] = useState<NewCart[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -103,8 +107,11 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({ children }
   const { getUserCart, addToCart, removeItemFromCart, newQuantity } = cartHookLogic({setCart, setLoading, setError, cart});
 
   useEffect(() => {
-    getUserCart(); // Fetch user cart on mount
-  }, []);
+    if(!initialCart) {
+      getUserCart(); 
+    }
+    
+  }, [initialCart]);
 
   const calculateCartSubTotal = (cart: NewCart[]) => {
     return cart.reduce((sum, item) => {
@@ -129,6 +136,7 @@ export const CartProvider: React.FC<{children: React.ReactNode}> = ({ children }
       addToCart,
       removeItemFromCart,
       newQuantity,
+      getUserCart
     }}>
       {children}
     </CartContext.Provider>
