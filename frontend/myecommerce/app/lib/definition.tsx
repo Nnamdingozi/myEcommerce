@@ -62,4 +62,32 @@ export type Product = {
     cartproduct: ProductDetails
 
 
+  };
+
+  export type Order = {
+    id?: number;
+    paymentMtd: string;
+    shippingAddy: string;
+     shippingMtd: string;
+      curr: string ;
+      total?: number;
+      trackingNum?: string
+      orderDate?: Date;
+      shipping_address?: string
+      total_amount?: string;
+      currency?: string;
+      order_date?: Date;
+      payment_method?: string;
+      shipping_method?: string;
+      tracking_number?: string;
+  };
+
+  export type GetOrder = {
+    shipping_address: string
+    total_amount: string;
+    currency: string;
+    order_date: Date;
+    payment_method: string;
+    shipping_method: string;
+    tracking_number: string;
   }

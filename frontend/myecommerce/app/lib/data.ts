@@ -1,6 +1,7 @@
 
-import { Product, Category, User, LoginRequest, LoginStatus, NewCart} from '@/app/lib/definition';
+import { Product, Category, User, LoginRequest, LoginStatus, NewCart, Order} from '@/app/lib/definition';
 import axios from 'axios';
+import { RESPONSE_LIMIT_DEFAULT } from 'next/dist/server/api-utils';
 //add base url later axios.defaults.baseUrl
 
 
@@ -177,10 +178,48 @@ export async function checkUserSession() {
 
 };
 
-export async function createOrder (paymentMtd, shippingAddy, shippingMtd, curr){
+export async function createOrder (paymentMtd: string, shippingAddy: string, shippingMtd: string, curr: string ) {
+  console.log(`values received in data.ts and passed to backend: paymentMtd: ${paymentMtd},`)
   try {
     const response = await axios.post('http://localhost:5000/order', {paymentMtd, shippingAddy, shippingMtd, curr}, {withCredentials: true})
-  } catch (err) {
+  if(response) {
+    console.log('Order successfully created,', response.data);
+    return response.data;
+  }
+  } catch (err: any) {
     console.error('Error verifying user session data', err.response?.data || err.message || err )
   }
+};
+ 
+
+export async function fetchUserOrder (): Promise<Order[] | null> {
+
+  try {
+    const response = await axios.get('http://localhost:5000/order', {withCredentials: true});
+    if(response){
+      console.log('user order fetched in data.tsx:', response.data);
+      return response.data
+    }
+    
+  } catch (error) {
+    console.error('Error fetching user orders', error)
+    
+  }
+  return null
+};
+
+export async function fetchOrderById (orderId: number): Promise<Order | null> {
+
+  try {
+    const response = await axios.get(`http://localhost:5000/order/${orderId}`, {withCredentials: true});
+    if(response){
+      console.log('user order with id fetched in data.tsx:', response.data);
+      return response.data
+    }
+    
+  } catch (error) {
+    console.error('Error fetching user orders by id', error)
+    
+  }
+  return null
 }

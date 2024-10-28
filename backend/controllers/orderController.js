@@ -3,7 +3,8 @@ const { createOrder, getAllOrder, getOrderById } = require('../services/orderSer
 
 const createOrderHandler = async (req, res) => {
     try {
-const { userId } = req.user.id
+const { id } = req.user;
+const userId = id;
         const { paymentMtd, shippingAddy, shippingMtd, curr } = req.body
         const newOrder = await createOrder(userId, paymentMtd, shippingAddy, shippingMtd, curr);
         if (newOrder) {
@@ -18,8 +19,9 @@ const { userId } = req.user.id
 
 const getAllOrderHandler = async (req, res) => {
     try {
-        const { user_id } = req.body;
-        const orders = await getAllOrder(user_id);
+        const { id } = req.user;
+        const userId = id;
+        const orders = await getAllOrder(userId);
         if (!orders || orders.length === 0) {
           return  res.status(404).json({message: 'Orders not found'})
         } else {
@@ -32,9 +34,10 @@ const getAllOrderHandler = async (req, res) => {
 
 const getOrderByIdHandler = async(req, res) => {
     try {
-        const { user_id} = req.body;
-    const { id } = req.params
-const order = await getOrderById(id, user_id);
+        const {id} = req.user;
+        const userId = id
+    const { orderId } = req.params
+const order = await getOrderById(orderId, userId);
 if (!order) {
     res.status(404).json('Order not found')
 } else {

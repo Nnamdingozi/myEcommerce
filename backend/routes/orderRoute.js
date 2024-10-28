@@ -2,7 +2,7 @@ const { createOrderHandler, getAllOrderHandler, getOrderByIdHandler } = require(
 
 const express = require('express');
 const orderRoute = express.Router();
-
+const {ensureAuthenticated} = require('../middlewares/authMiddleware')
 
 /**
  * @swagger
@@ -85,7 +85,7 @@ const orderRoute = express.Router();
  *                   type: string
  *                   description: Error message
  */
-orderRoute.post('/', createOrderHandler);
+orderRoute.post('/', ensureAuthenticated, createOrderHandler);
 
 /**
  * @swagger
@@ -161,7 +161,7 @@ orderRoute.post('/', createOrderHandler);
  *                 message:
  *                   type: string
  */
-orderRoute.get('/', getAllOrderHandler);
+orderRoute.get('/', ensureAuthenticated, getAllOrderHandler);
 
 /**
  * @swagger
@@ -252,6 +252,6 @@ orderRoute.get('/', getAllOrderHandler);
  *                 message:
  *                   type: string
  */
-orderRoute.get('/:id', getOrderByIdHandler);
+orderRoute.get('/:orderId', ensureAuthenticated, getOrderByIdHandler);
 
 module.exports = orderRoute;

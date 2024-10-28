@@ -120,7 +120,7 @@ const updateCartItems = async (cartItemId, quantity, userId) => {
     return {
         id: cartItem.id,
         quantity: cartItem.quantity,
-        total: cartItem.total
+        total: parseFloat(cartItem.total || 0).toFixed(2) 
     };
 };
 
