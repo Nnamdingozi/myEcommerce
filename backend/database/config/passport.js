@@ -9,12 +9,13 @@ const authService = require('../../services/authService');
 const userService = require('../../services/userService')
 require('dotenv').config();
 
-module.exports = (passport) => {
+module.exports = () => {
     //local strategy
     passport.use(new LocalStrategy({
         usernameField: 'email',
         passwordField: 'password'
     }, async (email, password, done) => {
+        console.log('email in passport:', email)
         try {
             const user = await authService.findUserByEmail(email);
             if(!user) {
@@ -25,6 +26,7 @@ module.exports = (passport) => {
             if(!isMatch) {
                 return done(null, false, {message: 'Incorrect passoword'})
             }
+            console.log('authenticated user:', user)
             return done(null, user);
         } catch (err) {
             return done(err)
@@ -49,6 +51,9 @@ passport.use(new GitHubStrategy({
 }));
 
 passport.serializeUser((user, done) => {
+    if(!user || !user.id) {
+        return done(new Error('User serialization failed: user object is invalid'))
+    }
     done(null, user.id);
 });
 passport.deserializeUser(async(id, done) => {

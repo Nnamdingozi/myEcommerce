@@ -2,17 +2,17 @@ import Link from 'next/link';
 import { Category} from '@/app/lib/definition';
 
 interface CategoryProps {
-    categories: Category[];
+    categories: Category[] | null;
   }
   
 
 const Categories: React.FC<CategoryProps> = ({ categories }) => {
     return (
-        <div>
-        <h1>Categories</h1>
-        <ul className='space-y-2 w-full h-auto mx-4 text-center text-red-800 p-4 mt-12'>
+        <div className='mt-14'>
+        <h1 className='text-center text-red-800  font-bold'>CATEGORIES</h1>
+        <ul className='space-y-2 w-full h-auto mx-4 text-center text-red-800 p-4 '>
             
-            {categories.map((category) => (
+            {categories?.map((category) => (
                 <li key={category.id} className='border-2 border-red-800'><Link href={`/category/${category.id}`}>{category.category_name}</Link></li>
             ))}
         </ul>

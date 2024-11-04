@@ -1,3 +1,4 @@
+'use client'
 
 import { User } from '@/app/lib/definition';
 // import { useUser } from '../context/userContext';

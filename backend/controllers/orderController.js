@@ -1,13 +1,16 @@
 const { createOrder, getAllOrder, getOrderById } = require('../services/orderService');
-
+const { Order, } = require('../database/models');
 
 const createOrderHandler = async (req, res) => {
     try {
-
-        const { user_id, payment_method, shipping_address, shipping_method, currency } = req.body
-        const newOrder = await createOrder(user_id, payment_method, shipping_address, shipping_method, currency);
+const { id } = req.user;
+const userId = id;
+        const { paymentMtd, shippingAddy, shippingMtd, curr } = req.body
+        const newOrder = await createOrder(userId, paymentMtd, shippingAddy, shippingMtd, curr);
+        console.log('new order created in createorderhandler:', newOrder)
         if (newOrder) {
-            res.status(200).json(newOrder);
+            
+            return res.status(200).json({orderId: newOrder.id});
         } else {
             res.status(400).json('error while creating order')
         }
@@ -18,8 +21,9 @@ const createOrderHandler = async (req, res) => {
 
 const getAllOrderHandler = async (req, res) => {
     try {
-        const { user_id } = req.body;
-        const orders = await getAllOrder(user_id);
+        const { id } = req.user;
+        const userId = id;
+        const orders = await getAllOrder(userId);
         if (!orders || orders.length === 0) {
           return  res.status(404).json({message: 'Orders not found'})
         } else {
@@ -32,9 +36,10 @@ const getAllOrderHandler = async (req, res) => {
 
 const getOrderByIdHandler = async(req, res) => {
     try {
-        const { user_id} = req.body;
-    const { id } = req.params
-const order = await getOrderById(id, user_id);
+        const {id} = req.user;
+        const userId = id
+    const { orderId } = req.params
+const order = await getOrderById(orderId, userId);
 if (!order) {
     res.status(404).json('Order not found')
 } else {

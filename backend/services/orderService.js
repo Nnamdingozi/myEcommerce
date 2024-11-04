@@ -75,10 +75,10 @@ const getAllOrder = async (userId) => {
     }
 };
 
-const getOrderById = async (id, userId) => {
+const getOrderById = async (orderId, userId) => {
     const order = await Order.findOne({
          where: { 
-            id: id,
+            id: orderId,
             user_id: userId
             
          },
