@@ -1,5 +1,5 @@
 
-import { Product, Category, User, LoginRequest, LoginStatus, NewCart, Order} from '@/app/lib/definition';
+import { Product, Category, User, LoginRequest, LoginStatus, NewCart, Order, Paystack} from '@/app/lib/definition';
 import axios from 'axios';
 import { RESPONSE_LIMIT_DEFAULT } from 'next/dist/server/api-utils';
 //add base url later axios.defaults.baseUrl
@@ -27,7 +27,7 @@ export async function fetchCategories(): Promise<Category[]> {
     return response.data
 
   } catch(err: any) {
-    console.error('Error fetching data', err)
+    console.log('Error fetching data', err.response?.data || err.message || err)
     return [];
 
   }
@@ -121,14 +121,14 @@ export async function addItemsToCart(productId: number | null, quantity: number 
   }
 
 };
-export async function fetchUserCart(): Promise<NewCart[] | undefined>{
+export async function fetchUserCart(): Promise<NewCart[] | []>{
   try {
     const response = await axios.get<NewCart[]>(`http://localhost:5000/cart`, { withCredentials: true });
     console.log('getting cart data from database: ', response.data)
     return response.data
   }  catch (err: any) {
-    console.error('Error getting items from cart:', err.response?.data || err.message || err);
-    return undefined;
+    console.log('Error getting items from cart:', err.response?.data || err.message || err);
+    return [];
   }
 
 };
@@ -182,7 +182,7 @@ export async function createOrder (paymentMtd: string, shippingAddy: string, shi
   console.log(`values received in data.ts and passed to backend: paymentMtd: ${paymentMtd},`)
   try {
     const response = await axios.post('http://localhost:5000/order', {paymentMtd, shippingAddy, shippingMtd, curr}, {withCredentials: true})
-  if(response) {
+  if(response.data) {
     console.log('Order successfully created,', response.data);
     return response.data;
   }
@@ -222,4 +222,22 @@ export async function fetchOrderById (orderId: number): Promise<Order | null> {
     
   }
   return null
+};
+
+export async function initializePaystack (orderId: number): Promise<Paystack | null> {
+  console.log('orderId received in initializePaystack data.ts:', orderId)
+
+  try {
+    const response = await axios.post(`http://localhost:5000/checkout/initialize/${orderId}`);
+    if(response){
+      console.log('Payment with card initialized on paystack', response.data);
+      return response.data
+    }
+    
+  } catch (error) {
+    console.error('Error initializing payment with card on paystack', error)
+    
+  }
+  return null
 }
+

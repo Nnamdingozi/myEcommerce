@@ -8,7 +8,7 @@ const {getUserOrder, userOrder,isLoading, error } = useOrderContext()
 useEffect(()=> {
  getUserOrder();
     console.log('user order fron getUserOrder useEffect:', userOrder)
-}, [getUserOrder]);
+}, []);
 
 
 if(isLoading) {

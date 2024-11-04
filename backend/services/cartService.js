@@ -38,30 +38,11 @@ const addItemsToCart = async (userId, productId) => {
 
 };
 
-// const calcCartTotal = async (userId) => {
-//     try {
-
-//         const cartItems = await Cart.findOne({
-//         where: {user_id: userId},
-//         include: [{
-//             model: Product,
-//             as: 'cartproduct',
-//             attribute: ['price']
-//         }]
-//         });
-//         const total = cartItems.reduce((acc, item)=> {
-//             return acc + (item.quantity * item.cartproduct.price)
-//         }, 0);
-//         return total;
-//     } catch (err) {
-//         throw new Error(`Errror calculating cart total: ${err.message}`)
-//     }
-// };
 
 const getItemByUserId = async (userId) => {
     console.log('service userId for getCart: ', userId)
     if(typeof userId !== 'number') {
-        console.error(`Invalid userId provided: ${userId}`); // Logging the invalid userId
+        console.error(`Invalid userId provided: ${userId}`); 
         throw new Error('Invalid user ID. Must be a number.');
     }
     

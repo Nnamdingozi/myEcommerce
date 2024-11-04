@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -17,6 +18,7 @@
 }
 
 body {
+
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
@@ -24,6 +26,25 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+  display: flex;               /* Set body as a flex container */
+  flex-direction: column;      /* Arrange children vertically */
+  height: auto;              /* Ensure full viewport height */
+  margin: 0;                  /* Remove default margin */
+}
+
+main {
+  /* flex: 1;                    Allow main to take remaining space */
+  padding: 20px;  /* Optional: add padding for main content */
+  height: auto
+
+}
+
+footer {
+  background-color: rgba(255, 255, 255, 0.9); /* Optional footer background */
+  padding: 10px 20px;       /* Optional: padding for footer */
+  text-align: center; 
+  height: auto;
+         /* Center align footer text */
 }
 
 @layer utilities {

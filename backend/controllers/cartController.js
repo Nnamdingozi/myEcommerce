@@ -21,17 +21,6 @@ const addItemsHandler = async (req, res) => {
     }
 };
 
-// const calcCartTotalHandler = async (req, res) => {
-//     try {
-//         const { user_id } = req.body;
-//     const calcTotal = calcCartTotal(user_id);
-//     res.status(200).json({ calcTotal })
-
-//     } catch (err) {
-//         res.status(500).json({ error: err.message })
-  
-//     }
-// };
     
 const getItemByUserIdHandler = async(req, res) => {
     console.log('getItemByUserIdHandler by', req.user)

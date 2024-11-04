@@ -1,42 +1,40 @@
-'use client'
-import { MyCart } from '@/app/ui/cart';
- import { useCart } from './cartContext';
-import { useUser } from '@/app/context/userContext';
+// 'use client'
+// import { MyCart } from '@/app/ui/cart';
+//  import { useCart } from './cartContext';
+// import { useUser } from '@/app/context/userContext';
 
 
 
 
-const  CartContent: React.FC= () => {
-    const { cart, loading, error, newQuantity, removeItemFromCart, cartSubTotal } = useCart()
-    const { user } = useUser();
+// const  CartContent: React.FC= () => {
+// //     const { cart, loading, error, newQuantity, removeItemFromCart, cartSubTotal } = useCart()
+// //     const { user } = useUser();
 
-if(!user.id) {
-  return <div className='mt-60 w-full h-36 text-red-600'>Please log in to view cart</div>
-}
+// // if(!user.id) {
+// //   return <div className='mt-60 w-full h-36 text-red-600'>Please log in to view cart</div>
+// // }
 
 
-if(loading) {
-  return <div className='mt-60 w-full h-36 text-red-600'>Loading cart ...</div>
-} 
+// // if(loading) {
+// //   return <div className='mt-60 w-full h-36 text-red-600'>Loading cart ...</div>
+// // } 
 
-if(error) {
-  return <div className='mt-60 w-full h-36 text-red-600'>Error Loading cart: {error}</div>
-}
+// // if(error) {
+// //   return <div className='mt-60 w-full h-36 text-red-600'>Error Loading cart: {error}</div>
+// // }
 
-// if(cart.length === 0) {
-//   return <div>Cart is empty</div>
-// }
-   
-    return (
 
    
-   <MyCart
-    cart={cart} 
-    newQuantity ={newQuantity} 
-    removeItemFromCart = {removeItemFromCart} 
-    cartSubTotal= {cartSubTotal}
-    />   
-    )
-};
+// //     return (
 
-export default CartContent
+   
+// //    <MyCart
+// //     cart={cart} 
+// //     newQuantity ={newQuantity} 
+// //     removeItemFromCart = {removeItemFromCart} 
+// //     cartSubTotal= {cartSubTotal}
+// //     />   
+// //     )
+// // };
+
+// export default CartContent

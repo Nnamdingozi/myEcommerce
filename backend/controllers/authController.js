@@ -5,6 +5,8 @@ const authService = require('../services/authService');
 const bcrypt = require('bcrypt');
 const {ensureAuthenticated} = require('../middlewares/authMiddleware');
 
+
+// register new user
 exports.register = async(req, res) => {
     console.log('Register endpoint hit')
     const { username, email, phone, password, country_code,} = req.body
@@ -18,6 +20,7 @@ exports.register = async(req, res) => {
     }
 };
 
+// login existing user
 exports.login = (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
         if(err) {
@@ -41,19 +44,22 @@ exports.login = (req, res, next) => {
     })(req, res, next);
 };
 
+
+// login with github
 exports.githubCallback = (req, res, next) => {
     passport.authenticate('github', (err, user, info) => {
       if (err) return next(err);
-      if (!user) return res.redirect('/login'); // Adjust redirect as needed
+      if (!user) return res.redirect('/login'); 
   
       req.login(user, (err) => {
         if (err) return next(err);
-        res.redirect('/'); // Adjust redirect as needed
+        res.redirect('/'); 
       });
     })(req, res, next);
   };
  
 
+//   access user credentials from request objext
   exports.getMeHandler = (req, res) => {
     try {
         const user = authService.getUserDetails(req.user);

@@ -4,11 +4,10 @@ import "./globals.css";
 import { UserProvider } from '@/app/context/userContext';
 import { CartProvider } from "@/app/context/cartContext";
 import NavBarWrapper from "@/app/context/navbarWrapper";
-// import Navbar from "./ui/navabar";
-import dynamic from 'next/dynamic';
+import Footer from '@/app/ui/footer'
+import { OrderProvider } from "./context/orderContext";
 
 
-const Navbar = dynamic(() => import('@/app/ui/navabar'), {ssr: false});
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -31,10 +30,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
 
         <UserProvider>
           <CartProvider>
+            <OrderProvider>
+            
           <NavBarWrapper />
-          </CartProvider>
             <main>{children}</main>
-         
+            <Footer />
+            </OrderProvider>
+            </CartProvider>
         </UserProvider>
 
       </body>

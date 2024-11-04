@@ -4,12 +4,16 @@ import { useEffect, useState } from 'react';
 import { Product } from '@/app/lib/definition';
 import { fetchProductsByCategoryId } from '@/app/lib/data';
 import  CategoryProducts  from '@/app/ui/categoryProducts';
+import { useCart } from '@/app/context/cartContext';
 
 export default function CategoryPage({params}: { params : {id: string}}) {
 
     const [catProducts, setCatProducts] = useState<Product[]>([]);
     const [loading, setLoading] =  useState<boolean>(true);
 const [error, setError] = useState<string | null>(null);
+
+const {addToCart, getUserCart} = useCart();
+
 
     useEffect(() => {
         const baseUrl = 'http://localhost:5000';
@@ -36,7 +40,11 @@ fetchByCat()
     }, [params.id])
     
     return (
-        <CategoryProducts categoryproducts={catProducts} />
+        <CategoryProducts 
+        categoryproducts={catProducts}
+        addToCart={addToCart}
+        getUserCart={getUserCart}
+         />
     )
 }
 

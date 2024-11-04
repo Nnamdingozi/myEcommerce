@@ -66,7 +66,7 @@ app.use('/images', express.static('public/images'));
 app.use('/product', productRoute);
 app.use('/cart', cartRoute);
 app.use('/order', orderRoute);
-app.use('/checkout',checkoutRoute);
+app.use('/checkout', checkoutRoute);
 
 
 // catch 404 and forward to error handler

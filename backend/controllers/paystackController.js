@@ -7,20 +7,23 @@ const { Order, } = require('../database/models');
 const CreateCheckoutHandler = async (req, res) => {
     try {
 
-        const { id } = req.body;
-        const response = await initializeTransaction(id);
+        const { orderId } = req.params;
+        console.log( `orderId in initialize paystack handler: ${orderId}` )
+        const response = await initializeTransaction( orderId);
         if (response && response.data) {
             const {authorization_url, reference} = response.data;
-            console.log(response.data);
+            console.log(`data after initialization in handler authorization url: ${authorization_url}, reference: ${reference}`);
             console.log(`AuthorizationUrl: ${authorization_url}`);
             console.log(`Reference: ${reference}`);
-            await Order.update({ transaction_reference: reference }, { where: { id } });
+
+
+            await Order.update({ transaction_reference: reference }, { where: { id: orderId } });
             res.status(200).json({
                 authorization_url,
                 reference
             });
 
-            
+            return response.data
         } else {
          res.status(404).json({message: 'data not created'})
         }

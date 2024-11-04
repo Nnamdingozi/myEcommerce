@@ -3,10 +3,13 @@
 import { useEffect, useState } from 'react';
 import Hero from '@/app/ui/hero';
 import Products from '@/app/ui/products';
+import  Categories  from '@/app/ui/categories'
 import { fetchProducts } from '@/app/lib/data';
 import { Product } from '@/app/lib/definition';
 import { useRouter } from "next/navigation";
-import { CartProvider } from '../context/cartContext';
+import { useCart } from '../context/cartContext';
+import { fetchCategories } from '../lib/data';
+import { Category } from '@/app/lib/definition';
 
 
 
@@ -16,8 +19,10 @@ export default  function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-   const router = useRouter();
+const [ categoryData, setCategoryData] = useState<Category[] | null>(null)
 
+   const router = useRouter();
+const { addToCart, getUserCart} = useCart()
    
  useEffect(() => {
   const baseUrl = 'http://localhost:5000';
@@ -41,7 +46,27 @@ export default  function Home() {
   } 
   fetchData()
  }, []);
- 
+
+
+
+   useEffect (()=> { 
+    const catData = async()=> {
+      try {
+        const response = await fetchCategories();
+        if (response) {
+          setCategoryData(response)
+        }
+      } catch (error) {
+        console.error('Error fetching categories', error)
+        
+      }
+     
+       
+      
+
+    } 
+    catData();
+   }, [])
 
  if (loading) return <p>Loading products...</p>;
  if (error) return <p>{error}</p>;
@@ -50,66 +75,22 @@ export default  function Home() {
     return <p className=''>No products found</p>;
   };
 
-  // useEffect (() => {
-  //   const handleAddToCart = async (productId: number, quantity: number) => {
-  //     try {
-  //     const addedItem = await addItemsToCart(productId, quantity);
-  //     if(addedItem) {
-  //      console.log('items successfully added to cart');
-  //     } 
-  //     } catch (err) {
-  //       console.error('Unable to add item to cart', err)
 
-  //     }
-    
-  //     };
-  //     if(productId && quantity) {
-  //       handleAddToCart(productId, quantity)
-  //     }
-
-  // }[productId])
-
-
-  // const handleAddToCart = async (productId: number, quantity: number) => {
-  //   try {
-  //     const addedItem = await addItemsToCart(productId, quantity);
-  //     if (addedItem) {
-  //       console.log('Item successfully added to cart');
-       
-  //     }
-  //   } catch (err) {
-  //     console.error('Unable to add item to cart', err);
-  
-  //   }
-  // };
-
-  
-  
-
-  
-      // const productDetails: ProductDetails = {
-      //   id: product.id,
-      //   name: product.name,
-      //   price: product.price,
-      //   description: product.description,
-      //   image_url: product.imageUrl
-
-      // }
-      // await addItemsToCart(product.id, setCartItems)
-
-    
-    
-  
 
   return (
-    <div>
+    <div className='flex flex-col lg:flex-row min-h-screen'>
+      <div>
+      <Categories categories = {categoryData}/>
+      </div>
+     
+      <div className='mt-8 flex flex-col'>       
  <Hero />
- <CartProvider>
- <Products products={products} />
- </CartProvider>
-  
+ <Products 
+ products={products} 
+ addToCart = {addToCart}
+ getUserCart={getUserCart}/>
     </div>
-
+    </div>   
     
   );
 };
