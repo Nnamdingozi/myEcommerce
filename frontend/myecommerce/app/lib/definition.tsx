@@ -90,4 +90,10 @@ export type Product = {
     payment_method: string;
     shipping_method: string;
     tracking_number: string;
+  };
+
+  export type Paystack = {
+    authorization_url: string
+    reference: string
+
   }

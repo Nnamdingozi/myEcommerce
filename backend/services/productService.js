@@ -45,7 +45,7 @@ const getProductByCategory = async(categoryId) => {
         include: [
             {
                 model: Category,
-                as: 'category', // use the alias specified in your association
+                as: 'category', 
             }
         ]
     });

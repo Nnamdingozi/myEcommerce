@@ -1,12 +1,28 @@
-import {  Product } from '@/app/lib/definition';
+import {  Product, NewCart } from '@/app/lib/definition';
 import Image from 'next/image';
 
 interface CategoryproductProps {
     categoryproducts: Product[]; 
+    addToCart: (productId: number, quantity?: number) => Promise<NewCart | null | undefined>;
+  getUserCart: () => Promise<NewCart[] | undefined>;
 }
 
-const CategoryProducts: React.FC<CategoryproductProps> = ({ categoryproducts }) => {
+
+const CategoryProducts: React.FC<CategoryproductProps> = ({ categoryproducts, addToCart, getUserCart }) => {
     console.log('categoryproducts value in props:', categoryproducts);
+   
+   
+    const handleAddToCart = (productId: number) => {
+      getUserCart();
+      addToCart(productId);
+      getUserCart();
+    };
+    
+  
+  
+  
+  
+  
     if(!categoryproducts || categoryproducts.length === 0) {
         return <p>No products found for this category</p>;
     }
@@ -27,7 +43,7 @@ const CategoryProducts: React.FC<CategoryproductProps> = ({ categoryproducts }) 
             <p className='text-gray-600'>{categoryproduct.description}</p> 
             <p className='text-green-500 font-bold'>${categoryproduct.price}</p>
           </div>
-          <button className='bg-red-800 text-rose-100 w-[60%] mx-auto h-6 rounded-lg hover:bg-rose-100 hover:text-red-800'>Add to Cart</button>
+          <button className='bg-red-800 text-rose-100 w-[60%] mx-auto h-6 rounded-lg hover:bg-rose-100 hover:text-red-800' onClick={() => handleAddToCart(categoryproduct.id)}>Add to Cart</button>
          
         </div>
       ))}

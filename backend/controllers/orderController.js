@@ -1,5 +1,5 @@
 const { createOrder, getAllOrder, getOrderById } = require('../services/orderService');
-
+const { Order, } = require('../database/models');
 
 const createOrderHandler = async (req, res) => {
     try {
@@ -7,8 +7,10 @@ const { id } = req.user;
 const userId = id;
         const { paymentMtd, shippingAddy, shippingMtd, curr } = req.body
         const newOrder = await createOrder(userId, paymentMtd, shippingAddy, shippingMtd, curr);
+        console.log('new order created in createorderhandler:', newOrder)
         if (newOrder) {
-            res.status(200).json(newOrder);
+            
+            return res.status(200).json({orderId: newOrder.id});
         } else {
             res.status(400).json('error while creating order')
         }

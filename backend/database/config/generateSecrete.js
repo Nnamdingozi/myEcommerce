@@ -5,7 +5,7 @@ const secret = crypto.randomBytes(32).toString('hex');
 fs.appendFileSync('.env', `SESSION_SECRET=${secret}\n`);
 console.log('Secret Key added to .env file');
 
-const secretKey = 'your_secret_key_here'; // Replace with your actual secret
+const secretKey = 'your_secret_key_here'; 
 const envFilePath = '.env';
 
 // Read the current .env file

@@ -1,4 +1,8 @@
+
 import type { Config } from "tailwindcss";
+
+
+
 
 const config: Config = {
   content: [
@@ -12,6 +16,7 @@ const config: Config = {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+          
       },
       keyframes: {
         bounceThrice: {
@@ -24,6 +29,9 @@ const config: Config = {
       animation: {
         bounceThrice: 'bounceThrice 1s ease-in-out',  // No need to loop it three times, keyframes handle that
       },
+      fontFamily: {
+        pacifico: ['Pacifico', 'cursive'], // Add Pacifico font
+      },
     
     },
   },
@@ -32,3 +40,7 @@ const config: Config = {
 
 };
 export default config;
+
+
+
+

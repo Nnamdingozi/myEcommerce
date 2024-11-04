@@ -7,19 +7,23 @@ console.log(`Authorization: Bearer ${secretKey}`)
 const initializeTransaction = async (orderId) => {
         
         try {
-            const order = await Order.findOne({where: {id: orderId}});
+            const order = await Order.findOne({where: 
+                {id: orderId
+                }});
+            console.log('order found in initializePaystack service:' ,  order.id)
             if(!order){
                 throw new Error('Order not found')
             } else {
-                console.log('order found');
-                console.log(`amount from order: ${order.total_amount}`)
+                console.log('order found in initializePaystack service:',  order.id);
+                console.log(`amount from order in initialize paysstack service: ${order.total_amount}`)
             };
 
             const user = await User.findOne({ where: {id: order.user_id}});
+
             if(!user){
                 throw new Error('Oder not found')
             } else {
-                console.log('User found')
+                console.log('User found in paystack initialization', user.username)
                 console.log(`user's email: ${user.email}`)
             };
             const response = await axios.post(
@@ -27,15 +31,17 @@ const initializeTransaction = async (orderId) => {
                 {
                     email: user.email,
                     amount: Math.floor(order.total_amount * 100), 
+                    callback_url: `https://http://localhost:3000/orderPages/success?orderId=${order.id}`,
                 },
                 
                 {
                     headers: {
                         Authorization: `Bearer ${secretKey}`
+
                     },
                 }
             );
-            console.log(response.data)
+            console.log('Paystack resopnse in service:', response.data)
            
             return response.data;
 
