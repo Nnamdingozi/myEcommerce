@@ -6,26 +6,19 @@ module.exports = {
 
     await queryInterface.bulkInsert('carts', [{
         quantity: 2,
-       user_id: 3,
+       user_id: 1,
        product_id: 6,
        createdAt: new Date(),
        updatedAt: new Date()
 
         }], {});
-    /**
-     * Add seed commands here.
-     *
-     * Example:
-     * await queryInterface.bulkInsert('People', [{
-     *   name: 'John Doe',
-     *   isBetaMember: false
-     * }], {});
-    */
+
   },
 
   async down (queryInterface, Sequelize) {
 
     await queryInterface.bulkDelete('carts', null, {});
+    await queryInterface.sequelize.query('ALTER SEQUENCE "carts_id_seq" RESTART WITH 1;');
     /**
      * 
      * Add commands to revert seed here.

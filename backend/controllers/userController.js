@@ -35,7 +35,7 @@ const getUserByEmailHandler =  async(req, res) => {
             return res.status(404).json({ error: ' User not found with this email'})
         }
 
-        // const { id, username } = user; 
+      
         console.log('user details fetched by email:', user)
         res.status(200).json(user);
 

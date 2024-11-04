@@ -1,13 +1,15 @@
 const {addItemsToCart, getItemByUserId, getCartItemsById, updateCartItems, deleteCartItem} = require('../services/cartService');
 
 const addItemsHandler = async (req, res) => {
-    console.log( req.body)
+    console.log('Route /cart reached with data:', req.body);
+    console.log('received from frontend in body', req.body);
+    console.log('received from frontend in req.user:', req.user)
     
-        const { quantity, product_id} = req.body;
-        const { user_id } = req.user.id;
-        console.log('Controller - userId:', user_id, 'productId:', product_id, 'quantity:', quantity, 'productdetails:', productDetails );
+        const {productId} = req.body
+        const userId = req.user.id;
+        console.log('Controller - userId:', userId, 'productId:', productId );
         try {
-        const newItem = await addItemsToCart( user_id, product_id, quantity);
+        const newItem = await addItemsToCart( userId, productId);
         if (newItem) {
             res.status(201).json(newItem);
         } else {
@@ -19,20 +21,15 @@ const addItemsHandler = async (req, res) => {
     }
 };
 
-// const calcCartTotalHandler = async (req, res) => {
-//     try {
-//         const { user_id } = req.body;
-//     const calcTotal = calcCartTotal(user_id);
-//     res.status(200).json({ calcTotal })
-
-//     } catch (err) {
-//         res.status(500).json({ error: err.message })
-  
-//     }
-// };
     
 const getItemByUserIdHandler = async(req, res) => {
-    const {id: userId} = req.user;
+    console.log('getItemByUserIdHandler by', req.user)
+    const userId = req.user? req.user.id : null;
+    console.log('controller userId for getCart:', userId)
+    if(!userId) {
+        return res.status(400).json('userId required')
+    }
+    
 try {
     const userCart = await getItemByUserId(userId);
     console.log('Users cart found:', userCart);
@@ -58,9 +55,10 @@ const getCartItemsByIdHandler = async (req, res) => {
 
 const updateCartItemsHandler = async (req, res) => {
     try{
-        const { user } = req.user;
-        const userId = user.id;
-        const updatedItem = await updateCartItems(userId, req.params.id, req.body.quantity);
+        const userId = req.user.id;
+    const { id }= req.params;
+        const {quantity} = req.body;
+        const updatedItem = await updateCartItems(id, quantity, userId);
         if(updatedItem) {
             res.status(200).json(updatedItem);
         } else {
@@ -73,8 +71,12 @@ const updateCartItemsHandler = async (req, res) => {
 };
 
 const deleteCartItemHandler = async (req, res) => {
+    console.log('deleteCart handler hit in backend')
+    const userId = req.user.id;
+    const cartItemId = req.params.cartItemId;
+    console.log('userId in controller, deleteCartItem:', userId + 'cartItemId in controller, deleteCartItem:', cartItemId)
     try {
-        const deletedItem = await deleteCartItem(req.params.id);
+        const deletedItem = await deleteCartItem(userId, cartItemId);
         if(deletedItem) {
             res.status(204).json()
         } else {

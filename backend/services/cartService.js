@@ -1,43 +1,10 @@
 
 
-// const addItemsToCart = async (quantity, userId, productId) => {
-// const product = await Product.findByPk(productId);
-
-// if(!product) {
-//     throw new Error('Product not found')
-// }
-
-// const price = product.price;
-//  const total = price * quantity;
-// const newCartItem = await Cart.create({
-//     quantity, 
-//     user_id: userId,
-//     product_id: productId,
-//     total
-
-
-// });
-// return newCartItem;
-
-// };
-
-// // const addItemsToCart = async (cartData) => {
-// //     const product = Product.findByPk(cartData.product_id);
-// //     if(!product) {
-// //             throw new Error('Product not found')
-// //          }
-
-// //          const price = product.price;
-// //          const total = price * quantity;
-//          const newCartItem = await Cart.create(cartData);
-//          return newCartItem;
-
-// }
 
 const { Cart, Product, } = require('../database/models');
 console.log('product, cart accessed');
 
-const addItemsToCart = async (productId, userId, quantity) => {
+const addItemsToCart = async (userId, productId) => {
     console.log('Service - userId:', userId, 'productId:', productId);
     try {
         if (!userId || !productId) {
@@ -61,7 +28,6 @@ const addItemsToCart = async (productId, userId, quantity) => {
             await Cart.create({
                 user_id: userId,
                 product_id: productId,
-                quantity,
             });
         }
         return 'item successuflly added';
@@ -72,39 +38,26 @@ const addItemsToCart = async (productId, userId, quantity) => {
 
 };
 
-// const calcCartTotal = async (userId) => {
-//     try {
-
-//         const cartItems = await Cart.findOne({
-//         where: {user_id: userId},
-//         include: [{
-//             model: Product,
-//             as: 'cartproduct',
-//             attribute: ['price']
-//         }]
-//         });
-//         const total = cartItems.reduce((acc, item)=> {
-//             return acc + (item.quantity * item.cartproduct.price)
-//         }, 0);
-//         return total;
-//     } catch (err) {
-//         throw new Error(`Errror calculating cart total: ${err.message}`)
-//     }
-// };
 
 const getItemByUserId = async (userId) => {
+    console.log('service userId for getCart: ', userId)
+    if(typeof userId !== 'number') {
+        console.error(`Invalid userId provided: ${userId}`); 
+        throw new Error('Invalid user ID. Must be a number.');
+    }
+    
     const userCart = await Cart.findAll({
         where: { user_id: userId },
         include: [
             {
                 model: Product,
                 as: 'cartproduct',
-                attributes: [ 'name', 'price', 'description', 'image_url' ]
+                attributes: [ 'id', 'name', 'price', 'description', 'image_url' ]
             }
         ],
-        attributes: ['user_id', 'product_id', 'quantity', 'total']
+        attributes: [ 'id', 'user_id', 'product_id', 'quantity', 'total']
     });
-    if(!userCart) {
+    if(!userCart || userCart.length === 0) {
         console.log('User has no cart Items');
         throw new Error('Cart not found for this user')
     }
@@ -122,12 +75,19 @@ const getCartItemsById = async (id) => {
 };
 // update cart Items
 
-const updateCartItems = async (userId, id, quantity) => {
+const updateCartItems = async (cartItemId, quantity, userId) => {
+    console.log(`userId, productId and quantity in updateCartItems service: cartitemId: ${cartItemId}, quantitty: ${quantity}, userId: ${userId}`)
     if(!userId) {
         throw new Error('UserId not authenticated')
     }
 
-    let cartItem = await Cart.findByPk(id);
+    let cartItem = await Cart.findOne({
+        where: {
+            id: cartItemId,
+            user_id: userId,
+    
+        }
+    });
 
     if (!cartItem) {
         throw new Error('Cart not found')
@@ -140,14 +100,24 @@ const updateCartItems = async (userId, id, quantity) => {
 
     return {
         id: cartItem.id,
-        quantity: cartItem.quantity
+        quantity: cartItem.quantity,
+        total: parseFloat(cartItem.total || 0).toFixed(2) 
     };
 };
 
 // delete cart items
 
-const deleteCartItem = async (id) => {
-    const deleteCart = await Cart.destroy({ where: { id } })
+const deleteCartItem = async (userId, cartItemId) => {
+    console.log('userId in service, deleteCartItem:', userId + 'cartItemId in service, deleteCartItem:', cartItemId)
+    if(!userId) {
+        throw new Error('User not found')
+    }
+
+    const deleteCart = await Cart.destroy({
+         where: { 
+            user_id: userId,
+            id: cartItemId
+         } })
     if (deleteCart) {
         return deleteCart;
     } else {

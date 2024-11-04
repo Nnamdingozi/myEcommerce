@@ -12,20 +12,49 @@ const productRoute = require('./routes/productRoute');
 const cartRoute = require('./routes/cartRoute');
 const orderRoute = require('./routes/orderRoute');
 const checkoutRoute = require('./routes/checkoutRoute');
-// const passport = require('./database/config/passport');
 const passport = require('passport');
-const session = require('express-session')
+const initializedPassport = require('./database/config/passport');
+const session = require('express-session');
+const { default: RedisStore } = require('connect-redis');
+const redis = require('redis');
 const bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors');
+initializedPassport();
 
+const redisClient = redis.createClient({
+  host: 'localhost',
+  port: 6379,
+});
 
+redisClient.connect().catch(console.error);
+redisClient.on('connect', () => {
+  console.log('Redis connected');
+});
 
-app.use(cors());
+redisClient.on('error', (err) => {
+  console.error('Redis connection error', err);
+});
+
+app.use(cors({
+  origin: 'http://localhost:3000', // Allow your frontend origin
+  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+}));
+
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(session({ secret: 'secret', resave: false, saveUninitialized: true }));
+app.use(session({
+  store: new RedisStore({client: redisClient}),
+  secret: process.env.SESSION_SECRET, // Use the secret from your .env file
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+      secure: false, // Set to true if you're using HTTPS
+      httpOnly: true, // Helps mitigate XSS attacks
+      maxAge: 1000 * 60 * 60 // Set cookie expiration (1 hour in this case)
+  }
+}));
 
 
 app.use(passport.initialize());
@@ -33,10 +62,11 @@ app.use(passport.session());
 
 app.use('/users', userRoutes);
 app.use('/auth', authRoute);
+app.use('/images', express.static('public/images'));
 app.use('/product', productRoute);
 app.use('/cart', cartRoute);
 app.use('/order', orderRoute);
-app.use('/checkout',checkoutRoute);
+app.use('/checkout', checkoutRoute);
 
 
 // catch 404 and forward to error handler

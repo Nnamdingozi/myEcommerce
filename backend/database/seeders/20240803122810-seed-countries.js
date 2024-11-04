@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    return queryInterface.bulkInsert('countries', [
+    await queryInterface.bulkInsert('countries', [
       {
         code: '+1',
         country_name: 'United States',
@@ -63,6 +63,8 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('countries', null, {});
+    await queryInterface.bulkDelete('countries', null, {});
+    await queryInterface.sequelize.query('ALTER SEQUENCE "countries_id_seq" RESTART WITH 1;');
   }
+ 
 };
