@@ -1,7 +1,7 @@
 'use client'
 
 
-import { fetchUserCart } from '../../lib/data';
+import { fetchUserCart } from '@/app/lib/data';
 import { NewCart } from '@/app/lib/definition';
 
 import { MyCart } from '@/app/ui/cart';
@@ -10,15 +10,10 @@ import { useUser } from '@/app/context/userContext';
 
 
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
 
 
 
-const CartPage: React.FC<PageProps> = ({ params }): JSX.Element => {
+const CartPage: React.FC = (): JSX.Element => {
 
 
     const { cart, loading, error, newQuantity, removeItemFromCart, cartSubTotal } = useCart()
