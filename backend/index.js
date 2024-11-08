@@ -96,9 +96,10 @@ app.use(function (err, req, res, next) {
 })
 
 // Start listening.
+const PORT = process.env.PORT || 5000;
 
   app.listen(process.env.PORT, async () => {
-    console.log('Server started on http://localhost:5000')
+    console.log(`Server started on http://localhost:${PORT}`)
     console.log('Press Ctrl-C to terminate...')
 });
 
