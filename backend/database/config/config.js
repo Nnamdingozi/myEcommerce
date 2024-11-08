@@ -6,6 +6,11 @@ module.exports = {
               dialect: 'postgres',
 
     },
+
+    'swagger-autogen': {
+        url: process.env.SWAGGER_AUTOGEN_DB_URL,
+        dialect: 'postgres',
+    }
     // test: {
     //     url: process.env.TEST_DATABASE_URL,
     //     dialect: 'postgres',
