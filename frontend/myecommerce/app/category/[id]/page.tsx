@@ -7,27 +7,30 @@ import CategoryProducts from '@/app/ui/categoryProducts';
 import { useCart } from '@/app/context/cartContext';
 
 interface CategoryPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default function CategoryPage({ params }: CategoryPageProps) {
   const [catProducts, setCatProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
+  
   const { addToCart, getUserCart } = useCart();
 
   useEffect(() => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-
     const fetchByCat = async () => {
       try {
-        const categoryId = Number(params.id); // Convert the string id to a number
+        setLoading(true);
+
+        // Resolve the promise for params.id
+        const resolvedParams = await params;
+        const categoryId = parseInt(resolvedParams.id, 10); // Parse string id to a number
 
         if (isNaN(categoryId)) {
           throw new Error("Invalid category ID provided.");
         }
 
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
         const categoryproducts: Product[] = await fetchProductsByCategoryId(categoryId);
         console.log('category Products fetched:', categoryproducts);
 
@@ -46,7 +49,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     };
 
     fetchByCat();
-  }, [params.id]);
+  }, [params]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
