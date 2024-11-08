@@ -14,7 +14,7 @@ RUN npm install -g pnpm && pnpm install
 COPY . .
 
 # Build the application
-RUN pnpm build
+RUN pnpm run build
 
 # Expose the port
 EXPOSE 3000
