@@ -6,11 +6,18 @@ import { fetchProductsByCategoryId } from '@/app/lib/data';
 import CategoryProducts from '@/app/ui/categoryProducts';
 import { useCart } from '@/app/context/cartContext';
 
-interface CategoryPageProps {
-  params: Promise<{ id: string }>;
-}
+// interface CategoryPageProps {
+//   params: Promise<{ id: string }>;
+// }
 
-export default function CategoryPage({ params }: CategoryPageProps) {
+
+
+export default function CategoryPage({ 
+    params, 
+}: {
+    params: Promise<{ id: string }>
+}) {
+
   const [catProducts, setCatProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,8 +30,9 @@ export default function CategoryPage({ params }: CategoryPageProps) {
         setLoading(true);
 
         // Resolve the promise for params.id
-        const resolvedParams = await params;
-        const categoryId = parseInt(resolvedParams.id, 10); // Parse string id to a number
+      
+        const resolvedParams = (await params).id
+        const categoryId = parseInt(resolvedParams, 10); // Parse string id to a number
 
         if (isNaN(categoryId)) {
           throw new Error("Invalid category ID provided.");
