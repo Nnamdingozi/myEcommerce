@@ -1,4 +1,4 @@
-"use client"; // Assuming the component is intended to run on the client side
+"use client";
 
 import { useEffect, useState } from 'react';
 import { Product } from '@/app/lib/definition';
@@ -22,7 +22,13 @@ export default function CategoryPage({ params }: CategoryPageProps) {
 
     const fetchByCat = async () => {
       try {
-        const categoryproducts: Product[] = await fetchProductsByCategoryId(params.id);
+        const categoryId = Number(params.id); // Convert the string id to a number
+
+        if (isNaN(categoryId)) {
+          throw new Error("Invalid category ID provided.");
+        }
+
+        const categoryproducts: Product[] = await fetchProductsByCategoryId(categoryId);
         console.log('category Products fetched:', categoryproducts);
 
         const modifiedCategoryProducts = categoryproducts.map((categoryproduct) => ({
@@ -32,12 +38,13 @@ export default function CategoryPage({ params }: CategoryPageProps) {
 
         setCatProducts(modifiedCategoryProducts);
       } catch (err) {
-        console.error('Error fetching products for this category', err);
+        console.error('Error fetching products for this category:', err);
         setError('Failed to fetch products for this category');
       } finally {
         setLoading(false);
       }
     };
+
     fetchByCat();
   }, [params.id]);
 

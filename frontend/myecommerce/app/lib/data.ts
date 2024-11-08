@@ -34,7 +34,7 @@ export async function fetchCategories(): Promise<Category[]> {
   }
 };
 
-export async function fetchProductsByCategoryId( id: string): Promise<Product[]> {
+export async function fetchProductsByCategoryId( id: number): Promise<Product[]> {
   
   try {
     const categoryData = await axios.get(`${backendUrl}/product/categoryProduct/${id}`);
