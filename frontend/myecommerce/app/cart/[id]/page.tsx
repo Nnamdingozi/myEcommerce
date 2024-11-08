@@ -1,18 +1,25 @@
 'use client'
 
-// import { CartProvider } from '@/app/context/cartContext'
-// import CartContent from '@/app/context/cartUwrapper'
+
 import { fetchUserCart } from '../../lib/data';
 import { NewCart } from '@/app/lib/definition';
-// import { OrderProvider } from '@/app/context/orderContext';
+
 import { MyCart } from '@/app/ui/cart';
 import { useCart } from '@/app/context/cartContext';
 import { useUser } from '@/app/context/userContext';
 
 
 
-const CartPage: React.FC = (): JSX.Element=> {
-    // const cartValue: NewCart[] | undefined = await fetchUserCart()
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
+
+
+
+const CartPage: React.FC<PageProps> = ({ params }): JSX.Element => {
+
 
     const { cart, loading, error, newQuantity, removeItemFromCart, cartSubTotal } = useCart()
     const { user } = useUser();
