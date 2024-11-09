@@ -36,10 +36,23 @@ redisClient.on('error', (err) => {
   console.error('Redis connection error', err);
 });
 
-app.use(cors({
-  origin: 'http://localhost:3000', // Allow your frontend origin
-  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
-}));
+
+
+const allowedOrigins = ['http://localhost:3000', 'https://myecommerce-frontend.onrender.com'];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Check if the origin is available in the allowedOrigins list
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true); // Allow request
+    } else {
+      callback(new Error('Not allowed by CORS')); // Block request
+    }
+  },
+  credentials: true // Allow credentials such as cookies and auth headers
+};
+
+app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 app.use(express.json());
