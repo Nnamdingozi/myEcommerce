@@ -1,10 +1,11 @@
 
 import { Product, Category, User, LoginRequest, LoginStatus, NewCart, Order, Paystack} from '@/app/lib/definition';
 import axios from 'axios';
-import { RESPONSE_LIMIT_DEFAULT } from 'next/dist/server/api-utils';
+
 //add base url later axios.defaults.baseUrl
 
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+console.log(backendUrl)
 
 export async function fetchProducts(): Promise<Product[]> {
     // let products = [];
@@ -168,16 +169,22 @@ export async function deleteUserItem(cartItemId: number) {
 
 export async function checkUserSession() {
   try {
-    const response = await axios.get(`${backendUrl}/auth/me`,  {withCredentials: true })
-    if(response.status === 200 && response.data.user) {
-      console.log(' User data fetched in checkUserSession', response.data)
-    return response.data
+    const response = await axios.get(`${backendUrl}/auth/me`, { withCredentials: true });
+    if (response.status === 200 && response.data.user) {
+      console.log('User data fetched in checkUserSession', response.data);
+      return response.data;
     }
-  } catch (err: any) {
-    console.error('Error verifying user session data', err.response?.data || err.message || err )
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      // Axios-specific error handling
+      console.error('Error verifying user session data:', err.response?.data || err.message);
+    } else {
+      // Non-Axios errors (e.g., unexpected runtime errors)
+      console.error('Unexpected error:', err);
+    }
   }
+}
 
-};
 
 export async function createOrder (paymentMtd: string, shippingAddy: string, shippingMtd: string, curr: string ) {
   console.log(`values received in data.ts and passed to backend: paymentMtd: ${paymentMtd},`)

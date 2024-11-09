@@ -25,7 +25,7 @@ const [ categoryData, setCategoryData] = useState<Category[] | null>(null)
 const { addToCart, getUserCart} = useCart()
    
  useEffect(() => {
-  const baseUrl = 'http://localhost:5000';
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
 
   const fetchData = async () => {
     try {
