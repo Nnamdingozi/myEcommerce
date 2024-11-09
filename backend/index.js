@@ -23,7 +23,7 @@ const cors = require('cors');
 initializedPassport();
 
 const redisClient = redis.createClient({
-  host: 'localhost',
+  host: 'redis_store',
   port: 6379,
 });
 
