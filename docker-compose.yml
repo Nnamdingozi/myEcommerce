@@ -30,30 +30,30 @@ services:
     volumes:
       - redis-data:/data"
 
-  # backend:
-  #   build:
-  #     context: ./backend        # Relative to docker-compose.yml
-  #     dockerfile: docker/Dockerfile  # Relative to the context directory
-  #   container_name: backend
-  #   ports:
-  #     - "5000:5000"
-  #   environment:
-  #     DATABASE_URL: postgres://postgres:postgres@postgres:5432/ecommerce
-  #   depends_on:
-  #     - postgres
-  #     - redis
+  backend:
+    build:
+      context: ./backend        # Relative to docker-compose.yml
+      dockerfile: docker/Dockerfile  # Relative to the context directory
+    container_name: backend
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/ecommerce
+    depends_on:
+      - postgres
+      - redis
 
-  # frontend:
-  #   build:
-  #     context: ./frontend/myecommerce   # Relative to docker-compose.yml
-  #     dockerfile: Dockerfile            # Dockerfile inside 'myecommerce' directory
-  #   container_name: frontend
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     NEXT_PUBLIC_BACKEND_URL: http://backend:5000
-  #   depends_on:
-  #     - backend
+  frontend:
+    build:
+      context: ./frontend/myecommerce   # Relative to docker-compose.yml
+      dockerfile: Dockerfile            # Dockerfile inside 'myecommerce' directory
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_BACKEND_URL: http://backend:5000
+    depends_on:
+      - backend
 
 volumes:
   postgres-data:
