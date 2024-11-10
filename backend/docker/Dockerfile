@@ -16,9 +16,6 @@ RUN npm install --production
 # Copy the rest of your application code
 COPY . .
 
-# Make init.sh executable
-RUN chmod +x ./init.sh
-
 # Expose the port the app runs on
 EXPOSE 5000
 
