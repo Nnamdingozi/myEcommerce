@@ -18,8 +18,17 @@ const nextConfig = {
       ];
     },
     images: {
-      domains: ['localhost'],
+      remotePatterns: [
+        {
+          protocol: 'https',
+          hostname: process.env.NODE_ENV === 'production' 
+            ? 'myecommerce-la62.onrender.com'
+            : 'localhost',
+          pathname: '/images/*',
+        },
+      ],
     },
+    
   };
   
   export default nextConfig;

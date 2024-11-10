@@ -120,7 +120,7 @@ const Navbar: React.FC<NavBarProps> = ({ count }) => {
   };
 
   const handleCartClick = () => {
-    router.push('/cart/[id]');
+    router.push('/cart');
   };
 
   return (
