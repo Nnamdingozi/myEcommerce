@@ -33,7 +33,7 @@ const { addToCart, getUserCart} = useCart()
 
       const modifiedProducts = GetProducts.map(product => ({
         ...product,
-        image_url: `${baseUrl}${product.image_url}`
+        image_url: `${baseUrl}/${product.image_url}`
       }));
       setProducts(modifiedProducts);
       console.log('products from fetchProducts call:', products)
