@@ -183,7 +183,7 @@ export async function checkUserSession() {
       console.error('Unexpected error:', err);
     }
   }
-}
+};
 
 
 export async function createOrder (paymentMtd: string, shippingAddy: string, shippingMtd: string, curr: string ) {

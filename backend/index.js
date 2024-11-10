@@ -55,6 +55,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
 app.use(session({
   store: new RedisStore({client: redisClient}),
   secret: process.env.SESSION_SECRET, // Use the secret from your .env file
