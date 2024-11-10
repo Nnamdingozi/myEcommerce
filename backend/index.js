@@ -22,18 +22,16 @@ const app = express();
 const cors = require('cors');
 initializedPassport();
 
+const redisUrl = process.env.REDIS_URL || process.env.REDIS_URL_LOCAL;
+
 const redisClient = redis.createClient({
-  host: 'redis_store',
-  port: 6379,
+  url: redisUrl,
 });
 
 redisClient.connect().catch(console.error);
+
 redisClient.on('connect', () => {
   console.log('Redis connected');
-});
-
-redisClient.on('error', (err) => {
-  console.error('Redis connection error', err);
 });
 
 
