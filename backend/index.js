@@ -64,6 +64,13 @@ app.use(session({
   }
 }));
 
+redisClient.on('connect', () => {
+  console.log('Connected to Redis');
+});
+
+redisClient.on('error', (err) => {
+  console.error('Redis connection error:', err);
+});
 
 app.use(passport.initialize());
 app.use(passport.session());
