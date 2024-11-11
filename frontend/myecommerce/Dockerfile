@@ -19,5 +19,5 @@ RUN pnpm run build
 # Expose the port
 EXPOSE 3000
 
-# Run migrations and seeds before starting the app
-CMD ["sh", "-c", "npm run migrate && npm run seed && npm start"]
+# Start the application
+CMD ["pnpm", "start"]

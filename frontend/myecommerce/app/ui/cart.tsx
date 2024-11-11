@@ -180,14 +180,14 @@ interface MyCartProps {
 export const MyCart: React.FC<MyCartProps> = ({ cart, newQuantity, removeItemFromCart, cartSubTotal }) => {
     const [isCheckout, setIsCheckout] = useState(false);
     const router = useRouter();
-    const baseUrl = 'http://localhost:5000';
+    const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
     const handleClick = () => {
         router.push('/orderPages/[id]');
     };
 
     return (
-        <div className='flex flex-col mt-14 text-rose-800 relative px-4 md:px-10'>
+        <div className='flex flex-col mt-14 text-rose-800 relative px-4 md:px-10 h-auto'>
             <button
                 className="absolute top-2 right-10 h-8 border-2 border-red-500 text-red-600 px-4 rounded-lg hover:bg-rose-100 hover:text-red-800 focus:outline-none"
                 onClick={handleClick}

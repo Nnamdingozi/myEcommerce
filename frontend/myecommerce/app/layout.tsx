@@ -33,7 +33,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <OrderProvider>
             
           <NavBarWrapper />
-            <main>{children}</main>
+            <main className="h-auto bg-gray-100">{children}</main>
             <Footer />
             </OrderProvider>
             </CartProvider>
