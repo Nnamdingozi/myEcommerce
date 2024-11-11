@@ -116,7 +116,7 @@ const {user } = useUser();
         if (user) {
             setLoading(true);
             try {
-                // Assuming fetchUserCart calls the backend API and retrieves cart
+           
                 const userCart = await getUserCart(); // Fetch cart for authenticated user
                 if (userCart) {
                   setCart(userCart);
@@ -199,14 +199,12 @@ const {user } = useUser();
 
 
   useEffect(() => {
-    const countValue = async()=> {
-      const fetchvalue = await getUserCart();
-    if( user && cart && fetchvalue) {
-      setCount(fetchvalue.length)
-    }
+
+    if( user && cart ) {
+      setCount(cart.length)
+
     console.log('count value in cartContext useEffect:', count);
-    countValue();
-  }
+    }
   }, [cart, user])
 
  
