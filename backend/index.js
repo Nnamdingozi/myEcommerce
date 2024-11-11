@@ -15,24 +15,15 @@ const checkoutRoute = require('./routes/checkoutRoute');
 const passport = require('passport');
 const initializedPassport = require('./database/config/passport');
 const session = require('express-session');
-const { default: RedisStore } = require('connect-redis');
-const redis = require('ioredis');
+const RedisStore = require('connect-redis').default;
+const Redis = require('ioredis');
 const bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors');
 initializedPassport();
 
-const redisUrl = process.env.REDIS_URL || process.env.REDIS_URL_LOCAL;
 
-const redisClient = redis.createClient({
-  url: redisUrl,
-});
 
-redisClient.connect().catch(console.error);
-
-redisClient.on('connect', () => {
-  console.log('Redis connected');
-});
 
 
 
@@ -56,17 +47,21 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+const redisClient = new Redis(process.env.REDIS_URL);
+
+
+// Set up session middleware with RedisStore
 app.use(session({
-  store: new RedisStore({client: redisClient}),
-  secret: process.env.SESSION_SECRET, // Use the secret from your .env file
+  store: new RedisStore({ client: redisClient }),
+  secret: process.env.SESSION_SECRET, // Secret from your .env file
   resave: false,
   saveUninitialized: false,
   cookie: {
-      secure: process.env.NODE_ENV === 'production', 
-      httpOnly: true, // Helps mitigate XSS attacks
-      maxAge: 1000 * 60 * 60, // Set cookie expiration (1 hour in this case)
-      sameSite: 'none',
-    }
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60, // 1 hour
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  }
 }));
 
 

@@ -112,7 +112,7 @@ export async function fetchByEmail(email: string): Promise<{id: number, username
 
 
 
-export async function addItemsToCart(productId: number | null, quantity: number | null): Promise<NewCart | undefined>{
+export async function addItemsToCart(productId: number | null, quantity: number | null): Promise<NewCart | undefined >{
   try {
     const response = await axios.post<NewCart>(`${backendUrl}/cart`, {productId, quantity}, { withCredentials: true });
     console.log('sending cart data to database: ', response.data)
