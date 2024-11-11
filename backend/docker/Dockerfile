@@ -20,4 +20,4 @@ COPY . .
 EXPOSE 5000
 
 # Run migrations and seeding when starting the container
-CMD ["npm", "start"]
+CMD ["sh", "-c", "npm run migrate && npm run seed && npm start"]

@@ -204,7 +204,7 @@ const {user } = useUser();
       setCount(cart.length)
     }
     console.log('count value in cartContext useEffect:', count)
-  }, [cart])
+  }, [cart, user])
 
  
 
