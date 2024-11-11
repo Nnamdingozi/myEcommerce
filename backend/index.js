@@ -16,7 +16,7 @@ const passport = require('passport');
 const initializedPassport = require('./database/config/passport');
 const session = require('express-session');
 const { default: RedisStore } = require('connect-redis');
-const redis = require('redis');
+const redis = require('ioredis');
 const bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors');
@@ -64,8 +64,9 @@ app.use(session({
   cookie: {
       secure: process.env.NODE_ENV === 'production', 
       httpOnly: true, // Helps mitigate XSS attacks
-      maxAge: 1000 * 60 * 60 // Set cookie expiration (1 hour in this case)
-  }
+      maxAge: 1000 * 60 * 60, // Set cookie expiration (1 hour in this case)
+      sameSite: 'none',
+    }
 }));
 
 

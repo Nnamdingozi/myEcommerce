@@ -61,6 +61,7 @@ passport.deserializeUser(async(id, done) => {
         const user = await userService.getUserById(id);
         done(null, user);
     } catch (err) {
+        console.error(`Error during authentication: ${err}`);
         done(err);
     }
 });

@@ -199,11 +199,14 @@ const {user } = useUser();
 
 
   useEffect(() => {
-    if( user && cart) {
-      
-      setCount(cart.length)
+    const countValue = async()=> {
+      const fetchvalue = await getUserCart();
+    if( user && cart && fetchvalue) {
+      setCount(fetchvalue.length)
     }
-    console.log('count value in cartContext useEffect:', count)
+    console.log('count value in cartContext useEffect:', count);
+    countValue();
+  }
   }, [cart, user])
 
  
