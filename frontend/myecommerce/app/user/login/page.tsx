@@ -38,8 +38,9 @@ setError('Login failed. Please check your credentials')
     }
     useEffect(() => {
         if (loginSuccess) {
-            console.log('Redirecting to home page');
-            router.push('/');
+         router.push('/');
+         console.log('log in succeesuful')
+        
         }
     }, [loginSuccess, router]);
 

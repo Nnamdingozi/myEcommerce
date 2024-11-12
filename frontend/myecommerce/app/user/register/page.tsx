@@ -12,7 +12,7 @@ const UserRegistration: React.FC = () =>  {
         try {
 const userRegistered = await registerUser(user);
 if(userRegistered) {
-    router.push('/user/login');  
+  console.log('user successfully registered:', userRegistered)
 };
 
 

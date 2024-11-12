@@ -212,11 +212,11 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (isSessionChecked && !user.id) {
-      router.push('/');
-    }
-  }, [isSessionChecked, router, user.id]);
+  // useEffect(() => {
+  //   if (isSessionChecked && !user.id) {
+  //     router.push('/');
+  //   }
+  // }, [isSessionChecked, router, user.id]);
 
   return (
     <UserContext.Provider value={{ user, setUser, logout }}>
