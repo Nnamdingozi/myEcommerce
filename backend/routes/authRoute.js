@@ -3,9 +3,8 @@
 const express = require('express');
 const authRouter = express.Router();
 const authController = require('../controllers/authController'); 
-const passport = require('passport');
-require('../database/config/passport')(passport);
-const { ensureAuthenticated } = require('../middlewares/authMiddleware')
+const passport = require('../database/config/passport');
+
 
 
 /**
@@ -89,9 +88,11 @@ authRouter.post('/login', authController.login);
  *       500:
  *         description: Internal Server Error
  */
+
+authRouter.get('/profile', passport.authenticate('jwt', { session: false }), authController.profile)
 authRouter.get('/github', passport.authenticate('github'));
 authRouter.get('/github/callback', authController.githubCallback);
-authRouter.get('/me', ensureAuthenticated, authController.getMeHandler)
+authRouter.get('/me', authController.getMeHandler)
 
 
 module.exports = authRouter;

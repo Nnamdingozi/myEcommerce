@@ -4,13 +4,11 @@
 const bcrypt = require('bcryptjs');
 const { User } = require('../database/models');
 
-// Function to register a new user
-const register = async (username, email, phone, password, country_code) => {
+
+
+const register = async ({ username, email, phone, password, country_code }) => { 
     try {
-        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
-        
-        // Create a new user record
         const newUser = await User.create({
             username,
             email,
@@ -18,12 +16,25 @@ const register = async (username, email, phone, password, country_code) => {
             password: hashedPassword,
             country_code
         });
-        
+
+        if (!newUser) {
+            throw new Error("User creation failed, no user returned from the database.");
+        }
+
+        console.log("New user in register service:", newUser);
         return newUser;
     } catch (error) {
-        throw new Error('Error creating user: ' + error.message);
+        if (error.name === 'SequelizeValidationError') {
+            console.error('Validation error:', error.errors);
+            throw new Error('Validation error: ' + error.errors.map(e => e.message).join(', '));
+        } else {
+            console.error('Error during user registration:', error);
+            throw new Error('User registration failed.');
+        }
     }
 };
+
+
 
 // Function to find a user by email
 const findUserByEmail = async (email) => {

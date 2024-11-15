@@ -1,6 +1,6 @@
 'use strict'
 
-require('dotenv').config();
+require('dotenv').config()
 
 const createError = require('http-errors');
 const express = require('express');
@@ -12,15 +12,11 @@ const productRoute = require('./routes/productRoute');
 const cartRoute = require('./routes/cartRoute');
 const orderRoute = require('./routes/orderRoute');
 const checkoutRoute = require('./routes/checkoutRoute');
-const passport = require('passport');
-const initializedPassport = require('./database/config/passport');
-const session = require('express-session');
-const RedisStore = require('connect-redis').default;
-const Redis = require('ioredis');
+const passport = require('./database/config/passport')
 const bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors');
-initializedPassport();
+
 
 
 
@@ -47,33 +43,11 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const redisClient = new Redis(process.env.REDIS_URL);
-
-
-// Set up session middleware with RedisStore
-app.use(session({
-  store: new RedisStore({ client: redisClient }),
-  secret: process.env.SESSION_SECRET, // Secret from your .env file
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    httpOnly: true,
-    maxAge: 1000 * 60 * 60, // 1 hour
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-  }
-}));
-
-redisClient.on('connect', () => {
-  console.log('Connected to Redis');
-});
-
-redisClient.on('error', (err) => {
-  console.error('Redis connection error:', err);
-});
+// const redisClient = new Redis(process.env.REDIS_URL);
 
 app.use(passport.initialize());
-app.use(passport.session());
+
+
 
 app.use('/users', userRoutes);
 app.use('/auth', authRoute);
