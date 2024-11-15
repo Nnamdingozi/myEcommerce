@@ -82,7 +82,7 @@ const { addItemsHandler,
  *                   type: string
  *                   example: Error message describing the issue
  */
-    cartRoute.post('/', ensureAuthenticated, addItemsHandler);
+    cartRoute.post('/', addItemsHandler);
 
     /**
  * @swagger
@@ -144,7 +144,7 @@ const { addItemsHandler,
  *                   example: Error message describing the issue
  */
     cartRoute.get('/:id', getCartItemsByIdHandler);
-    cartRoute.get('/', ensureAuthenticated, getItemByUserIdHandler )
+    cartRoute.get('/',  getItemByUserIdHandler )
 /**
  * @swagger
  * /cart/{id}:
@@ -205,7 +205,7 @@ const { addItemsHandler,
  *                   example: Error updating cart item
  */
 
-    cartRoute.put('/:id', ensureAuthenticated, updateCartItemsHandler);
+    cartRoute.put('/:id', updateCartItemsHandler);
     /**
  * @swagger
  * /cart/{id}:
@@ -243,7 +243,7 @@ const { addItemsHandler,
  *                   type: string
  *                   example: Error deleting cart item
  */
-    cartRoute.delete('/:cartItemId', ensureAuthenticated, deleteCartItemHandler);
+    cartRoute.delete('/:cartItemId', deleteCartItemHandler);
 
     module.exports = cartRoute
 

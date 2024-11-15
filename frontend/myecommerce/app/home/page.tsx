@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { useCart } from '../context/cartContext';
 import { fetchCategories } from '../lib/data';
 import { Category } from '@/app/lib/definition';
+import {useUser} from '@/app/context/userContext';
 
 
 
@@ -22,7 +23,8 @@ export default  function Home() {
 const [ categoryData, setCategoryData] = useState<Category[] | null>(null)
 
    const router = useRouter();
-const { addToCart, getUserCart} = useCart()
+const { addToCart, getUserCart} = useCart();
+const {token} = useUser();
    
  useEffect(() => {
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
@@ -38,6 +40,7 @@ const { addToCart, getUserCart} = useCart()
       console.log('Final image URLs:', modifiedProducts.map(p => p.image_url));
       setProducts(modifiedProducts);
       console.log('products from fetchProducts call:', products)
+    
     } catch (err) {
       console.error('Error fetching products:', err);
       setError('Failed to load products');
@@ -61,9 +64,6 @@ const { addToCart, getUserCart} = useCart()
         console.error('Error fetching categories', error)
         
       }
-     
-       
-      
 
     } 
     catData();

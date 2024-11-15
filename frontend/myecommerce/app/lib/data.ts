@@ -1,5 +1,5 @@
 
-import { Product, Category, User, LoginRequest, LoginStatus, NewCart, Order, Paystack} from '@/app/lib/definition';
+import { Product, Category, User, LoginRequest, LoginStatus, NewCart, Order, Paystack, UserProfile} from '@/app/lib/definition';
 import axios from 'axios';
 
 //add base url later axios.defaults.baseUrl
@@ -48,55 +48,75 @@ return categoryData.data;
   
 };
 
-export async function registerUser(user: User): Promise<{ id: number; username: string; email: string; }> {
-  
+
+export async function registerUser(user: { username: string; email: string; phone: string; password: string; country_code: string; }): Promise<{ token: string }> {
   try {
     const response = await axios.post(`${backendUrl}/auth/register`, user);
+    const tokenData = response.data;  // receiving token instead of user data
 
-const userData = response.data;
-console.log('sending data to database: ', userData);
-return {
-  id: userData.id,          // Assuming the response includes these fields
-  username: userData.username,
-  email: userData.email,
-  // phone: userData.phone,
-  // country_code: userData.country_code,
-};
+    console.log('Received token from backend:', tokenData);
 
-} catch (err: any) {
-  console.error('Error registering user:', err.response?.data || err.message || err);
-  throw new Error("Registration failed")
+    return {
+      token: tokenData.token
+    };
+  } catch (error) {
+    console.error('Error registering user:', error);
+    throw new Error('Failed to register user');
+  }
 }
 
-};
 
-export async function userLogging(user: LoginRequest): Promise<{data:LoginRequest, status: LoginStatus} | undefined> {
+export async function userLoggin (user:{email: string; password: string}): Promise<{ token: string }> {
   try {
     console.log('user login data sent from onsubmit to api', user)
-    const response = await axios.post<LoginRequest>(`${backendUrl}/auth/login`, user, {withCredentials: true });
-    console.log('API Response:', response);
-    if(response.status === 200) {
-      console.log('userLoggin data authenticated:', response)
+    const response = await axios.post(`${backendUrl}/auth/login`, user);
+    console.log('token from userLoggin:', response.data);
+
+    const tokenData = response.data; 
+    
       return {
-        data:  response.data as LoginRequest,
-        status: response.status as LoginStatus
+        token: tokenData.token
       };
-    }
+    
     
   } catch (err: any) {
     console.error('Error logging in user:', err.response?.data || err.message || err);
-  return undefined
-  };
+    throw new Error('User loggin failed')
+  }
 };
 
 
 
+export async function userProfile(token: string): Promise<UserProfile | undefined> {
+  try {
+   
+    const response = await axios.get<UserProfile>(`${backendUrl}/auth/profile`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+      },
+    });
 
-export async function fetchByEmail(email: string): Promise<{id: number, username: string} | undefined> {
+    if (response.data) {
+      console.log('User data retrieved:', response.data);
+      return response.data;
+    }
+  } catch (error: any) {
+    console.error('Error fetching user profile:', error.response?.data || error.message || error);
+    return undefined;
+  }
+}
+
+
+
+
+export async function fetchByEmail(email: string, token: string): Promise<{id: number, username: string} | undefined> {
   try {
     const response = await axios.get(`${backendUrl}/users/email`, {
-      params: { email }, 
-    });
+      params: { email },
+      headers: {
+        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+      },
+    }); 
     console.log('Fetch user by email endpoint hit')
     if(response.status === 200) {
       console.log('user data fetched by email:', response.data)
@@ -112,20 +132,38 @@ export async function fetchByEmail(email: string): Promise<{id: number, username
 
 
 
-export async function addItemsToCart(productId: number | null, quantity: number | null): Promise<NewCart | undefined >{
+export async function addItemsToCart(
+  token: string | null, 
+  productId: number | null, 
+  quantity: number | null
+): Promise<NewCart | undefined> {
   try {
-    const response = await axios.post<NewCart>(`${backendUrl}/cart`, {productId, quantity}, { withCredentials: true });
-    console.log('sending cart data to database: ', response.data)
-    return response.data
-  }  catch (err: any) {
+    const response = await axios.post<NewCart>(
+      `${backendUrl}/cart`,
+      { productId, quantity },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+        },
+      }
+    );
+    
+    console.log('Sending cart data to database:', response.data);
+    return response.data;
+  } catch (err: any) {
     console.error('Error adding to cart:', err.response?.data || err.message || err);
     return undefined;
   }
-
 };
-export async function fetchUserCart(): Promise<NewCart[] | []>{
+
+
+export async function fetchUserCart(token: string): Promise<NewCart[] | []>{
   try {
-    const response = await axios.get<NewCart[]>(`${backendUrl}/cart`, { withCredentials: true });
+    const response = await axios.get<NewCart[]>(`${backendUrl}/cart`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+      },
+    });
     console.log('getting cart data from database: ', response.data)
     return response.data
   }  catch (err: any) {
@@ -137,9 +175,13 @@ export async function fetchUserCart(): Promise<NewCart[] | []>{
 
 
  
-export async function updateCartItem(cartItemId: number,  quantity: number): Promise<NewCart | undefined>{
+export async function updateCartItem(token: string, cartItemId: number,  quantity: number): Promise<NewCart | undefined>{
   try {
-    const response = await axios.put<NewCart>(`${backendUrl}/cart/${cartItemId}`, { quantity}, { withCredentials: true });
+    const response = await axios.put<NewCart>(`${backendUrl}/cart/${cartItemId}`, { quantity}, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+      },
+    });
     console.log('getting cart data from database: ', response.data)
     return response.data
   }  catch (err: any) {
@@ -149,10 +191,14 @@ export async function updateCartItem(cartItemId: number,  quantity: number): Pro
 
 };
 
-export async function deleteUserItem(cartItemId: number) {
+export async function deleteUserItem(token: string, cartItemId: number) {
   console.log('cartItemId in deleteUserItem in data.ts', cartItemId)
   try {
-    const response = await axios.delete(`${backendUrl}/cart/${cartItemId}`, {withCredentials: true});
+    const response = await axios.delete(`${backendUrl}/cart/${cartItemId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+      },
+    });
     console.log('deleting cart item from database: ', response.status)
    if(response.status === 204) {
     console.log('Item successfully deleted');
@@ -167,29 +213,33 @@ export async function deleteUserItem(cartItemId: number) {
   }
 };
 
-export async function checkUserSession() {
-  try {
-    const response = await axios.get(`${backendUrl}/auth/me`, { withCredentials: true });
-    if (response.status === 200 && response.data.user) {
-      console.log('User data fetched in checkUserSession', response.data);
-      return response.data;
-    }
-  } catch (err) {
-    if (axios.isAxiosError(err)) {
-      // Axios-specific error handling
-      console.error('Error verifying user session data:', err.response?.data || err.message);
-    } else {
-      // Non-Axios errors (e.g., unexpected runtime errors)
-      console.error('Unexpected error:', err);
-    }
-  }
-};
+// export async function checkUserSession() {
+//   try {
+//     const response = await axios.get(`${backendUrl}/auth/me`, { withCredentials: true });
+//     if (response.status === 200 && response.data.user) {
+//       console.log('User data fetched in checkUserSession', response.data);
+//       return response.data;
+//     }
+//   } catch (err) {
+//     if (axios.isAxiosError(err)) {
+//       // Axios-specific error handling
+//       console.error('Error verifying user session data:', err.response?.data || err.message);
+//     } else {
+//       // Non-Axios errors (e.g., unexpected runtime errors)
+//       console.error('Unexpected error:', err);
+//     }
+//   }
+// };
 
 
-export async function createOrder (paymentMtd: string, shippingAddy: string, shippingMtd: string, curr: string ) {
+export async function createOrder (paymentMtd: string, shippingAddy: string, shippingMtd: string, curr: string, token: string ) {
   console.log(`values received in data.ts and passed to backend: paymentMtd: ${paymentMtd},`)
   try {
-    const response = await axios.post(`${backendUrl}/order`, {paymentMtd, shippingAddy, shippingMtd, curr}, {withCredentials: true})
+    const response = await axios.post(`${backendUrl}/order`, {paymentMtd, shippingAddy, shippingMtd, curr}, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+      },
+    })
   if(response.data) {
     console.log('Order successfully created,', response.data);
     return response.data;
@@ -200,10 +250,14 @@ export async function createOrder (paymentMtd: string, shippingAddy: string, shi
 };
  
 
-export async function fetchUserOrder (): Promise<Order[] | null> {
+export async function fetchUserOrder (token: string): Promise<Order[] | null> {
 
   try {
-    const response = await axios.get(`${backendUrl}/order`, {withCredentials: true});
+    const response = await axios.get(`${backendUrl}/order`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+      },
+    }) ;
     if(response){
       console.log('user order fetched in data.tsx:', response.data);
       return response.data
@@ -216,10 +270,14 @@ export async function fetchUserOrder (): Promise<Order[] | null> {
   return null
 };
 
-export async function fetchOrderById (orderId: number): Promise<Order | null> {
+export async function fetchOrderById (orderId: number, token: string): Promise<Order | null> {
 
   try {
-    const response = await axios.get(`${backendUrl}/order/${orderId}`, {withCredentials: true});
+    const response = await axios.get(`${backendUrl}/order/${orderId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+      },
+    });
     if(response){
       console.log('user order with id fetched in data.tsx:', response.data);
       return response.data
@@ -232,11 +290,16 @@ export async function fetchOrderById (orderId: number): Promise<Order | null> {
   return null
 };
 
-export async function initializePaystack (orderId: number): Promise<Paystack | null> {
+export async function initializePaystack (orderId: number, token: string): Promise<Paystack | null> {
   console.log('orderId received in initializePaystack data.ts:', orderId)
 
   try {
-    const response = await axios.post(`${backendUrl}/checkout/initialize/${orderId}`);
+    const response = await axios.post(`${backendUrl}/checkout/initialize/${orderId}`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+   
     if(response){
       console.log('Payment with card initialized on paystack', response.data);
       return response.data

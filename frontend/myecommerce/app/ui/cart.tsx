@@ -169,17 +169,19 @@ import Image from 'next/image';
 import OrderForm from './order';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useUser } from '../context/userContext';
 
 interface MyCartProps {
     cart: NewCart[];
-    newQuantity: (id: number, newqty: number) => void;
-    removeItemFromCart: (cartItemId: number) => void;
+    newQuantity: (token: string, id: number, newqty: number) => void;
+    removeItemFromCart: (token: string, cartItemId: number) => void;
     cartSubTotal: number;
 }
 
 export const MyCart: React.FC<MyCartProps> = ({ cart, newQuantity, removeItemFromCart, cartSubTotal }) => {
     const [isCheckout, setIsCheckout] = useState(false);
     const router = useRouter();
+    const {token} = useUser()
     const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
     const handleClick = () => {
@@ -243,14 +245,14 @@ export const MyCart: React.FC<MyCartProps> = ({ cart, newQuantity, removeItemFro
                                     <div className='flex items-center mt-3'>
                                         <button
                                             className='h-8 w-8 border border-red-500 text-red-500 rounded-full flex justify-center items-center'
-                                            onClick={() => newQuantity(item.id!, itemQuantity + 1)}
+                                            onClick={() => newQuantity(token!, item.id!, itemQuantity + 1)}
                                         >
                                             +
                                         </button>
                                         <span className='mx-3'>{itemQuantity}</span>
                                         <button
                                             className='h-8 w-8 border border-red-500 text-red-500 rounded-full flex justify-center items-center'
-                                            onClick={() => itemQuantity > 1 && newQuantity(item.id!, itemQuantity - 1)}
+                                            onClick={() => itemQuantity > 1 && newQuantity(token!, item.id!, itemQuantity - 1)}
                                         >
                                             -
                                         </button>
@@ -260,7 +262,7 @@ export const MyCart: React.FC<MyCartProps> = ({ cart, newQuantity, removeItemFro
                                     <p className="font-semibold">Total:  ${Number(item.total).toFixed(2)}</p>
                                     <button
                                         className='mt-4 bg-red-500 text-white px-4 py-1 rounded-lg hover:bg-red-600'
-                                        onClick={() => removeItemFromCart(item.id!)}
+                                        onClick={() => removeItemFromCart(token!, item.id!)}
                                     >
                                         Remove
                                     </button>

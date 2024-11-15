@@ -2,19 +2,21 @@
 import Link from 'next/link';
 import { Product, ProductDetails, NewCart } from '@/app/lib/definition';
 import Image from 'next/image';
+import { useUser } from '../context/userContext';
 
 
 import { useState } from 'react';
 
 interface ProductProps {
   products: Product[];
-  addToCart: (productId: number, quantity?: number) => Promise<NewCart | null | undefined>;
-  getUserCart: () => Promise<NewCart[] | undefined>;
+  addToCart: (token: string, productId: number, quantity?: number) => Promise<NewCart | null | undefined>;
+  getUserCart: (token: string) => Promise<NewCart[] | undefined>;
 }
 
 
 const Products: React.FC<ProductProps> = ({products, addToCart, getUserCart}) => {
   const [successMessage, setSuccessMessage] = useState('')
+  const {token} = useUser();
   console.log('add to cart function in product:', addToCart)
 
   // useEffect(() => {
@@ -28,9 +30,9 @@ const Products: React.FC<ProductProps> = ({products, addToCart, getUserCart}) =>
   // };
   
 
-  const handleAddToCart = async (productId: number) => {
+  const handleAddToCart = async (token: string, productId: number) => {
     try {
-      await addToCart(productId); // Assuming addItemsToCart is your cart function
+      await addToCart(token, productId); // Assuming addItemsToCart is your cart function
       const product = products.find(p => p.id === productId);
       if(product) {
         setSuccessMessage(`${product.name} added to cart successfully!`);
@@ -67,7 +69,7 @@ const Products: React.FC<ProductProps> = ({products, addToCart, getUserCart}) =>
         </div>
         <button 
           className='bg-red-700 text-white w-full py-2 mt-2 rounded-lg hover:bg-red-600 transition-colors duration-200' 
-          onClick={() => handleAddToCart(product.id)}
+          onClick={() => handleAddToCart(token!, product.id)}
         >
           Add to Cart
         </button>

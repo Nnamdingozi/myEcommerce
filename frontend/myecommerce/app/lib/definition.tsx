@@ -15,21 +15,27 @@ export type Product = {
   };
 
   export type User = {
-    id?: number
     username: string;
     email: string;
-    phone?: string;
-    password?: string;
+    phone: string; // Ensure this field is not optional
+    password: string;
     country_code: string;
   };
 
+  // export type LoginRequest = {
+  //   id?: number
+  //   username?: string
+  //   email: string;
+  //   password: string;
+  // };
+  
   export type LoginRequest = {
-    id?: number
-    username?: string
     email: string;
     password: string;
   };
   
+
+
   export type LoginStatus = 200 | 201 | 400 | 500;
 
   // export type Cart = {
@@ -60,6 +66,7 @@ export type Product = {
     description?: string;
     image_url?: string;
     cartproduct: ProductDetails
+    token: string
 
 
   };
@@ -80,6 +87,7 @@ export type Product = {
       payment_method?: string;
       shipping_method?: string;
       tracking_number?: string;
+      token: string
   };
 
   export type GetOrder = {
@@ -90,10 +98,19 @@ export type Product = {
     payment_method: string;
     shipping_method: string;
     tracking_number: string;
+    token: string
   };
 
   export type Paystack = {
     authorization_url: string
-    reference: string
+    reference: string;
+    token: string
 
-  }
+  };
+
+  export type UserProfile = {
+    id: number
+    username: string
+    email: string;
+  
+  };
