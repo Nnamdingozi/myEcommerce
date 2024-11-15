@@ -1,21 +1,24 @@
 import {  Product, NewCart } from '@/app/lib/definition';
 import Image from 'next/image';
+import { useUser } from '../context/userContext';
 
 interface CategoryproductProps {
     categoryproducts: Product[]; 
-    addToCart: (productId: number, quantity?: number) => Promise<NewCart | null | undefined>;
-  getUserCart: () => Promise<NewCart[] | undefined>;
+    addToCart: (token: string, productId: number, quantity?: number) => Promise<NewCart | null | undefined>;
+  getUserCart: (token: string) => Promise<NewCart[] | undefined>;
 }
 
 
 const CategoryProducts: React.FC<CategoryproductProps> = ({ categoryproducts, addToCart, getUserCart }) => {
-    console.log('categoryproducts value in props:', categoryproducts);
+   const {token} = useUser();
+  
+  console.log('categoryproducts value in props:', categoryproducts);
    
    
     const handleAddToCart = (productId: number) => {
-      getUserCart();
-      addToCart(productId);
-      getUserCart();
+      getUserCart(token!);
+      addToCart(token!, productId);
+      getUserCart(token!);
     };
     
   
