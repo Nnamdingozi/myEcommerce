@@ -6,6 +6,7 @@ import { Order, Paystack } from '../lib/definition';
 import { initializePaystack } from '../lib/data';
 import { orderHookLogic } from '@/app/lib/hooks/orderHook';
 import { useRouter } from 'next/navigation';
+import { useUser } from './userContext';
 
 
 
@@ -15,10 +16,10 @@ interface OrderContextProps {
     isLoading: boolean;
     error: string | null;
     setError: (error: string | null) => void;
-    createNewOrder: (paymentMtd: string, shippingAddy: string, shippingMtd: string, curr: string) => Promise<{ orderId: number } | null>;
-    getUserOrder: () => Promise<Order[] | null>;
-    getUserOrderById: (orderId: number) => Promise<Order | null>;
-    createPaystack: (orderId: number) => Promise<Paystack | null>;
+    createNewOrder: (token: string, paymentMtd: string, shippingAddy: string, shippingMtd: string, curr: string) => Promise<{ orderId: number } | null>;
+    getUserOrder: (token: string) => Promise<Order[] | null>;
+    getUserOrderById: (token: string, orderId: number) => Promise<Order | null>;
+    createPaystack: (token: string,orderId: number) => Promise<Paystack | null>;
     successMessage: string | null;
     setSuccessMessage: (message: string | null) => void
     showOrderDetails: boolean;
@@ -37,7 +38,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const [userOrder, setUserOrder] = useState<Order[] | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [showOrderDetails, setShowOrderDetails] = useState(false);
-
+const {token} = useUser();
     const router = useRouter()
     const { createNewOrderHook, getUserOrderHook, getUserOrderByIdHook, createPaystackHook } = orderHookLogic(
         setOrder,
@@ -50,12 +51,12 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
 
     const createNewOrder = useCallback(
-        async (paymentMtd: string, shippingAddy: string, shippingMtd: string, curr: string): Promise<{ orderId: number } | null> => {
+        async (token: string, paymentMtd: string, shippingAddy: string, shippingMtd: string, curr: string): Promise<{ orderId: number } | null> => {
             setIsLoading(true);
             setError(null);
 
             try {
-                const newOrder = await createNewOrderHook(paymentMtd, shippingAddy, shippingMtd, curr);
+                const newOrder = await createNewOrderHook(token, paymentMtd, shippingAddy, shippingMtd, curr);
                 if (newOrder && newOrder.orderId) {
                     return { orderId: newOrder.orderId }; // Ensure we return an object with orderId
                 } else {
@@ -73,12 +74,12 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
 
     const getUserOrder = useCallback(
-        async (): Promise<Order[] | null> => {
+        async (token: string): Promise<Order[] | null> => {
             setIsLoading(true);
             setError(null);
 
             try {
-                const userOrders = await getUserOrderHook(); // Wait for getUserOrderHook to complete
+                const userOrders = await getUserOrderHook(token); // Wait for getUserOrderHook to complete
                 return userOrders;
             } catch (error) {
                 setError(error instanceof Error ? error.message : 'An error occurred while fetching user orders');
@@ -91,12 +92,12 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     );
 
     const getUserOrderById = useCallback(
-        async (orderId: number): Promise<Order | null> => {
+        async (token: string, orderId: number): Promise<Order | null> => {
             setIsLoading(true);
             setError(null);
 
             try {
-                const userOrder = await getUserOrderByIdHook(orderId); // Wait for getUserOrderHook to complete
+                const userOrder = await getUserOrderByIdHook(token, orderId); // Wait for getUserOrderHook to complete
                 return userOrder;
             } catch (error) {
                 setError(error instanceof Error ? error.message : 'An error occurred while initializing paystack in order context');
@@ -109,12 +110,12 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     );
 
     const createPaystack = useCallback(
-        async (orderId: number): Promise<Paystack | null> => {
+        async (token: string, orderId: number): Promise<Paystack | null> => {
             setIsLoading(true);
             setError(null);
             try {
                 console.log('order id in createPaystack context:', orderId)
-                const initialPay = await createPaystackHook(orderId);
+                const initialPay = await createPaystackHook(token, orderId);
                 console.log('initialPay value in context:', initialPay)
                     return initialPay
         

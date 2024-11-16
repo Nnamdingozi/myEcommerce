@@ -19,6 +19,7 @@ export const orderHookLogic = (
    ) => {
 
    const createNewOrderHook = async(
+      token: string,
       paymentMtd: string,
        shippingAddy: string,
        shippingMtd: string,
@@ -28,13 +29,13 @@ export const orderHookLogic = (
       setError(null);
 
 try {
-   const newOrder = await createOrder(paymentMtd, shippingAddy, shippingMtd, curr)
+   const newOrder = await createOrder( token, paymentMtd, shippingAddy, shippingMtd, curr)
    if (newOrder && newOrder.orderId) {
       setShowOrderDetails(true);
-      const orderValues: Order | null = await getUserOrderByIdHook(newOrder.orderId);
+      const orderValues: Order | null = await getUserOrderByIdHook(token, newOrder.orderId);
       console.log('Fetched order values in orderHook:', orderValues);
       if(orderValues && orderValues.id  !== undefined) {
-         setSuccessMessage(orderValues.payment_method === 'Cash' ? 'Order successfully created!' : '');
+         setSuccessMessage(orderValues.payment_method === 'Cash' ? 'Order successfully created!' : 'Redirecting to paystack');
          setOrder(orderValues);
          console.log('new order in orderContext, ', orderValues)
          return { orderId: orderValues.id };
@@ -57,12 +58,12 @@ try {
 return null
  };
 
-const getUserOrderHook = async() => {
+const getUserOrderHook = async( token: string,) => {
    setIsLoading(true);
    setError(null);
  
         try {
-            const userOrders = await fetchUserOrder();
+            const userOrders = await fetchUserOrder(token);
             setUserOrder(userOrders);
             return userOrders;
         } catch (error: any) {
@@ -77,12 +78,12 @@ const getUserOrderHook = async() => {
 };
 
 
-const getUserOrderByIdHook = async(orderId: number) => {
+const getUserOrderByIdHook = async( token: string, orderId: number) => {
 setIsLoading(true);
 setError(null);
 
 try {
-   const userOrderById = await fetchOrderById(orderId);
+   const userOrderById = await fetchOrderById(token, orderId);
    setOrder(userOrderById);
    return userOrderById;
 } catch (error: any) {
@@ -99,12 +100,12 @@ return null
 };
 
 
-const createPaystackHook = async (orderId: number) => {
+const createPaystackHook = async ( token: string, orderId: number) => {
    console.log('orderID in orderContext;', orderId)
    setIsLoading(true);
    setError(null)
    try {
-      const initializePay: Paystack | null = await initializePaystack(orderId);
+      const initializePay: Paystack | null = await initializePaystack(token, orderId);
       console.log('id passed to initialize pay in createPaystackHoo:', orderId)
       console.log('data after initialze pay in order hook:', initializePay)
       return initializePay;

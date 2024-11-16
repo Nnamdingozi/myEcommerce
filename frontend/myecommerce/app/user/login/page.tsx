@@ -119,7 +119,14 @@ const UserLoginForm: React.FC = () => {
         setError('An error occurred during login.');
       }
     };
-  
+
+    useEffect(() => {
+      // Check for token on component mount
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        userProfile(token);
+      }
+    }, []);
     return (
       <div className='LoginContainer'>
         <UserLogin onSubmit={handleLogin} /> {/* Pass handleLogin as a prop */}

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Product, ProductDetails, NewCart } from '@/app/lib/definition';
 import Image from 'next/image';
 import { useUser } from '../context/userContext';
+import { useEffect } from 'react';
 
 
 import { useState } from 'react';
@@ -11,17 +12,21 @@ interface ProductProps {
   products: Product[];
   addToCart: (token: string, productId: number, quantity?: number) => Promise<NewCart | null | undefined>;
   getUserCart: (token: string) => Promise<NewCart[] | undefined>;
+  cart: NewCart[]
 }
 
 
-const Products: React.FC<ProductProps> = ({products, addToCart, getUserCart}) => {
+const Products: React.FC<ProductProps> = ({products, addToCart, getUserCart, cart}) => {
   const [successMessage, setSuccessMessage] = useState('')
   const {token} = useUser();
   console.log('add to cart function in product:', addToCart)
 
-  // useEffect(() => {
-  //   console.log('Cart items updated:', cart);
-  // }, [cart]);
+  useEffect(() => {
+    const fetchCart = async() => {
+       await getUserCart(token!);
+    }
+    fetchCart();
+  }, [cart]);
 
   // const handleAddToCart = (productId: number) => {
   //   getUserCart();
@@ -32,6 +37,7 @@ const Products: React.FC<ProductProps> = ({products, addToCart, getUserCart}) =>
 
   const handleAddToCart = async (token: string, productId: number) => {
     try {
+      await getUserCart(token)
       await addToCart(token, productId); // Assuming addItemsToCart is your cart function
       const product = products.find(p => p.id === productId);
       if(product) {

@@ -232,7 +232,7 @@ export async function deleteUserItem(token: string, cartItemId: number) {
 // };
 
 
-export async function createOrder (paymentMtd: string, shippingAddy: string, shippingMtd: string, curr: string, token: string ) {
+export async function createOrder (token: string, paymentMtd: string, shippingAddy: string, shippingMtd: string, curr: string) {
   console.log(`values received in data.ts and passed to backend: paymentMtd: ${paymentMtd},`)
   try {
     const response = await axios.post(`${backendUrl}/order`, {paymentMtd, shippingAddy, shippingMtd, curr}, {
@@ -270,7 +270,7 @@ export async function fetchUserOrder (token: string): Promise<Order[] | null> {
   return null
 };
 
-export async function fetchOrderById (orderId: number, token: string): Promise<Order | null> {
+export async function fetchOrderById ( token: string, orderId: number): Promise<Order | null> {
 
   try {
     const response = await axios.get(`${backendUrl}/order/${orderId}`, {
@@ -290,7 +290,7 @@ export async function fetchOrderById (orderId: number, token: string): Promise<O
   return null
 };
 
-export async function initializePaystack (orderId: number, token: string): Promise<Paystack | null> {
+export async function initializePaystack (token: string, orderId: number, ): Promise<Paystack | null> {
   console.log('orderId received in initializePaystack data.ts:', orderId)
 
   try {
