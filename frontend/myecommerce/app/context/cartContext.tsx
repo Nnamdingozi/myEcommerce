@@ -215,6 +215,7 @@ interface CartContextType  {
   newQuantity: (token: string, cartItemId: number, newqty: number) => Promise<void>;
   getUserCart: (token: string) => Promise<NewCart[] | undefined>;
   clearCart: () => void;
+  setCart: React.Dispatch<React.SetStateAction<NewCart[]>>;
 };
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -236,7 +237,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (token) {
         setLoading(true);
         try {
-          // You should pass the token to `getUserCart` function to make the request with the token
+        
           const userCart = await getUserCart(token); // Make the API call using the saved token
           if (userCart) {
             setCart(userCart);
@@ -285,7 +286,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       removeItemFromCart,
       newQuantity,
       getUserCart,
-      clearCart
+      clearCart,
+      setCart
     }}>
       {children}
     </CartContext.Provider>

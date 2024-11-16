@@ -3,8 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { useOrderContext } from '../context/orderContext';
 import { useRouter } from 'next/navigation';
-import { Order } from '../lib/definition';
-
+// import { Order } from '../lib/definition';
+import { useUser } from '../context/userContext';
+import { useCart } from '../context/cartContext';
 
 const OrderForm: React.FC = () => {
   const { order, isLoading, error, successMessage, createNewOrder, userOrder, getUserOrderById, setError, createPaystack,  handleCloseOrderDetails, showOrderDetails, setShowOrderDetails, setSuccessMessage,setIsLoading } = useOrderContext();
@@ -14,7 +15,11 @@ const OrderForm: React.FC = () => {
   const [shippingAddy, setShippingAddy] = useState('');
   const [shippingMtd, setShippingMtd] = useState('');
   const [curr, setCurr] = useState('');
-  
+  const { token } = useUser();
+  const {setCart} = useCart();
+
+
+
   const resetFormFields = () => {
     setPaymentMtd('');
     setShippingAddy('');
@@ -29,26 +34,26 @@ const OrderForm: React.FC = () => {
     setIsLoading(true)
 
     try {
-      const result = await createNewOrder(paymentMtd, shippingAddy, shippingMtd, curr);
+      const result = await createNewOrder(token!, paymentMtd, shippingAddy, shippingMtd, curr);
      console.log('value of result in handlesubmit:', result)
       if (!result) throw new Error('Order creation failed');
 
       const { orderId } = result;
      console.log(' orderId in handle submit:', orderId)
-       const currentOrder = await getUserOrderById(orderId);
+       const currentOrder = await getUserOrderById(token!, orderId);
        console.log('currentOrder value in handle submit:', currentOrder)
      
 
       if (currentOrder && currentOrder.id !== undefined) {
         console.log('currentOrder.payment method:', currentOrder.payment_method)
         console.log('currentOrder id:', currentOrder.id)
+        // setCart([]);
         if (currentOrder.payment_method === 'Cash') {
-          setSuccessMessage('Order successfully created!');
-          setShowOrderDetails(true);
           resetFormFields();
+         
         } else {
-          console.log('redirectiong to paystack');
-       const getUrl = await  createPaystack(currentOrder.id);
+          console.log('redirecting to paystack');
+       const getUrl = await  createPaystack(token!, currentOrder.id);
        console. log('data from initialize paystack in handleSubmit:', getUrl)
         if(getUrl) {
           const {authorization_url} = getUrl;
@@ -72,6 +77,7 @@ const OrderForm: React.FC = () => {
   const handleClosure = () => {
     handleCloseOrderDetails()
     setShowOrderDetails(false);
+    setCart([])
     router.push('/');
   };
 
@@ -161,7 +167,7 @@ const OrderForm: React.FC = () => {
               onClick={handleClosure}
               className="mt-4 w-full bg-green-400 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
             >
-              Continue Shopping
+              {order!.payment_method === 'Cash'? 'continue shopping' : 'Redirecting to paystack'}
             </button>
           </div>
         </div>

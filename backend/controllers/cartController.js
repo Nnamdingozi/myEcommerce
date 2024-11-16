@@ -23,22 +23,11 @@
 
 require('dotenv').config();
 const {addItemsToCart, getItemByUserId, getCartItemsById, updateCartItems, deleteCartItem} = require('../services/cartService');
-const jwt = require('jsonwebtoken');
-const SECRET_KEY = process.env.JWT_SECRET; // Replace with your actual secret key
 
 const addItemsHandler = async (req, res) => {
-    console.log('Route /cart reached with data:', req.body);
-
-    const token = req.headers.authorization?.split(' ')[1]; // Extract the token from the Authorization header
-
-    if (!token) {
-        return res.status(401).json({ message: 'Authorization token missing' });
-    }
-
-    try {
-        // Verify the token to retrieve user data
-        const decoded = jwt.verify(token, SECRET_KEY);
-        const userId = decoded.id; // Assuming the token payload contains an `id` field
+    
+    try { 
+        const userId = req.user.id; 
 
         const { productId } = req.body;
         console.log('Controller - userId:', userId, 'productId:', productId);
@@ -81,16 +70,10 @@ const addItemsHandler = async (req, res) => {
 
 // Handler to get items by user ID (retrieved from the token)
 const getItemByUserIdHandler = async (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1]; // Extract token from Authorization header
-
-    if (!token) {
-        return res.status(401).json({ message: 'Authorization token missing' });
-    }
-
+   
     try {
-        // Verify token and extract user ID
-        const decoded = jwt.verify(token, SECRET_KEY);
-        const userId = decoded.id;
+        
+        const userId = req.user.id;
 
         if (!userId) {
             return res.status(400).json({ message: 'User ID required' });
@@ -126,16 +109,9 @@ const getItemByUserIdHandler = async (req, res) => {
 
 // Handler to get items by user ID (retrieved from the token)
 const getCartItemsByIdHandler = async (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1]; // Extract token from Authorization header
-
-    if (!token) {
-        return res.status(401).json({ message: 'Authorization token missing' });
-    }
-
+  
     try {
-        // Verify token and extract user ID
-        const decoded = jwt.verify(token, SECRET_KEY);
-        const userId = decoded.id;
+            const userId = req.user.id;
 
         if (!userId) {
             return res.status(400).json({ message: 'User ID required' });
@@ -170,16 +146,10 @@ const getCartItemsByIdHandler = async (req, res) => {
 // };
 
 const updateCartItemsHandler = async (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1]; // Extract token from Authorization header
-
-    if (!token) {
-        return res.status(401).json({ message: 'Authorization token missing' });
-    }
-
+ 
     try {
-        // Verify token and extract user ID
-        const decoded = jwt.verify(token, SECRET_KEY);
-        const userId = decoded.id;
+   
+        const userId = req.user.id;
 
         if (!userId) {
             return res.status(400).json({ message: 'User ID required' });
@@ -224,16 +194,9 @@ const updateCartItemsHandler = async (req, res) => {
 
 
 const deleteCartItemHandler = async (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1]; // Extract token from Authorization header
-
-    if (!token) {
-        return res.status(401).json({ message: 'Authorization token missing' });
-    }
 
     try {
-        // Verify token and extract user ID
-        const decoded = jwt.verify(token, SECRET_KEY);
-        const userId = decoded.id;
+        const userId = req.user.id;
 
         if (!userId) {
             return res.status(400).json({ message: 'User ID required' });

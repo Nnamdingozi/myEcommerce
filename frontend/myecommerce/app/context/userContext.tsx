@@ -221,12 +221,77 @@
 // };
 
 
+// 'use client'
+
+// import { createContext, useState, useContext } from 'react';
+// import axios from 'axios';
+// import { useRouter } from 'next/navigation';
+// import { userProfile } from '../lib/data';
+// import { useEffect } from 'react';
+
+// interface UserProfile {
+//   id: number | null;
+//   email: string | null;
+//   username: string | null;
+// }
+
+// interface UserContextProps {
+//   user: UserProfile;
+//   setUser: React.Dispatch<React.SetStateAction<UserProfile>>;
+//  token: string | null;
+//   logout: () => void;
+//   saveToken: (token: string) => void
+// }
+
+// const UserContext = createContext<UserContextProps | undefined>(undefined);
+
+// export const UserProvider = ({ children }: { children: React.ReactNode }) => {
+//   const [user, setUser] = useState<UserProfile>({ id: null, email: null, username: null });
+//   const [token, setToken] = useState<string | null>(null);
+//   const router = useRouter();
+
+
+//   // const saveToken = (newToken: string) => {
+//   //   setToken(newToken);
+//   //   // Optionally, save to localStorage to persist between sessions
+//   //   // localStorage.setItem('token', newToken);
+//   //   document.cookie = `token=${token}; path=/; secure; samesite=strict`;
+//   // };
+  
+//   const saveToken = (newToken: string) => {
+//     setToken(newToken);
+//     localStorage.setItem('token', newToken);
+//     document.cookie = `token=${newToken}; path=/; secure; samesite=strict`;
+//   };
+  
+  
+//   const logout = () => {
+//     setUser({ id: null, email: null, username: null });
+//     document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+//     router.push('/');
+//   };
+
+//   return (
+//     <UserContext.Provider value={{ user, setUser, token, logout, saveToken }}>
+//       {children}
+//     </UserContext.Provider>
+//   );
+// };
+
+// export const useUser = () => {
+//   const context = useContext(UserContext);
+//   if (!context) {
+//     throw new Error('useUser must be used within a UserProvider');
+//   }
+//   return context;
+// };
+
+
 'use client'
 
-import { createContext, useState, useContext } from 'react';
-import axios from 'axios';
+import { createContext, useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { userProfile } from '../lib/data';
+import { userProfile } from '../lib/data'; // Assuming this function fetches user profile using a token
 
 interface UserProfile {
   id: number | null;
@@ -237,9 +302,9 @@ interface UserProfile {
 interface UserContextProps {
   user: UserProfile;
   setUser: React.Dispatch<React.SetStateAction<UserProfile>>;
- token: string | null;
+  token: string | null;
   logout: () => void;
-  saveToken: (token: string) => void
+  saveToken: (token: string) => void;
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
@@ -249,21 +314,44 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const router = useRouter();
 
-
   const saveToken = (newToken: string) => {
     setToken(newToken);
-    // Optionally, save to localStorage to persist between sessions
-    // localStorage.setItem('token', newToken);
-    document.cookie = `token=${token}; path=/; secure; samesite=strict`;
+    localStorage.setItem('token', newToken);
+    document.cookie = `token=${newToken}; path=/; secure; samesite=strict`;
   };
 
-  
-  
   const logout = () => {
     setUser({ id: null, email: null, username: null });
+    localStorage.removeItem('token');
     document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     router.push('/');
   };
+
+  const authenticateUser = async () => {
+    const savedToken = localStorage.getItem('token');
+    if (savedToken) {
+      try {
+        const userProfileData = await userProfile(savedToken);
+        if (userProfileData) {
+          setUser(userProfileData);
+          setToken(savedToken);
+        } else {
+          logout();
+        }
+      } catch (error) {
+        console.error('Authentication failed:', error);
+        logout();
+      }
+    } else {
+      logout();
+    }
+  };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      authenticateUser().catch(console.error);
+    }
+  }, []);
 
   return (
     <UserContext.Provider value={{ user, setUser, token, logout, saveToken }}>

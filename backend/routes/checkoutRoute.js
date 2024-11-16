@@ -1,6 +1,6 @@
 const {  CreateCheckoutHandler, verifyCheckoutHandler } = require('../controllers/paystackController');
 const express = require('express');
-const {ensureAuthenticated} = require('../middlewares/authMiddleware')
+const {authenticate} = require('../middlewares/authMiddleware');
 
 const checkoutRoute = express.Router();
 
@@ -60,7 +60,7 @@ const checkoutRoute = express.Router();
  *                   example: "Error initializing payment transaction"
  */
 
-checkoutRoute.post('/initialize/:orderId',  CreateCheckoutHandler);
+checkoutRoute.post('/initialize/:orderId', authenticate,  CreateCheckoutHandler);
 
 /**
  * @swagger
@@ -118,6 +118,6 @@ checkoutRoute.post('/initialize/:orderId',  CreateCheckoutHandler);
  *                   example: "Error verifying payment transaction"
  */
 
-checkoutRoute.get('/verify', verifyCheckoutHandler);
+checkoutRoute.get('/verify', authenticate, verifyCheckoutHandler);
 
 module.exports = checkoutRoute

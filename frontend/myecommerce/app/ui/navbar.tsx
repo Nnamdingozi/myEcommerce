@@ -111,7 +111,7 @@ interface NavBarProps {
 }
 
 const Navbar: React.FC<NavBarProps> = ({ count }) => {
-  const { user, logout } = useUser();
+  const { user, logout, token } = useUser();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -159,7 +159,7 @@ const Navbar: React.FC<NavBarProps> = ({ count }) => {
           <div className='flex items-center space-x-4'>
             <UserIcon className='h-6 w-6 text-red-800' />
             <span className='text-sm hidden md:inline'>
-              {user && user.username ? (
+              {token && user && user.username ? (
                 <>
                   Welcome, {user.username}{' '}
                   <button
@@ -208,7 +208,7 @@ const Navbar: React.FC<NavBarProps> = ({ count }) => {
             <div className='flex items-center space-x-2'>
               <UserIcon className='h-6 w-6 text-red-800' />
               <span className='text-sm'>
-                {user && user.username ? (
+                {token && user && user.username ? (
                   <>
                     Hello, {user.username}{' '}
                     <button

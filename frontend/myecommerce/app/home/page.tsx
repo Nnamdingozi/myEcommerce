@@ -23,7 +23,7 @@ export default  function Home() {
 const [ categoryData, setCategoryData] = useState<Category[] | null>(null)
 
    const router = useRouter();
-const { addToCart, getUserCart} = useCart();
+const { addToCart, getUserCart, cart} = useCart();
 const {token} = useUser();
    
  useEffect(() => {
@@ -89,7 +89,9 @@ const {token} = useUser();
  <Products 
  products={products} 
  addToCart = {addToCart}
- getUserCart={getUserCart}/>
+ getUserCart={getUserCart}
+ cart={cart}
+ />
     </div>
     </div>   
     
