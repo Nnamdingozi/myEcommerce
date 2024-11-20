@@ -1,11 +1,13 @@
 
-import { createOrder, fetchUserOrder, fetchOrderById, initializePaystack } from "../data";
-import { Order, Paystack } from '@/app/lib/definition'
+import { createOrder, fetchUserOrder, fetchOrderById, initializePaystack, verifyPaystack } from '@/app/lib/data'
+import { Order, Paystack, VerifyTransactionResponse } from '@/app/lib/definition'
 
 interface NewOrder {
    id: number;
    payment_method: string
-}
+};
+
+
 
 
 
@@ -100,12 +102,12 @@ return null
 };
 
 
-const createPaystackHook = async ( token: string, orderId: number) => {
+const createPaystackHook = async (orderId: number) => {
    console.log('orderID in orderContext;', orderId)
    setIsLoading(true);
    setError(null)
    try {
-      const initializePay: Paystack | null = await initializePaystack(token, orderId);
+      const initializePay: Paystack | null = await initializePaystack(orderId);
       console.log('id passed to initialize pay in createPaystackHoo:', orderId)
       console.log('data after initialze pay in order hook:', initializePay)
       return initializePay;
@@ -119,5 +121,37 @@ const createPaystackHook = async ( token: string, orderId: number) => {
 
    return null
 };
-return { createNewOrderHook, getUserOrderHook, getUserOrderByIdHook, createPaystackHook};
+
+
+const verifyPaystackHook = async (reference: string): Promise<VerifyTransactionResponse | null> => {
+   console.log('transaction reference received in verifypaystackhook:', reference)
+   setIsLoading(true);
+   setError(null)
+   try {
+      const verifyPay = await verifyPaystack(reference);
+      if(verifyPay) {
+         console.log('reference data after verifypaystack in order hook:', verifyPay)
+         return verifyPay;
+      }
+   
+     
+   } catch (error: any) {
+      console.error('Error initializing Paystack:', error);
+      setError(error.message || 'An error occurred while initializing payment.');
+
+   } finally {
+      setIsLoading(false);
    }
+
+   return null
+};
+
+
+
+
+return { createNewOrderHook, getUserOrderHook, getUserOrderByIdHook, createPaystackHook, verifyPaystackHook};
+   };
+
+
+
+   

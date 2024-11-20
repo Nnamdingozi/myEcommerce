@@ -86,7 +86,7 @@ const {authenticate} = require('../middlewares/authMiddleware');
  *                   type: string
  *                   description: Error message
  */
-orderRoute.post('/',authenticate, createOrderHandler);
+orderRoute.post('/', authenticate, createOrderHandler);
 
 /**
  * @swagger
@@ -162,7 +162,7 @@ orderRoute.post('/',authenticate, createOrderHandler);
  *                 message:
  *                   type: string
  */
-orderRoute.get('/',authenticate, getAllOrderHandler);
+orderRoute.get('/', authenticate, getAllOrderHandler);
 
 /**
  * @swagger

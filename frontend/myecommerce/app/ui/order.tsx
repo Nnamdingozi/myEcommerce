@@ -3,20 +3,40 @@
 import React, { useEffect, useState } from 'react';
 import { useOrderContext } from '../context/orderContext';
 import { useRouter } from 'next/navigation';
-// import { Order } from '../lib/definition';
-import { useUser } from '../context/userContext';
 import { useCart } from '../context/cartContext';
 
 const OrderForm: React.FC = () => {
-  const { order, isLoading, error, successMessage, createNewOrder, userOrder, getUserOrderById, setError, createPaystack,  handleCloseOrderDetails, showOrderDetails, setShowOrderDetails, setSuccessMessage,setIsLoading } = useOrderContext();
+  const { order,
+    isLoading,
+    error,
+    successMessage,
+    createNewOrder,
+    userOrder,
+    getUserOrderById,
+    setError,
+    createPaystack,
+    handleCloseOrderDetails,
+    showOrderDetails,
+    setShowOrderDetails,
+    setSuccessMessage, 
+    setIsLoading,
+    verifyPayment
+  } = useOrderContext();
   const router = useRouter();
+  // const searchParams = useSearchParams();
+
 
   const [paymentMtd, setPaymentMtd] = useState('');
   const [shippingAddy, setShippingAddy] = useState('');
   const [shippingMtd, setShippingMtd] = useState('');
   const [curr, setCurr] = useState('');
-  const { token } = useUser();
-  const {setCart} = useCart();
+
+  const { setCart } = useCart();
+
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+  // searches for the paystack url
+  const searchParams = new URLSearchParams(window.location.search);
 
 
 
@@ -34,36 +54,36 @@ const OrderForm: React.FC = () => {
     setIsLoading(true)
 
     try {
-      const result = await createNewOrder(token!, paymentMtd, shippingAddy, shippingMtd, curr);
-     console.log('value of result in handlesubmit:', result)
+      const result = await createNewOrder(paymentMtd, shippingAddy, shippingMtd, curr);
+      console.log('value of result in handlesubmit:', result)
       if (!result) throw new Error('Order creation failed');
 
       const { orderId } = result;
-     console.log(' orderId in handle submit:', orderId)
-       const currentOrder = await getUserOrderById(token!, orderId);
-       console.log('currentOrder value in handle submit:', currentOrder)
-     
+      console.log(' orderId in handle submit:', orderId)
+      const currentOrder = await getUserOrderById( orderId);
+      console.log('currentOrder value in handle submit:', currentOrder)
+
 
       if (currentOrder && currentOrder.id !== undefined) {
         console.log('currentOrder.payment method:', currentOrder.payment_method)
         console.log('currentOrder id:', currentOrder.id)
-        // setCart([]);
+
         if (currentOrder.payment_method === 'Cash') {
           resetFormFields();
-         
+
         } else {
           console.log('redirecting to paystack');
-       const getUrl = await  createPaystack(token!, currentOrder.id);
-       console. log('data from initialize paystack in handleSubmit:', getUrl)
-        if(getUrl) {
-          const {authorization_url} = getUrl;
-          window.location.href = authorization_url
-        } else {
-          throw new Error('authorization url not found')
+          const getUrl = await createPaystack(currentOrder.id);
+          console.log('data from initialize paystack in handleSubmit:', getUrl)
+          if (getUrl) {
+            const { authorization_url } = getUrl;
+            window.location.href = authorization_url
+          } else {
+            throw new Error('authorization url not found')
+          }
         }
-        }
-      
-       
+
+
       }
     }
     catch (error) {
@@ -74,6 +94,40 @@ const OrderForm: React.FC = () => {
     }
   };
 
+  // useEffect(() => {
+
+  //   if (transactionReference && token) {
+  //     verifyPaymentStatus(token, transactionReference);
+  //   }
+  // }, [searchParams, token]);
+
+  // const verifyPaymentStatus = async (token: string, transactionReference: string) => {
+  //   setIsVerifying(true);
+  //   setMessage('');
+  //   setError(null);
+  //   try {
+  //     const paymentStatus = await verifyPayment(token!, transactionReference);
+  //     const status = paymentStatus?.data.status;
+
+  //     if (status === 'success') {
+  //       setSuccessMessage('Your payment was successful!');
+  //       setMessage('Payment successful! Thank you for your order.');
+  //     } else {
+  //       setError('Unable to process the transaction. Please try again.');
+  //       setMessage('Unable to process the transaction. Please try again.');
+  //     }
+  //   } catch (error: any) {
+  //     console.error('Error verifying transaction:', error);
+  //     setError(
+  //       error.response?.data?.error || 'An error occurred while verifying the transaction.'
+  //     );
+  //     setMessage('An error occurred. Please try again later.');
+  //   } finally {
+  //     setIsVerifying(false);
+  //   }
+  // };
+
+
   const handleClosure = () => {
     handleCloseOrderDetails()
     setShowOrderDetails(false);
@@ -81,6 +135,8 @@ const OrderForm: React.FC = () => {
     router.push('/');
   };
 
+  
+  
   return (
     <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
       <h2 className="text-2xl font-semibold mb-6 text-gray-800">Create New Order</h2>
@@ -96,7 +152,7 @@ const OrderForm: React.FC = () => {
             required
           />
         </div>
-
+  
         <div className="mb-4">
           <label htmlFor="shippingMtd" className="block text-gray-700 font-medium mb-2">Shipping Method:</label>
           <input
@@ -108,7 +164,7 @@ const OrderForm: React.FC = () => {
             required
           />
         </div>
-
+  
         <div className="mb-6">
           <label htmlFor="curr" className="block text-gray-700 font-medium mb-2">Currency:</label>
           <select
@@ -123,7 +179,7 @@ const OrderForm: React.FC = () => {
             <option value="NGN">NGN</option>
           </select>
         </div>
-
+  
         <div className="mb-4">
           <label htmlFor="paymentMtd" className="block text-gray-700 font-medium mb-2">Payment Method:</label>
           <select
@@ -138,7 +194,7 @@ const OrderForm: React.FC = () => {
             <option value="Cash">Cash</option>
           </select>
         </div>
-
+  
         <button
           type="submit"
           className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
@@ -148,33 +204,137 @@ const OrderForm: React.FC = () => {
         </button>
       </form>
       {error && <p className="mt-4 text-red-600">Error: {error}</p>}
-
-      {/* display when order is successfull */}
-
-      {showOrderDetails  && isOrderValid && (
+  
+      {/* Display Order Details on Success */}
+      {showOrderDetails && order && isOrderValid && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto">
             <h3 className="text-xl font-semibold mb-4">Order Details</h3>
             {successMessage && <p className="text-green-600 mb-4">{successMessage}</p>}
-            <p><strong>Order ID:</strong> {order!.id}</p>
-            <p><strong>Created on:</strong> {order!.order_date ? new Date(order!.order_date).toLocaleDateString() : 'N/A'}</p>
-            <p><strong>Payment Method:</strong> {order!.payment_method}</p>
-            <p><strong>Shipping Address:</strong> {order!.shipping_address}</p>
-            <p><strong>Shipping Method:</strong> {order!.shipping_method}</p>
-            <p><strong>Currency:</strong> {order!.currency}{order!.total_amount}</p>
-
+            <p><strong>Order ID:</strong> {order.id}</p>
+            <p><strong>Created on:</strong> {order.order_date ? new Date(order.order_date).toLocaleDateString() : 'N/A'}</p>
+            <p><strong>Payment Method:</strong> {order.payment_method}</p>
+            <p><strong>Shipping Address:</strong> {order.shipping_address}</p>
+            <p><strong>Shipping Method:</strong> {order.shipping_method}</p>
+            <p><strong>Currency:</strong> {order.currency} {order.total_amount}</p>
+  
             <button
               onClick={handleClosure}
               className="mt-4 w-full bg-green-400 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
             >
-              {order!.payment_method === 'Cash'? 'continue shopping' : 'Redirecting to paystack'}
+              {order.payment_method === 'Cash' ? 'Continue Shopping' : 'Redirecting to Paystack'}
             </button>
           </div>
         </div>
       )}
+
+      {
+        isLoading && <p>Redirecting to paystack...</p>
+      }
+  
     </div>
   );
+  
+
+
 };
 
 export default OrderForm;
 
+// return (
+  //   <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
+  //     <h2 className="text-2xl font-semibold mb-6 text-gray-800">Create New Order</h2>
+  //     <form onSubmit={handleSubmit}>
+  //       <div className="mb-4">
+  //         <label htmlFor="shippingAddy" className="block text-gray-700 font-medium mb-2">Shipping Address:</label>
+  //         <input
+  //           id="shippingAddy"
+  //           type="text"
+  //           value={shippingAddy}
+  //           onChange={(e) => setShippingAddy(e.target.value)}
+  //           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600"
+  //           required
+  //         />
+  //       </div>
+
+  //       <div className="mb-4">
+  //         <label htmlFor="shippingMtd" className="block text-gray-700 font-medium mb-2">Shipping Method:</label>
+  //         <input
+  //           id="shippingMtd"
+  //           type="text"
+  //           value={shippingMtd}
+  //           onChange={(e) => setShippingMtd(e.target.value)}
+  //           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600"
+  //           required
+  //         />
+  //       </div>
+
+  //       <div className="mb-6">
+  //         <label htmlFor="curr" className="block text-gray-700 font-medium mb-2">Currency:</label>
+  //         <select
+  //           id="curr"
+  //           value={curr}
+  //           onChange={(e) => setCurr(e.target.value)}
+  //           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600"
+  //           required
+  //         >
+  //           <option value="" disabled>Select Preferred Currency</option>
+  //           <option value="USD">USD</option>
+  //           <option value="NGN">NGN</option>
+  //         </select>
+  //       </div>
+
+  //       <div className="mb-4">
+  //         <label htmlFor="paymentMtd" className="block text-gray-700 font-medium mb-2">Payment Method:</label>
+  //         <select
+  //           id="paymentMtd"
+  //           value={paymentMtd}
+  //           onChange={(e) => setPaymentMtd(e.target.value)}
+  //           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600"
+  //           required
+  //         >
+  //           <option value="" disabled>Select a payment method</option>
+  //           <option value="Card">Card</option>
+  //           <option value="Cash">Cash</option>
+  //         </select>
+  //       </div>
+
+  //       <button
+  //         type="submit"
+  //         className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+  //         disabled={isLoading}
+  //       >
+  //         {isLoading ? 'Processing...' : 'Create Order'}
+  //       </button>
+  //     </form>
+  //     {error && <p className="mt-4 text-red-600">Error: {error}</p>}
+
+  //     {/* display when order is successfull */}
+
+  //     {showOrderDetails && isOrderValid && (
+  //       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+  //         <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto">
+  //           <h3 className="text-xl font-semibold mb-4">Order Details</h3>
+  //           {successMessage && <p className="text-green-600 mb-4">{successMessage}</p>}
+  //           <p><strong>Order ID:</strong> {order!.id}</p>
+  //           <p><strong>Created on:</strong> {order!.order_date ? new Date(order!.order_date).toLocaleDateString() : 'N/A'}</p>
+  //           <p><strong>Payment Method:</strong> {order!.payment_method}</p>
+  //           <p><strong>Shipping Address:</strong> {order!.shipping_address}</p>
+  //           <p><strong>Shipping Method:</strong> {order!.shipping_method}</p>
+  //           <p><strong>Currency:</strong> {order!.currency}{order!.total_amount}</p>
+
+  //           <button
+  //             onClick={handleClosure}
+  //             className="mt-4 w-full bg-green-400 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+  //           >
+  //             {order!.payment_method === 'Cash' ? 'continue shopping' : 'Redirecting to paystack'}
+  //           </button>
+  //         </div>
+  //       </div>
+  //     )}
+
+
+
+      
+  //   </div>
+  // );

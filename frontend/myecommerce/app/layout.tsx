@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { UserProvider } from '@/app/context/userContext';
 import { CartProvider } from "@/app/context/cartContext";
+import { ProductProvider } from "@/app/context/productContext";
 import NavBarWrapper from "@/app/context/navbarWrapper";
 import Footer from '@/app/ui/footer'
 import { OrderProvider } from "./context/orderContext";
@@ -27,7 +28,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
 
     <html lang="en">
       <body className={inter.className}  >
-
+<ProductProvider>
         <UserProvider>
           <CartProvider>
             <OrderProvider>
@@ -38,7 +39,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             </OrderProvider>
             </CartProvider>
         </UserProvider>
-
+        </ProductProvider>
       </body>
     </html>
 

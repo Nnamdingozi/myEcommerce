@@ -227,32 +227,31 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [cartSubTotal, setCartSubTotal] = useState<number>(0);
   const [count, setCount] = useState<number>(0);
 
-  const { getUserCart, addToCart, removeItemFromCart, newQuantity } = cartHookLogic({ setCart, setLoading, setError, cart });
+  const { getUserCart, addToCart, removeItemFromCart, newQuantity } = cartHookLogic({ setCart, setLoading, setError});
   const { user, token } = useUser(); // Getting savedToken from useUser context
-
+  
   useEffect(() => {
-    const fetchUserCart = async (): Promise<NewCart[] | []> => {
-     
-
-      if (token) {
-        setLoading(true);
-        try {
-        
-          const userCart = await getUserCart(token); // Make the API call using the saved token
-          if (userCart) {
-            setCart(userCart);
-          }
-        } catch (err: any) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
-        }
+    const fetchUserCart = async (): Promise<NewCart[] | undefined> => {
+      if (!token) {
+        console.warn('No token provided. Skipping cart fetch.');
+        setCart([]); // Clear cart if no user is logged in
+        return;
       }
-      return [];
+  
+      setLoading(true);
+      try {
+        const userCart = await getUserCart(token); // Fetch cart from API
+        setCart(userCart || []); // Set cart to fetched data or an empty array
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     };
-
+  
     fetchUserCart();
-  }, [token]); // Only run when savedToken changes
+  }, [token]); // Only fetch when token changes
+  
 
   const calculateCartSubTotal = (cart: NewCart[]) => {
     return cart.reduce((sum, item) => {

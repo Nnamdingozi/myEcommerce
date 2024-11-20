@@ -60,7 +60,7 @@ const checkoutRoute = express.Router();
  *                   example: "Error initializing payment transaction"
  */
 
-checkoutRoute.post('/initialize/:orderId', authenticate,  CreateCheckoutHandler);
+checkoutRoute.post('/initialize/:orderId', CreateCheckoutHandler);
 
 /**
  * @swagger
@@ -118,6 +118,6 @@ checkoutRoute.post('/initialize/:orderId', authenticate,  CreateCheckoutHandler)
  *                   example: "Error verifying payment transaction"
  */
 
-checkoutRoute.get('/verify', authenticate, verifyCheckoutHandler);
+checkoutRoute.get('/verify', verifyCheckoutHandler);
 
 module.exports = checkoutRoute
