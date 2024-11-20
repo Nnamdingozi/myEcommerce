@@ -81,7 +81,7 @@
 
 import UserLogin from '@/app/ui/userLogin';
 import { LoginRequest, LoginStatus } from '@/app/lib/definition';
-import { userLoggin, userProfile } from '@/app/lib/data';
+import { userLogin, userProfile } from '@/app/lib/data';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useUser } from '@/app/context/userContext';
@@ -96,7 +96,7 @@ const UserLoginForm: React.FC = () => {
   
     const handleLogin = async (user: LoginRequest): Promise<void> => {
       try {
-        const response = await userLoggin(user);
+        const response = await userLogin(user);
   
         if (response) {
           const { token } = response;

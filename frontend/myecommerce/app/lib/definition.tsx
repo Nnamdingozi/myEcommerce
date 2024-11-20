@@ -108,6 +108,18 @@ export type Product = {
 
   };
 
+
+  export type VerifyTransactionResponse = {
+    status: string;
+    data: {
+      status: string; 
+      reference: string;
+      amount: number;
+      currency: string;
+      [key: string]: any; 
+    };
+  }
+
   export type UserProfile = {
     id: number
     username: string
