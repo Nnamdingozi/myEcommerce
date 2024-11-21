@@ -197,29 +197,26 @@ const initializeTransaction = async (orderId) => {
 //  * @param {string} reference - The transaction reference from Paystack.
 //  * @returns {Promise<Object>} The Paystack verification response data.
 //  */
-const verifyTransaction = async (reference) => {
+const verifyTransactionWithRetry = async (reference, retries = 5) => {
     try {
-        console.log(`Verifying transaction with reference: ${reference}`);
-
-        // Send verification request to Paystack
-        const response = await axios.get(`${baseUrl}/transaction/verify/${reference}`, {
-            headers: {
-                Authorization: `Bearer ${secretKey}`,
-            },
-        });
-
-        console.log('Paystack verification response:', response.data);
-
-        // Return response data
-        return response.data;
-    } catch (err) {
-        console.error('Error verifying Paystack transaction:', err.message);
-        // Provide more detailed error information
-        throw new Error(err.response ? err.response.data.message : err.message);
+      const response = await axios.get(`https://api.paystack.co/transaction/verify/${reference}`, {
+        headers: { Authorization: `Bearer ${secretKey}` }
+      });
+      console.log('Verification response:', response.data);
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 429 && retries > 0) {
+        const retryAfter = error.response.headers['x-ratelimit-reset'] * 1000;  // Get the retry time in milliseconds
+        console.error(`Rate limit exceeded. Retrying in ${retryAfter}ms...`);
+        await new Promise(resolve => setTimeout(resolve, retryAfter));  // Wait before retrying
+        return verifyTransactionWithRetry(reference, retries - 1);  // Retry the request
+      }
+      console.error('Error verifying transaction:', error.message);
+      return null;
     }
-};
-
+  };
+  
 module.exports = {
     initializeTransaction,
-    verifyTransaction,
+    verifyTransactionWithRetry,
 };

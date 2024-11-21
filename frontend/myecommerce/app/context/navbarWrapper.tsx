@@ -6,7 +6,7 @@ import { useCart} from '@/app/context/cartContext';
 const NavBarWrapper: React.FC = ()=> {
 const { count } = useCart();
 const [isHydrated, setIsHydrated] = useState<boolean>(false);
-// const [cartCount, setCartCount] = useState<number>(count);
+
 
 
 useEffect(() => {

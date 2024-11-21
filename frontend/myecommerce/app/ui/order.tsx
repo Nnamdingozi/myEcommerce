@@ -94,40 +94,7 @@ const OrderForm: React.FC = () => {
     }
   };
 
-  // useEffect(() => {
-
-  //   if (transactionReference && token) {
-  //     verifyPaymentStatus(token, transactionReference);
-  //   }
-  // }, [searchParams, token]);
-
-  // const verifyPaymentStatus = async (token: string, transactionReference: string) => {
-  //   setIsVerifying(true);
-  //   setMessage('');
-  //   setError(null);
-  //   try {
-  //     const paymentStatus = await verifyPayment(token!, transactionReference);
-  //     const status = paymentStatus?.data.status;
-
-  //     if (status === 'success') {
-  //       setSuccessMessage('Your payment was successful!');
-  //       setMessage('Payment successful! Thank you for your order.');
-  //     } else {
-  //       setError('Unable to process the transaction. Please try again.');
-  //       setMessage('Unable to process the transaction. Please try again.');
-  //     }
-  //   } catch (error: any) {
-  //     console.error('Error verifying transaction:', error);
-  //     setError(
-  //       error.response?.data?.error || 'An error occurred while verifying the transaction.'
-  //     );
-  //     setMessage('An error occurred. Please try again later.');
-  //   } finally {
-  //     setIsVerifying(false);
-  //   }
-  // };
-
-
+  
   const handleClosure = () => {
     handleCloseOrderDetails()
     setShowOrderDetails(false);
