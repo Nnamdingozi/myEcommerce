@@ -4,11 +4,11 @@ import { useOrderContext } from "../context/orderContext";
 import {useUser} from '@/app/context/userContext';
 
 export default function UserOrderDisplay () {
-const {getUserOrder, userOrder,isLoading, error } = useOrderContext();
+const {getUserOrder, userOrder, isLoading, error } = useOrderContext();
 const {token} = useUser();
 
 useEffect(()=> {
- getUserOrder(token!);
+ getUserOrder();
     console.log('user order fron getUserOrder useEffect:', userOrder)
 }, []);
 

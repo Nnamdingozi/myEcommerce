@@ -49,11 +49,11 @@ export type Product = {
 
   // };
   export type  ProductDetails = {
-    id: number;          // Product ID
-    name: string;        // Product name
-    price: number;       // Product price
-    description: string; // Product description
-    image_url: string;   // URL for the product image
+    id: number;         
+    name: string;        
+    price: number;       
+    description: string; 
+    image_url: string;   
   };
   export type NewCart = {
     id?: number;

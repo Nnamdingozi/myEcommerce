@@ -118,6 +118,6 @@ checkoutRoute.post('/initialize/:orderId', CreateCheckoutHandler);
  *                   example: "Error verifying payment transaction"
  */
 
-checkoutRoute.get('/verify', verifyCheckoutHandler);
+checkoutRoute.get('/verify/:reference', verifyCheckoutHandler);
 
 module.exports = checkoutRoute

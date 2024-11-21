@@ -15,7 +15,7 @@ export default function Home() {
   const { products, loading, error } = useProduct(); // Using ProductProvider context
   const [categoryData, setCategoryData] = useState<Category[] | null>(null);
 
-  const { addToCart, getUserCart, cart } = useCart();
+  const { addToCart, cart } = useCart();
 
   // Fetch categories
   useEffect(() => {
@@ -51,7 +51,6 @@ export default function Home() {
         <Products 
           products={products} 
           addToCart={addToCart} 
-          getUserCart={getUserCart} 
           cart={cart} 
         />
       </div>
