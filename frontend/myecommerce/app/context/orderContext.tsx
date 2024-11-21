@@ -293,7 +293,7 @@
 //     const [isVerifying, setIsVerifying] = useState(false);
 
 //     const { createNewOrderHook, getUserOrderHook, getUserOrderByIdHook, createPaystackHook, verifyPaystackHook } = orderHookLogic(
-     
+
 //     );
 
 //     // Memoize createNewOrder to prevent unnecessary token fetch
@@ -749,7 +749,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const [isVerifying, setIsVerifying] = useState(false);
 
     const { createNewOrderHook, getUserOrderHook, getUserOrderByIdHook, createPaystackHook, verifyPaystackHook } = orderHookLogic(
-     
+
     );
 
     // Memoize createNewOrder to prevent unnecessary token fetch
@@ -791,8 +791,10 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             setError(null);
 
             try {
-                const userOrders = await getUserOrderHook(token); // Use token directly here
-                return userOrders;
+                const order = await getUserOrderHook(token); // Use token directly here
+
+                setUserOrder(order);
+
             } catch (error) {
                 setError(error instanceof Error ? error.message : 'An error occurred while fetching user orders');
                 return null;
@@ -814,8 +816,8 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             setError(null);
 
             try {
-                const userOrder = await getUserOrderByIdHook(token, orderId); // Use token directly here
-                return userOrder;
+                const order = await getUserOrderByIdHook(token, orderId); // Use token directly here
+              return order
             } catch (error) {
                 setError(error instanceof Error ? error.message : 'An error occurred while fetching the order details');
                 return null;
