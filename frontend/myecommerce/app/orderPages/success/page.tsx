@@ -93,7 +93,7 @@ const SuccessPage = () => {
       <div className="mt-4">
         <button
           className="bg-green-500 text-white px-4 py-2 rounded mr-2"
-          onClick={() => handleRedirect('/orderPages/[id]')} // Redirect to order page on click
+          onClick={() => handleRedirect('/orderPages/orderDisplay')} // Redirect to order page on click
         >
           View Your Order
         </button>

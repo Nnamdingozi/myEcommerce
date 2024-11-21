@@ -21,7 +21,7 @@ export const MyCart: React.FC<MyCartProps> = ({ cart, newQuantity, removeItemFro
     const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
     const handleClick = () => {
-        router.push('/orderPages/[id]');
+        router.push('/orderPages/orderDisplay');
     };
 
     return (
