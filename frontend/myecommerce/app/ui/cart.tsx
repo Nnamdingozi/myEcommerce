@@ -26,10 +26,6 @@ export const MyCart: React.FC<MyCartProps> = ({ cart, newQuantity, removeItemFro
     };
 
 
-    const handleOrderSuccess = () => {
-        setIsCheckout(false); // Hide the order form after order is created successfully
-        setOrderSuccess(true); // Track order success
-      }
 
     return (
         <div className='flex flex-col mt-14 text-rose-800 relative px-4 md:px-10 h-auto'>
