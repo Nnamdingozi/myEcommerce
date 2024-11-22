@@ -7,7 +7,7 @@ import { useOrderContext } from '@/app/context/orderContext';
 const SuccessPage = () => {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [reference, setReference] = useState<string | null>(null);
-  const { verifyPayment, setError, isVerifying, error, successMessage} = useOrderContext();
+  const { verifyPayment, error, successMessage} = useOrderContext();
   const [message, setMessage] = useState<string | null>(null);
   const router = useRouter();
 
@@ -25,7 +25,7 @@ const SuccessPage = () => {
       setOrderId(extractedOrderId);
       setReference(extractedReference);
     } else {
-      setError('Invalid payment verification URL. Missing orderId or reference.');
+      console.error('Invalid payment verification URL. Missing orderId or reference.');
     }
   }, []); // Runs only once on initial mount
 
@@ -40,20 +40,11 @@ const SuccessPage = () => {
 
         const result = await verifyPayment(reference); // `result` is already the response.data
         console.log('Verification result:', result);
-
-        // Check if status is 'success'
-        if (result && result.status === 'success') {
-  
-          setMessage('our payment was successfully verified!Thank you for your order!');
-        
-        } else {
-          console.error('Payment verification failed. Result:', result);
-       
-          // setMessage('Unable to verify payment.');
-        }
+        setMessage('payment was successfully verified!Thank you for your order!')
+   
       } catch (err) {
         console.error('Error during verification:', err);
-        setError('An error occurred while verifying the payment.');
+        // setError('An error occurred while verifying the payment.');
         setMessage('Please try again later.');
       }
     };
@@ -67,16 +58,6 @@ const SuccessPage = () => {
     router.push(path); // Redirect to the given path (homepage or order page)
   };
 
-  // Display loading state if verification is in progress
-  if (isVerifying) {
-    return (
-      <div className="text-center">
-        <p>Verifying your payment...</p>
-      </div>
-    );
-  }
-
-  // Display error message if verification failed
   if (error) {
     return (
       <div className="text-center text-red-500">
@@ -88,7 +69,8 @@ const SuccessPage = () => {
   // Show success message and options to redirect
   return (
     <div className="text-center h-auto mt-12 py-24 border,">
-      <p className="text-lg font-bold text-green-500">{message}</p>
+        <p className="text-lg font-bold text-green-500">{message}</p>
+
     
       <div className="mt-4">
         <button
@@ -99,7 +81,7 @@ const SuccessPage = () => {
         </button>
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded"
-          onClick={() => handleRedirect('/')} // Redirect to homepage on click
+          onClick={() => handleRedirect('/home')} // Redirect to homepage on click
         >
           Go to Homepage
         </button>

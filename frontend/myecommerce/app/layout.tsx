@@ -6,7 +6,7 @@ import { CartProvider } from "@/app/context/cartContext";
 import { ProductProvider } from "@/app/context/productContext";
 import NavBarWrapper from "@/app/context/navbarWrapper";
 import Footer from '@/app/ui/footer'
-import { OrderProvider } from "./context/orderContext";
+import { OrderProvider } from '@/app/context/orderContext';
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -23,22 +23,22 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
 
- 
+
   return (
 
     <html lang="en">
       <body className={inter.className}  >
-<ProductProvider>
-        <UserProvider>
-          <CartProvider>
-            <OrderProvider>
-            
-          <NavBarWrapper />
-            <main className="h-auto bg-gray-100">{children}</main>
-            <Footer />
-            </OrderProvider>
+        <ProductProvider>
+          <UserProvider>
+            <CartProvider>
+              <OrderProvider>
+
+                <NavBarWrapper />
+                <main className="h-auto bg-gray-100">{children}</main>
+                <Footer />
+              </OrderProvider>
             </CartProvider>
-        </UserProvider>
+          </UserProvider>
         </ProductProvider>
       </body>
     </html>
