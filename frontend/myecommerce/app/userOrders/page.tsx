@@ -1,13 +1,13 @@
-import { OrderProvider } from "../context/orderContext";
-import OrderDisplay from "../ui/orderDisplay";
+// import { OrderProvider } from "../context/orderContext";
+// import OrderDisplay from "../ui/orderDisplay";
 
-const OrderDisplayPage = () => {
-    return (
-        <OrderProvider>
-        <OrderDisplay />
-        </OrderProvider>
+// const OrderDisplayPage = () => {
+//     return (
+       
+//         <OrderDisplay />
+      
         
-    )
-}
+//     )
+// }
 
-export default OrderDisplayPage;
+// export default OrderDisplayPage;

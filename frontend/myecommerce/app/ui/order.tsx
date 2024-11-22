@@ -4,7 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { useOrderContext } from '../context/orderContext';
 import { useRouter } from 'next/navigation';
 import { useCart } from '../context/cartContext';
+import{useUser} from '@/app/context/userContext'
 
+// interface OrderFormProps {
+//   onOrderSuccess: () => void; // Callback to handle success
+// }
 const OrderForm: React.FC = () => {
   const { order,
     isLoading,
@@ -13,14 +17,9 @@ const OrderForm: React.FC = () => {
     createNewOrder,
     userOrder,
     getUserOrderById,
-    setError,
     createPaystack,
-    handleCloseOrderDetails,
-    showOrderDetails,
-    setShowOrderDetails,
-    setSuccessMessage, 
-    setIsLoading,
-    verifyPayment
+
+    
   } = useOrderContext();
   const router = useRouter();
   // const searchParams = useSearchParams();
@@ -29,9 +28,11 @@ const OrderForm: React.FC = () => {
   const [paymentMtd, setPaymentMtd] = useState('');
   const [shippingAddy, setShippingAddy] = useState('');
   const [shippingMtd, setShippingMtd] = useState('');
+  const [showOrderDetails, setShowOrderDetails] = useState(false)
   const [curr, setCurr] = useState('');
 
   const { setCart } = useCart();
+  const {token} = useUser();
 
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -50,29 +51,31 @@ const OrderForm: React.FC = () => {
   const isOrderValid = order !== null && order !== undefined;
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSuccessMessage('');
-    setIsLoading(true)
-
+    
     try {
-      const result = await createNewOrder(paymentMtd, shippingAddy, shippingMtd, curr);
+      const result = await createNewOrder(token!, paymentMtd, shippingAddy, shippingMtd, curr);
       console.log('value of result in handlesubmit:', result)
       if (!result) throw new Error('Order creation failed');
 
       const { orderId } = result;
       console.log(' orderId in handle submit:', orderId)
-      const currentOrder = await getUserOrderById( orderId);
+      const currentOrder = await getUserOrderById(token!, orderId);
       console.log('currentOrder value in handle submit:', currentOrder)
 
 
       if (currentOrder && currentOrder.id !== undefined) {
         console.log('currentOrder.payment method:', currentOrder.payment_method)
-        console.log('currentOrder id:', currentOrder.id)
+        console.log('currentOrder id:', currentOrder.id);
+    
+      
 
         if (currentOrder.payment_method === 'Cash') {
           resetFormFields();
+          setShowOrderDetails(true);
 
         } else {
           console.log('redirecting to paystack');
+          setShowOrderDetails(false);
           const getUrl = await createPaystack(currentOrder.id);
           console.log('data from initialize paystack in handleSubmit:', getUrl)
           if (getUrl) {
@@ -88,18 +91,25 @@ const OrderForm: React.FC = () => {
     }
     catch (error) {
       console.error('Error creating order:', error);
-      setSuccessMessage('');
-    } finally {
-      setIsLoading(false)
     }
   };
 
+
+
+
+  const handleCloseOrderDetails = () => {
+    setShowOrderDetails(false);
+    router.push('/')
+}
+
+
   
   const handleClosure = () => {
+    resetFormFields();
     handleCloseOrderDetails()
-    setShowOrderDetails(false);
+    // setShowOrderDetails(false);
     setCart([])
-    router.push('/');
+    // router.push('/');
   };
 
   
