@@ -18,9 +18,15 @@ const ContactPage = () => {
         <p className="text-gray-700 text-lg font-bold pl-3">08101408378</p>
       </div>
       <div className="flex items-center gap-2 mb-4 justify-start ml-4">
-        <TfiEmail className="h-5 w-5 text-blue-600" />
-        <p className="text-gray-700 text-lg font-bold pl-3 ml-4">ngozika1105@gmail.com</p>
-      </div>
+  <TfiEmail className="h-5 w-5 text-blue-600" />
+  <Link
+    href="mailto:ngozika1105@gmail.com?subject=Hello&body=I would like to connect with you."
+    className="text-blue-600 hover:underline text-lg font-bold pl-3"
+  >
+    ngozika1105@gmail.com
+  </Link>
+</div>
+      
       <div className="flex items-center gap-2 mb-4 justify-start ml-4">
         <FaGithub className="h-5 w-5 text-gray-700" />
         <Link
