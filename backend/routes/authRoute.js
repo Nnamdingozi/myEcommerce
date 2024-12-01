@@ -4,6 +4,7 @@ const express = require('express');
 const authRouter = express.Router();
 const authController = require('../controllers/authController'); 
 const passport = require('../database/config/passport');
+const { validateLogin, validateRegistration } = require('../middlewares/validationMiddleware');
 
 
 
@@ -39,7 +40,7 @@ const passport = require('../database/config/passport');
  *       500:
  *         description: Internal server error
  */
-authRouter.post('/register', authController.register);
+authRouter.post('/register', validateRegistration, authController.register);
 /**
  * @swagger
  * /login:
@@ -64,7 +65,7 @@ authRouter.post('/register', authController.register);
  *       500:
  *         description: Internal Server Error
  */
-authRouter.post('/login', authController.login);
+authRouter.post('/login', validateLogin, authController.login);
 
 /**
  * @swagger
