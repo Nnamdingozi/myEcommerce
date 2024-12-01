@@ -53,7 +53,7 @@ export async function registerUser(user: { username: string; email: string; phon
     console.log('Received token from backend:', response.data);
     return { token: response.data.token };
   } catch (error) {
-    console.error('Error registering user:', error);
+    // console.error('Error registering user:', error);
     throw new Error('Failed to register user');
   }
 }
