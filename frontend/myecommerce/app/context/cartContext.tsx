@@ -46,14 +46,19 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const userCart = await getUserCart(token); // Fetch cart from API
         setCart(userCart || []); // Set cart to fetched data or an empty array
       } catch (err: any) {
+        console.error('Error fetching cart items:', err.response?.data || err.message || err);
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
   
-    fetchUserCart();
-  }, [token]); // Only fetch when token changes
+    // Only call fetchUserCart if the token exists (user is logged in)
+    if (token) {
+      fetchUserCart();
+    }
+  }, [token]); // Only trigger when the token changes or is available
+  
   
 
   const calculateCartSubTotal = (cart: NewCart[]) => {

@@ -1,13 +1,9 @@
 
 'use client';
 
-
-import { createContext, useState, useContext } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { userProfile } from '../lib/data'; 
-
-
+import { userProfile } from '../lib/data';
 
 interface UserProfile {
   id: number | null;
@@ -28,55 +24,55 @@ const UserContext = createContext<UserContextProps | undefined>(undefined);
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserProfile>({ id: null, email: null, username: null });
   const [token, setToken] = useState<string | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Track authentication status
   const router = useRouter();
 
+  // Save token in localStorage and cookies
   const saveToken = (newToken: string) => {
     setToken(newToken);
     localStorage.setItem('token', newToken);
-    document.cookie = `token=${newToken}; path=/; secure; samesite=strict`;
+
+    const isSecure = process.env.NODE_ENV === 'production' ? 'secure;' : '';
+    document.cookie = `token=${newToken}; path=/; ${isSecure} samesite=strict`;
   };
 
+  // Logout function
   const logout = () => {
     setUser({ id: null, email: null, username: null });
     setToken(null);
-    setIsAuthenticated(false);
     localStorage.removeItem('token');
     document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    router.push('/'); // Redirect to homepage on logout
+    router.push('/');
   };
 
+  // Authenticate user
   const authenticateUser = async () => {
-    const savedToken = token || localStorage.getItem('token') || getCookie('token');
+    const savedToken = token || localStorage.getItem('token');
     if (savedToken) {
       try {
         const userProfileData = await userProfile(savedToken);
         if (userProfileData) {
-          setUser(userProfileData);
           setToken(savedToken);
-          setIsAuthenticated(true);
+          setUser(userProfileData);
+         
         } else {
-          logout(); // Token invalid, log the user out
+          logout();
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Authentication failed:', error);
-        logout();
+        if (error.response?.status === 401) {
+          // Token invalid
+          logout();
+        }
       }
     } else {
-      logout(); // No token found, log the user out
+      logout();
     }
   };
 
-  const getCookie = (name: string): string | null => {
-    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-    return match ? match[2] : null;
-  };
-
+  // Authenticate on mount
   useEffect(() => {
-    if (!isAuthenticated && typeof window !== 'undefined') {
-      authenticateUser().catch(console.error);
-    }
-  }, [isAuthenticated]); // Only re-run if authentication status changes
+    authenticateUser().catch(console.error);
+  }, []);
 
   return (
     <UserContext.Provider value={{ user, setUser, token, logout, saveToken }}>

@@ -148,8 +148,8 @@ const Navbar: React.FC<NavBarProps> = ({ count }) => {
                 </>
               ) : (
                 <>
-                  <Link href={'/user/register'}>Sign up</Link> /{' '}
-                  <Link href={'/user/login'}>Log In</Link>
+                  <Link href={'/user/register'} className='cursor-pointer font-bold hover:text-blue-600 shadow-sm'>Sign up</Link> /{' '}
+                  <Link href={'/user/login'} className='cursor-pointer font-bold hover:text-blue-600 shadow-sm '>Log In</Link>
                 </>
               )}
             </span>
@@ -158,9 +158,9 @@ const Navbar: React.FC<NavBarProps> = ({ count }) => {
           {/* Contact and Cart */}
           <div className="flex items-center space-x-4">
             <ChatBubbleLeftIcon className="h-6 w-6 text-red-800 cursor-pointer" />
-            <span><Link href={'/contacts'}>Contact</Link></span>
+            <span><Link href={'/contacts'} className='cursor-pointer font-bold hover:text-blue-600 shadow-sm'>Contact</Link></span>
             <div className="relative">
-              <ShoppingCartIcon className="h-6 w-9 text-red-800 cursor-pointer" onClick={handleCartClick} />
+              <ShoppingCartIcon className="h-6 w-9 text-red-800 cursor-pointer font-bold hover:text-blue-600 shadow-sm" onClick={handleCartClick} />
               {count > 0 && <span className="absolute top-3 text-black">{count}</span>}
             </div>
           </div>
