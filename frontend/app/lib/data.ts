@@ -70,6 +70,34 @@ export async function userLogin(user: { email: string; password: string }): Prom
   }
 }
 
+export async function githubLogin(): Promise<{ token: string }> {
+  try {
+    const response = await axios.get(`${backendUrl}/auth/github/callback`);
+    if (!response.data?.token) {
+      throw new Error('No token returned from GitHub login');
+    }
+    return { token: response.data.token };
+  } catch (err: any) {
+    console.error('Error during GitHub login:', err.response?.data || err.message || err);
+    throw new Error('GitHub login failed');
+  }
+}
+
+// export async function googleLogin(): Promise<{ token: string }> {
+//   try {
+//     const response = await axios.get(`${backendUrl}/auth/google/callback`);
+//     if (!response.data?.token) {
+//       throw new Error('No token returned from Google login');
+//     }
+//     return { token: response.data.token };
+//   } catch (err: any) {
+//     console.error('Error during Google login:', err.response?.data || err.message || err);
+//     throw new Error('Google login failed');
+//   }
+// }
+
+
+
 export async function userProfile(token: string): Promise<UserProfile | undefined> {
   try {
     const response = await axios.get<UserProfile>(`${backendUrl}/auth/profile`, configWithToken(token));

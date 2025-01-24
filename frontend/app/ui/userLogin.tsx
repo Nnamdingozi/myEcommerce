@@ -5,9 +5,10 @@ import { useState } from 'react';
 
 interface UserLoginProps {
   onSubmit: (userInput: LoginRequest) => Promise<{ token: string } | void>;
+  onGitHubLogin: () => Promise<{ token: string } | void>;
 }
 
-const UserLogin: React.FC<UserLoginProps> = ({ onSubmit }) => {
+const UserLogin: React.FC<UserLoginProps> = ({ onSubmit, onGitHubLogin }) => {
   const [userInput, setUserInput] = useState({ email: '', password: '' });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -75,6 +76,17 @@ const UserLogin: React.FC<UserLoginProps> = ({ onSubmit }) => {
 
         {error && <p className='text-red-600 mt-4 text-center'>{error}</p>}
       </form>
+      <div>
+      <button
+          type='button'
+          onClick={onGitHubLogin}
+          className='bg-gray-800 text-white h-8 w-32 mb-5 border-3 border-gray-800 rounded focus:bg-gray-900 focus:text-gray-100'
+        >
+          Log in with GitHub
+        </button>
+
+      </div>
+      
     </div>
   );
 };

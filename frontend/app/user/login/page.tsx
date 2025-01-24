@@ -41,6 +41,16 @@ const UserLoginForm: React.FC = () => {
       }
     };
 
+    const handleGitHubLogin = async (): Promise<void> => {
+      try {
+        // Redirect the user to GitHub OAuth endpoint
+        window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/github`; 
+      } catch (err) {
+        console.error('GitHub login error:', err);
+        setError('An error occurred during GitHub login.');
+      }
+    };
+
     useEffect(() => {
       // Check for token on component mount
       const token = localStorage.getItem('authToken');
@@ -50,7 +60,9 @@ const UserLoginForm: React.FC = () => {
     }, []);
     return (
       <div className='LoginContainer'>
-        <UserLogin onSubmit={handleLogin} /> {/* Pass handleLogin as a prop */}
+        <UserLogin onSubmit={handleLogin}
+        onGitHubLogin={handleGitHubLogin}
+/>
         {error && <p className='error-text'>{error}</p>}
       </div>
     );
