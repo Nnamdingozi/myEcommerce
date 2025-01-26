@@ -6,7 +6,7 @@ const { User } = require('../database/models');
 
 
 
-const register = async ({ username, email, phone, password, country_code }) => { 
+const register = async ({ username, email, phone, password, country_code }) => {
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await User.create({
@@ -54,18 +54,26 @@ const comparePassword = async (password, hashedPassword) => {
     }
 };
 
-// Function to find or create a user based on social profile
 const findOrCreateUser = async (profile, provider) => {
     try {
         const whereClause = { [`${provider}Id`]: profile.id };
 
+        // Step 1: Check if user exists with provider-specific ID
         let user = await User.findOne({ where: whereClause });
 
         if (!user) {
+            // Step 2: Handle missing email
+            const email = profile.emails?.[0]?.value || `${profile.username || 'githubUser'}-${profile.id}@placeholder.com`;
+            const phoneNumber = '09000000000'
+            // Step 3: Create a new user if none exists
             user = await User.create({
-                username: profile.displayName,
-                email: profile.emails[0].value,
+                username: profile.displayName || profile.username || 'GitHubUser', // Fallback to 'GitHubUser' if no displayName
+                email: email, // Use actual email or placeholder
+                phone: phoneNumber,
+                password: await bcrypt.hash(Math.random().toString(36).slice(-8), 10), // Generate a random hashed password
+                country_code: '+234',
                 [`${provider}Id`]: profile.id
+
             });
         }
 
@@ -75,8 +83,10 @@ const findOrCreateUser = async (profile, provider) => {
     }
 };
 
-const getUserDetails =(user) => {
-    if(!user) {
+
+
+const getUserDetails = (user) => {
+    if (!user) {
         throw new Error('User not found')
     }
     return {
