@@ -1,134 +1,117 @@
-
 require('dotenv').config();
-const {addItemsToCart, getItemByUserId, getCartItemsById, updateCartItems, deleteCartItem} = require('../services/cartService');
+const { 
+    addItemsToCart, 
+    getItemByUserId, 
+    getCartItemsById, 
+    updateCartItems, 
+    deleteCartItem 
+} = require('../services/cartService');
 
+// Add item to cart
 const addItemsHandler = async (req, res) => {
-    
     try { 
-        const userId = req.user.id; 
-
+        const userId = req.user?.id;
         const { productId } = req.body;
-        console.log('Controller - userId:', userId, 'productId:', productId);
 
-        // Add the item to the cart
+        if (!productId) {
+            return res.status(400).json({ message: 'Product ID is required' });
+        }
+
         const newItem = await addItemsToCart(userId, productId);
+
         if (newItem) {
             res.status(201).json(newItem);
         } else {
             res.status(400).json({ message: 'Unable to add item to cart' });
         }
     } catch (err) {
-        if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
-            return res.status(401).json({ message: 'Invalid or expired token' });
-        }
-        res.status(500).json({ error: err.message });
+        handleErrorResponse(err, res);
     }
 };
 
-
-
-// Handler to get items by user ID (retrieved from the token)
+// Get cart items by user ID
 const getItemByUserIdHandler = async (req, res) => {
-   
     try {
-        
-        const userId = req.user.id;
-
-        if (!userId) {
-            return res.status(400).json({ message: 'User ID required' });
-        }
+        const userId = req.user?.id;
 
         const userCart = await getItemByUserId(userId);
-        console.log('User\'s cart found:', userCart);
+
+        if (!userCart || userCart.length === 0) {
+            return res.status(404).json({ message: 'No items found in cart' });
+        }
+
         res.status(200).json(userCart);
     } catch (err) {
-        if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
-            return res.status(401).json({ message: 'Invalid or expired token' });
-        }
-        res.status(500).json({ error: err.message });
+        handleErrorResponse(err, res);
     }
 };
 
-
-// Handler to get items by user ID (retrieved from the token)
+// Get cart items with user ID
 const getCartItemsByIdHandler = async (req, res) => {
-  
     try {
-            const userId = req.user.id;
+        const userId = req.user?.id;
 
-        if (!userId) {
-            return res.status(400).json({ message: 'User ID required' });
+        const cartItems = await getCartItemsById(userId);
+
+        if (!cartItems || cartItems.length === 0) {
+            return res.status(404).json({ message: 'No cart items found' });
         }
 
-        const item = await getCartItemsById(req.params.id)
-        console.log('Cart item found', userCart);
-        res.status(200).json(userCart);
+        res.status(200).json(cartItems);
     } catch (err) {
-        if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
-            return res.status(401).json({ message: 'Invalid or expired token' });
-        }
-        res.status(500).json({ error: err.message });
+        handleErrorResponse(err, res);
     }
 };
 
-
+// Update cart item quantity
 const updateCartItemsHandler = async (req, res) => {
- 
     try {
-   
-        const userId = req.user.id;
+        const userId = req.user?.id;
+        const { id } = req.params;
+        const { quantity } = req.body;
 
-        if (!userId) {
-            return res.status(400).json({ message: 'User ID required' });
+        if (!quantity || quantity <= 0) {
+            return res.status(400).json({ message: 'Valid quantity is required' });
         }
-        const { id }= req.params;
-        const {quantity} = req.body;
+
         const updatedItem = await updateCartItems(id, quantity, userId);
-        if(updatedItem) {
+
+        if (updatedItem) {
             res.status(200).json(updatedItem);
         } else {
-            res.status(404).json({error: 'Item not found'})
+            res.status(404).json({ message: 'Item not found' });
         }
-
     } catch (err) {
-        if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
-            return res.status(401).json({ message: 'Invalid or expired token' });
-        }
-        res.status(500).json({ error: err.message });
+        handleErrorResponse(err, res);
     }
 };
 
-
-
-
-
+// Delete cart item
 const deleteCartItemHandler = async (req, res) => {
-
     try {
-        const userId = req.user.id;
-
-        if (!userId) {
-            return res.status(400).json({ message: 'User ID required' });
-        }
+        const userId = req.user?.id;
         const cartItemId = req.params.cartItemId;
 
-        console.log('userId in controller, deleteCartItem:', userId + 'cartItemId in controller, deleteCartItem:', cartItemId)
-
         const deletedItem = await deleteCartItem(userId, cartItemId);
-        if(deletedItem) {
-            res.status(204).json()
-        } else {
-            res.status(404).json({error: 'Item not found'})
-        }
 
-    }  catch (err) {
-        if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
-            return res.status(401).json({ message: 'Invalid or expired token' });
+        if (deletedItem) {
+            res.status(204).send();
+        } else {
+            res.status(404).json({ message: 'Item not found' });
         }
-        res.status(500).json({ error: err.message });
+    } catch (err) {
+        handleErrorResponse(err, res);
     }
 };
 
+// Unified error handling function
+const handleErrorResponse = (err, res) => {
+    if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
+        return res.status(401).json({ message: 'Invalid or expired token' });
+    }
+    console.error('Error:', err);
+    res.status(500).json({ error: 'Something went wrong' });
+};
 
 module.exports = {
     addItemsHandler,

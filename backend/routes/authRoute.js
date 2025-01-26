@@ -93,6 +93,9 @@ authRouter.post('/login', validateLogin, authController.login);
 authRouter.get('/profile', passport.authenticate('jwt', { session: false }), authController.profile)
 authRouter.get('/github', passport.authenticate('github'));
 authRouter.get('/github/callback', authController.githubCallback);
+
+// authRouter.get('/google', passport.authenticate('google'));
+// authRouter.get('/google/callback', authController.googleCallback);
 authRouter.get('/me', authController.getMeHandler)
 
 

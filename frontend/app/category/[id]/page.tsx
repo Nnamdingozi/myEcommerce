@@ -9,7 +9,7 @@ import { useProduct } from '@/app/context/productContext';
 export default function CategoryPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string }; 
 }) {
   const { error, loading, getProductsByCategoryId } = useProduct();
   const { addToCart} = useCart();
