@@ -1,112 +1,3 @@
-// const { Cart, Order, OrderItem, Product } = require('../database/models');
-
-
-// const createOrder = async (userId, paymentMtd, shippingAddy, shippingMtd, curr) => {
-//     // Get cart items for the user
-//     const cartItems = await Cart.findAll({
-//         where: { user_id: userId },
-//         include: [{
-//             model: Product,
-//             as: 'cartproduct',
-//         }],
-//     });
-
-//     const totalAmount = cartItems.reduce((acc, cartItem) => {
-//         return acc + parseFloat(cartItem.total);
-//     }, 0);
-
-//     if (totalAmount === 0) {
-//         throw new Error('Cart is empty');
-//     }
-
-//     // Generate a tracking number
-//     const trackingNumber = () => {
-//         return Math.floor(Math.random() * 1000000);
-//     };
-//     const newNum = trackingNumber().toString();
-
-//     // Create the order
-//     const order = await Order.create({
-//         user_id: userId,
-//         status: 'pending',
-//         total_amount: totalAmount,
-//         payment_status: 'pending',
-//         payment_method: paymentMtd,
-//         shipping_address: shippingAddy,
-//         shipping_method: shippingMtd,
-//         tracking_number: newNum,
-//         currency: curr,
-//     });
-
-//     // Create the order items associated with the order
-//     const orderItems = cartItems.map(cartItem => ({
-//         order_id: order.id,
-//         product_id: cartItem.product_id,
-//         quantity: cartItem.quantity,
-//     }));
-//     await OrderItem.bulkCreate(orderItems);
-
-//     // Clear the cart
-//     await Cart.destroy({ where: { user_id: userId } });
-
-//     // Include the order items and product details when returning the order
-//     const orderWithDetails = await Order.findOne({
-//         where: { id: order.id },
-//         include: [{
-//             model: OrderItem,
-//             as: 'order',
-//             include: [{
-//                 model: Product,
-//                 as: 'product', // Include product details in the order items
-//             }],
-//         }],
-//     });
-
-//     return orderWithDetails;  // Return the full order with items and product details
-// };
-
-
-// const getAllOrder = async (userId) => {
-//     const orders = await Order.findAll({
-//         where: { user_id: userId },
-//             include: [{
-//                 model: OrderItem,
-//                 as: 'order'
-//         }],
-//         order: [['createdAt', 'DESC']]
-//     });
-//     if (!orders) {
-//         throw new Error('order not found')
-//     } else {
-//         return orders
-//     }
-// };
-
-// const getOrderById = async (orderId, userId) => {
-//     const order = await Order.findOne({
-//          where: { 
-//             id: orderId,
-//             user_id: userId
-            
-//          },
-//          include: [{
-//             model: OrderItem,
-//             as: 'order',
-            
-//          }]
-//          });
-//          if(!order) {
-//             return null;
-//          } else {return order}
-
-// }
-
-// module.exports = {
-//     createOrder,
-//     getAllOrder,
-//     getOrderById
-// }
-
 
 import  Cart from '../database/models/cart';
 import Order from '../database/models/order';
@@ -122,8 +13,6 @@ interface OrderItemData {
 
 
 export const createOrder = async (orderData: OrderInput, userId: number): Promise<OrderAttributes> => {
-  // Extract userId from orderData
- 
 
   if (!userId) {
     throw new Error('User ID is required');
@@ -155,14 +44,9 @@ export const createOrder = async (orderData: OrderInput, userId: number): Promis
     payment_status: 'unpaid',
     ...orderData, 
     tracking_number: newTrackingNumber,
-   
-
   }
 
-
-
-
-  // Create the order with the provided orderData and auto-generated fields (status, tracking_number, total_amount)
+  // Create the order 
   const order = await Order.create(NewOrderData);
 
   // Prepare order items for bulk insertion
@@ -194,6 +78,7 @@ export const createOrder = async (orderData: OrderInput, userId: number): Promis
   return orderWithDetails?.get({ plain: true }) as OrderAttributes;
 };
 
+// get all order for a user
 export const getAllOrder = async (userId: number): Promise<OrderAttributes[]> => {
     const orders = await Order.findAll({
         where: { user_id: userId },

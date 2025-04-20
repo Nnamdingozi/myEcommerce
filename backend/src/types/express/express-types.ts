@@ -11,20 +11,6 @@
 // }
 
 
-
-// import { IUser } from '../../interface/IUser';
-
-// declare global {
-//   namespace Express {
-//     interface User extends IUser {} // ✅ user is now the full IUser type
-
-//     interface Request {
-//       user?: IUser;
-//     }
-//   }
-// }
-
-
 import { IUser } from '../../interface/IUser';
 
 declare global {

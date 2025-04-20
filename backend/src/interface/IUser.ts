@@ -3,11 +3,11 @@ export interface IUser {
   username: string;
   email: string;
   phone: string;
-  password: string;  // Optional for security reasons
+  password: string;  
   country_code: string;
   createdAt: Date;
   updatedAt: Date;
-  [key: string]: any;  // Allows additional properties if needed
+  [key: string]: any;
 }
 
 
@@ -17,7 +17,7 @@ export interface ICreateUser {
   username: string;
   email: string;
   phone: string;
-  password: string;  // Optional for security reasons
+  password: string;  
   country_code: string;
  
 }
