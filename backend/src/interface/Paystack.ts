@@ -1,5 +1,5 @@
 
-// src/interfaces/paystack.types.ts
+
 
 export interface PaystackInitializationData {
     authorization_url: string;

@@ -20,7 +20,6 @@ export interface OrderInput {
   shipping_address: string;
   shipping_method?: string | null;
   currency: string;
-  
 }
 
 export interface OrderCreation {
@@ -32,8 +31,6 @@ export interface OrderCreation {
   tracking_number?: string | null;
   status: string;
   total_amount: number;
-  payment_status: string,
+  payment_status: string;
   transaction_reference?: string | null;
-
-
 }
