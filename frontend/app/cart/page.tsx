@@ -1,13 +1,12 @@
-'use client';
+import { useUser } from "../context/userContext";
+import { useCart } from "../context/cartContext";
+import { useEffect } from "react";
+import { MyCart } from "../ui/cart";
 
-import { useEffect } from 'react';
-import { MyCart } from '@/app/ui/cart';
-import { useUser } from '@/app/context/userContext';
-import { useCart } from '@/app/context/cartContext';
 
-const CartPage: React.FC = (): JSX.Element => {
+const CartPage: React.FC = () => {
   const { user } = useUser();
-  
+
   const {
     cart,
     loading,

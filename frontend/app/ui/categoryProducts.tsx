@@ -1,19 +1,18 @@
 'use client'
 
-import { ProductDetails, NewCart } from '@/app/lib/definition';
+import { Product} from '@/app/lib/definition';
 import Image from 'next/image';
 import { useUser } from '../context/userContext';
 import { useCart } from '@/app/context/cartContext';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface CategoryproductProps {
-  categoryproducts: ProductDetails[];
-  categoryId: number
+  categoryproducts: Product[];
+
 }
 
 const CategoryProducts: React.FC<CategoryproductProps> = ({
   categoryproducts,
-  categoryId
 }) => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const { token } = useUser();
@@ -88,7 +87,7 @@ const CategoryProducts: React.FC<CategoryproductProps> = ({
           </div>
           <button
             className="bg-red-800 text-rose-100 w-[60%] mx-auto h-6 rounded-lg hover:bg-rose-100 hover:text-red-800"
-            onClick={() => handleAddToCart(token!, categoryproduct.id)}
+            onClick={() => handleAddToCart(token!, categoryproduct.id!)}
           >
             Add to Cart
           </button>

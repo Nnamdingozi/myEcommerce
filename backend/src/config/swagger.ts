@@ -4,7 +4,7 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import path from 'path';
 
-const app = express();
+const app = express(); // Ensure you initialize the express app
 
 // Swagger JSDoc configuration
 const swaggerOptions: swaggerJsdoc.Options = {
@@ -21,7 +21,7 @@ const swaggerOptions: swaggerJsdoc.Options = {
       },
     ],
   },
-  apis: [path.resolve(__dirname, '../../routes/*.ts')], 
+  apis: [path.resolve(__dirname, '../../routes/*.ts')], // Point to TypeScript files
 };
 
 // Initialize swagger-jsdoc

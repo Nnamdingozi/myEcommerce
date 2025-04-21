@@ -1,48 +1,59 @@
 
-'use client'
+  'use client';
 
 import { useEffect, useState } from 'react';
-import { useProduct } from '@/app/context/productContext';
+import { Product } from '@/app/lib/definition';
 import CategoryProducts from '@/app/ui/categoryProducts';
+import { useProduct } from '@/app/context/productContext';
 
 interface CategoryPageProps {
   params: { id: string };
 }
 
 export default function CategoryPage({ params }: CategoryPageProps) {
-  const categoryId = parseInt(params.id, 10);
-
-  if (isNaN(categoryId)) {
-    return <p>Invalid category ID.</p>;
-  }
-
-  return <CategoryPageClient categoryId={categoryId} />;
-}
-
-function CategoryPageClient({ categoryId }: { categoryId: number }) {
-  const [clientSide, setClientSide] = useState(false); // To ensure client-side rendering
-  const { getProductsByCategoryId, products, loading, error } = useProduct();
+  const { error, loading, getProductsByCategoryId } = useProduct();
+  const [catProducts, setCatProducts] = useState<Product[]>([]);
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
 
   useEffect(() => {
-    setClientSide(true); // Indicate that we are now in client-side rendering
-    getProductsByCategoryId(categoryId);
-  }, [categoryId, getProductsByCategoryId]);
+    const fetchByCat = async () => {
+      try {
+        const categoryId = parseInt(params.id, 10);
 
-  if (!clientSide) {
-    return null; // Avoid rendering until on the client
-  }
+        if (isNaN(categoryId)) {
+          throw new Error("Invalid category ID provided.");
+        }
 
-  if (loading) {
-    return <p>Loading products...</p>;
-  }
+        const fetchedProducts = await getProductsByCategoryId(categoryId);
 
-  if (error) {
-    return <p>{error}</p>;
-  }
+        if (fetchedProducts && fetchedProducts.length > 0) {
+          const modifiedProducts = fetchedProducts.map(product => ({
+            ...product,
+            image_url: `${baseUrl}${product.image_url}`,
+          }));
+          setCatProducts(modifiedProducts);
+        } else {
+          setCatProducts([]);
+        }
+      } catch (err) {
+        console.error("Error fetching products:", err);
+      }
+    };
 
-  if (!products || products.length === 0) {
-    return <p>No products found for this category.</p>;
-  }
+    fetchByCat();
+  }, [params.id, getProductsByCategoryId]);
 
-  return <CategoryProducts categoryproducts={products} categoryId={categoryId} />;
+  if (loading) return <p>Loading products...</p>;
+  if (error) return <p>{error}</p>;
+  if (!catProducts || catProducts.length === 0) return <p>No products found</p>;
+
+  return (
+    <>
+      <CategoryProducts
+        categoryproducts={catProducts}
+      />
+
+      
+    </>
+  );
 }

@@ -1,7 +1,6 @@
-
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, useCallback} from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { NewCart } from '@/app/lib/definition';
 import { addItemsToCart, fetchUserCart, updateCartItem, deleteUserItem } from '@/app/lib/data/cart';
 import { useUser } from '@/app/context/userContext';
@@ -29,15 +28,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [error, setError] = useState<string | null>(null);
   const [cartSubTotal, setCartSubTotal] = useState<number>(0);
   const [deleteMessage, setDeleteMessage] = useState<string | null>(null);
-  
+
   const { token } = useUser();
-  
+
   const calculateCartSubTotal = useCallback(
     (cart: NewCart[]) => cart.reduce((sum, item) => sum + parseFloat(item.total?.toString() || '0'), 0),
     []
   );
 
-  // Fetch cart data only after login
   const fetchCartData = useCallback(async () => {
     if (!token) return;
 
@@ -53,9 +51,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [token]);
 
-
-
-  // Add item to cart
   const addToCart = useCallback(
     async (productId: number, quantity: number = 1): Promise<NewCart | null> => {
       if (!token) {
@@ -67,14 +62,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setError(null);
       try {
         const newItem = await addItemsToCart(token, productId, quantity);
-        if (!newItem) {
-          throw new Error('Failed to add item to cart');
-        }
+        if (!newItem) throw new Error('Failed to add item to cart');
         setCart((prevCart) => [...prevCart, newItem]);
         return newItem;
       } catch (err) {
         setError('Failed to add item to cart');
-        console.error('Failed to add item to cart', err);
+        console.error(err);
         alert('Failed to add item to cart');
         return null;
       } finally {
@@ -84,7 +77,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [token]
   );
 
-  // Remove item from cart
   const removeItemFromCart = useCallback(
     async (cartItemId: number): Promise<void> => {
       if (!token) return;
@@ -101,7 +93,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } catch (err) {
         setError('Failed to remove item from cart');
-        console.error('Failed to remove item from cart', err);
+        console.error(err);
         setDeleteMessage('Failed to delete cart item');
       } finally {
         setLoading(false);
@@ -110,25 +102,21 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [token]
   );
 
-  // Hide delete message after 3 seconds
   useEffect(() => {
     if (deleteMessage !== null) {
-      const timer = setTimeout(() => {
-        setDeleteMessage(null);
-      }, 3000);
+      const timer = setTimeout(() => setDeleteMessage(null), 3000);
       return () => clearTimeout(timer);
     }
   }, [deleteMessage]);
 
-  // Update item quantity
   const newQuantity = useCallback(
-    async (cartItemId: number, newqty: number): Promise<void> => {
-      if (newqty < 1 || !token) return;
+    async (cartItemId: number, newQty: number): Promise<void> => {
+      if (newQty < 1 || !token) return;
 
       setLoading(true);
       setError(null);
       try {
-        const updatedItem = await updateCartItem(token, cartItemId, newqty);
+        const updatedItem = await updateCartItem(token, cartItemId, newQty);
         setCart((prevCart) =>
           prevCart.map((item) =>
             item.id === cartItemId
@@ -137,8 +125,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           )
         );
       } catch (err) {
-        console.error('Failed to update item quantity', err);
         setError('Failed to update item quantity');
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -146,12 +134,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     [token]
   );
 
-  // Calculate cart subtotal on cart change
   useEffect(() => {
     setCartSubTotal(calculateCartSubTotal(cart));
   }, [cart, calculateCartSubTotal]);
 
-  // Clear the cart
   const clearCart = useCallback(() => {
     setCart([]);
   }, []);
@@ -185,4 +171,3 @@ export const useCart = () => {
   }
   return context;
 };
-

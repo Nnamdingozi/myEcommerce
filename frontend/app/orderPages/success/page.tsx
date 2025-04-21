@@ -1,5 +1,4 @@
 
-
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -42,6 +41,7 @@ const SuccessPage = () => {
         <div className="bg-white p-6 rounded-lg shadow-md text-center">
           <p className="text-lg font-semibold text-red-600">{error}</p>
         </div>
+
       </div>
     );
   }
@@ -77,6 +77,7 @@ const SuccessPage = () => {
             View Orders
           </button>
         )}
+
       </div>
     </div>
   );

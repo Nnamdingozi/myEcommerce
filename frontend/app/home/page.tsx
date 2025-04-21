@@ -1,5 +1,4 @@
 
-
 'use client'
 import Hero from '@/app/ui/hero';
 import Products from '@/app/ui/products';
@@ -53,6 +52,7 @@ export default function Home() {
       <div className="mt-8 flex flex-col">
         <Hero />
         <Products products={products} />
+
       </div>
     </div>
   );
