@@ -63,22 +63,44 @@
 
 
 
-import CategoryProducts from '@/app/ui/categoryProducts';
+// import CategoryProducts from '@/app/ui/categoryProducts';
 
+
+// interface CategoryPageProps {
+//   params: { id: string };
+// }
+
+// export default function CategoryPage({ params }: CategoryPageProps) {
+  
+//   return (
+//     <>
+//       <CategoryProducts
+//         catId={params.id}
+//       />
+
+      
+//     </>
+//   );
+// }
+
+
+import CategoryProducts from '@/app/ui/categoryProducts';
+import { fetchCategories } from '@/app/lib/data/product';
 
 interface CategoryPageProps {
   params: { id: string };
 }
 
 export default function CategoryPage({ params }: CategoryPageProps) {
-  
   return (
-    <>
-      <CategoryProducts
-        catId={params.id}
-      />
-
-      
-    </>
+    <CategoryProducts catId={params.id} />
   );
+}
+
+
+export async function generateStaticParams() {
+  const categories = await fetchCategories();
+  return categories.map((cat: { id: number }) => ({
+    id: cat.id.toString(),
+  }));
 }
