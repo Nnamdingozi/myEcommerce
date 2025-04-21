@@ -9,21 +9,25 @@ import { MagnifyingGlassIcon, ShoppingCartIcon, Cog8ToothIcon } from '@heroicons
 import { ChatBubbleLeftIcon, UserIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { useProduct } from '@/app/context/productContext';
 import { ProductDetails } from '../lib/definition';
+import { useCart} from '@/app/context/cartContext';
+import { useProduct } from '../context/productContext';
+import { lusitana } from '@/app/ui/font'
 
-interface NavBarProps {
-  count: number;
-}
+// interface NavBarProps {
+//   products: ProductDetails[];
+// }
 
-const Navbar: React.FC<NavBarProps> = ({ count }) => {
+const Navbar: React.FC = () => {
   const { user, logout, token } = useUser();
-  const { products } = useProduct() as { products: ProductDetails[] }; 
+  const { count } = useCart();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredProducts, setFilteredProducts] = useState<ProductDetails[] | []>([]);
-  const [loading, setLoading] = useState(false); // Local loading state
+  const [loading, setLoading] = useState(false); 
+
+  const {products} = useProduct()
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -77,7 +81,7 @@ const Navbar: React.FC<NavBarProps> = ({ count }) => {
       <div className="flex justify-between items-center h-full w-full p-2">
         {/* Brand and Home Icon */}
         <div className="flex items-center space-x-2 w-[20%]">
-          <h2 className="text-red-800 font-pacifico font-bold">Family Shop</h2>
+          <h2 className={`text-red-800 ${lusitana.className}` }>Family Shop</h2>
           <Link href={'/'}>
             <HomeIcon className="w-6 h-6 text-red-800" />
           </Link>

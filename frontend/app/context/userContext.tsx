@@ -1,9 +1,9 @@
 
 'use client';
 
-import { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { userProfile } from '../lib/data';
+import { userProfile } from '../lib/data/user';
 
 interface UserProfile {
   id: number | null;
@@ -21,58 +21,79 @@ interface UserContextProps {
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
 
-export const UserProvider = ({ children }: { children: React.ReactNode }) => {
+export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserProfile>({ id: null, email: null, username: null });
   const [token, setToken] = useState<string | null>(null);
   const router = useRouter();
-
-  // Save token in localStorage and cookies
-  const saveToken = (newToken: string) => {
+  const syncToken = (newToken: string | null) => {
     setToken(newToken);
-    localStorage.setItem('token', newToken);
 
-    const isSecure = process.env.NODE_ENV === 'production' ? 'secure;' : '';
-    document.cookie = `token=${newToken}; path=/; ${isSecure} samesite=strict`;
-  };
-
-  // Logout function
-  const logout = () => {
-    setUser({ id: null, email: null, username: null });
-    setToken(null);
-    localStorage.removeItem('token');
-    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    router.push('/');
-  };
-
-  // Authenticate user
-  const authenticateUser = async () => {
-    const savedToken = token || localStorage.getItem('token');
-    if (savedToken) {
-      try {
-        const userProfileData = await userProfile(savedToken);
-        if (userProfileData) {
-          setToken(savedToken);
-          setUser(userProfileData);
-         
-        } else {
-          logout();
-        }
-      } catch (error: any) {
-        console.error('Authentication failed:', error);
-        if (error.response?.status === 401) {
-          // Token invalid
-          logout();
-        }
+    if (typeof window !== 'undefined') {
+      if (newToken) {
+        // Update localStorage
+        localStorage.setItem('token', newToken);
+        // Set cookie: include "secure" only in production environments.
+        const secureFlag = process.env.NODE_ENV === 'production' ? 'secure;' : '';
+        document.cookie = `token=${newToken}; path=/; ${secureFlag} samesite=strict`;
+      } else {
+        // Remove token from localStorage and cookies if token is null.
+        localStorage.removeItem('token');
+        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
       }
-    } else {
-      logout();
     }
   };
 
-  // Authenticate on mount
+  /**
+   * Call this function to store a new token.
+   */
+  const saveToken = (newToken: string) => {
+    syncToken(newToken);
+  };
+
+  /**
+   * Clears the user state and token from all storages, then navigates to the home page.
+   */
+  const logout = () => {
+    setUser({ id: null, email: null, username: null });
+    syncToken(null);
+    router.push('/');
+  };
+
+  /**
+   * Authenticates the user using the provided token.
+   */
+  const authenticateUser = async (currentToken: string) => {
+    try {
+      const userProfileData = await userProfile(currentToken);
+      if (userProfileData) {
+        setUser(userProfileData);
+      } else {
+        logout();
+      }
+    } catch (error: any) {
+      console.error('Authentication failed:', error);
+      // If authentication fails (e.g., token is invalid), log out the user.
+      if (error.response?.status === 401) {
+        logout();
+      }
+    }
+  };
+
+  /**
+   * On mount, check for a stored token in localStorage.
+   * Since localStorage and cookies are browser-only, we do this inside useEffect.
+   */
   useEffect(() => {
-    authenticateUser().catch(console.error);
-  }, []);
+    if (typeof window !== 'undefined') {
+      const storedToken = localStorage.getItem('token');
+      if (storedToken) {
+        syncToken(storedToken);
+        authenticateUser(storedToken);
+      }
+    }
+    // The empty dependency array ensures this effect runs only once after mounting.
+  }, [authenticateUser]);
+
 
   return (
     <UserContext.Provider value={{ user, setUser, token, logout, saveToken }}>
@@ -80,7 +101,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     </UserContext.Provider>
   );
 };
-
+ 
 export const useUser = () => {
   const context = useContext(UserContext);
   if (!context) {

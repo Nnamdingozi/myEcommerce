@@ -1,157 +1,97 @@
-// 'use client'
-
-
-// import React, { createContext, useContext, useEffect, useState } from 'react';
-// import { ProductDetails } from '@/app/lib/definition';
-// import { productHookLogic } from '@/app/lib/hooks/producthook';
-
-
-// interface ProductContextType {
-//   products: ProductDetails[];
-//   loading: boolean;
-//   error: string | null;
-//   getProducts: () => Promise<ProductDetails[] | null | undefined>;
-//   getProductsByCategoryId: (id: number) => Promise<ProductDetails[] | null | undefined>;
-//   setProducts: React.Dispatch<React.SetStateAction<ProductDetails[]>>;
-// }
-
-// const ProductContext = createContext<ProductContextType | null | undefined>(null);
-
-// export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-//   const [products, setProducts] = useState<ProductDetails[]>([]);
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState<string | null>(null);
-
-//   const { getProducts, getProductsByCategoryId } = productHookLogic({
-//     setProducts,
-//     setLoading,
-//     setError,
-//     products,
-//   });
-
-//   useEffect(() => {
-//     const fetchProducts = async () => {
-//       try {
-//         const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-//         const productValue: ProductDetails[] | null | undefined= await getProducts();
-
-//         // Add baseUrl to image_url
-//         if(productValue) {
-//             const modifiedProducts = productValue.map(product => ({
-//                 ...product,
-//                 image_url: `${baseUrl}${product.image_url}`,
-//               }));
-//               setProducts(modifiedProducts);
-//             }
-        
-
-        
-//       } catch (err: any) {
-//         console.error('error fetching products in context,'err)
-  
-//     };
-
-//     fetchProducts();
-//   }, []);
-
-//   return (
-//     <ProductContext.Provider
-//       value={{
-//         products,
-//         loading,
-//         error,
-//         getProducts,
-//         getProductsByCategoryId,
-//         setProducts,
-//       }}
-//     >
-//       {children}
-//     </ProductContext.Provider>
-//   );
-// };
-
-// // Custom hook to use the ProductContext
-// export const useProduct = () => {
-//   const context = useContext(ProductContext);
-//   if (!context) {
-//     throw new Error('ProductContext must be used within a ProductProvider');
-//   }
-//   return context;
-// };
-
-
-
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { ProductDetails } from '@/app/lib/definition';
-import { productHookLogic } from '@/app/lib/hooks/producthook';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useMemo,
+} from 'react';
+import { Product, ProductDetails } from '@/app/lib/definition';
+import {
+  fetchProducts,
+  fetchProductsByCategoryId,
+} from '@/app/lib/data/product';
 
 interface ProductContextType {
-  products: ProductDetails[];
+  products: Product[];
   loading: boolean;
   error: string | null;
-  getProducts: () => Promise<ProductDetails[] | null | undefined>;
-  getProductsByCategoryId: (id: number) => Promise<ProductDetails[] | null | undefined>;
-  setProducts: React.Dispatch<React.SetStateAction<ProductDetails[]>>;
+  getProducts: () => Promise<void>;
+  getProductsByCategoryId: (id: number) => Promise<Product[]>;
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
 }
 
 const ProductContext = createContext<ProductContextType | null>(null);
 
 export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [products, setProducts] = useState<ProductDetails[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { getProducts, getProductsByCategoryId } = productHookLogic({
-    setProducts,
-    setLoading,
-    setError,
-    products,
-  });
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:5000';
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:5000';
-        const productValue: ProductDetails[] | null | undefined = await getProducts();
+  const formatImageUrls = (items: Product[]) =>
+    items.map((product) => ({
+      ...product,
+      image_url: `${baseUrl}${product.image_url}`,
+    }));
 
-        if (Array.isArray(productValue)) {
-          const modifiedProducts = productValue.map((product) => ({
-            ...product,
-            image_url: `${baseUrl}${product.image_url}`,
-          }));
-          setProducts(modifiedProducts);
-        }
-      } catch (err: any) {
-        console.error('Error fetching products in context:', err);
+  const getProducts = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const items = (await fetchProducts()) || [];
+      if (items.length) {
+        setProducts(formatImageUrls(items));
       }
-    };
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch products');
+    } finally {
+      setLoading(false);
+    }
+  }, [baseUrl]);
 
-    fetchProducts();
-  }, []);
+  const getProductsByCategoryId = useCallback(async (id: number): Promise<Product[]> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const items = (await fetchProductsByCategoryId(id)) || [];
+      if (items.length) {
+        // setProducts(formatImageUrls(items));
+        return items
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch products by category');
+    } finally {
+      setLoading(false);
+    }
+    return []
+  }, [baseUrl]);
+
+  const contextValue = useMemo(
+    () => ({
+      products,
+      loading,
+      error,
+      getProducts,
+      getProductsByCategoryId,
+      setProducts,
+    }),
+    [products, loading, error, getProducts, getProductsByCategoryId]
+  );
 
   return (
-    <ProductContext.Provider
-      value={{
-        products,
-        loading,
-        error,
-        getProducts,
-        getProductsByCategoryId,
-        setProducts,
-      }}
-    >
+    <ProductContext.Provider value={contextValue}>
       {children}
     </ProductContext.Provider>
   );
 };
 
-// Custom hook to use the ProductContext
 export const useProduct = () => {
   const context = useContext(ProductContext);
   if (!context) {
-    throw new Error('ProductContext must be used within a ProductProvider');
+    throw new Error('useProduct must be used within a ProductProvider');
   }
   return context;
 };

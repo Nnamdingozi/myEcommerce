@@ -2,7 +2,7 @@
 
 import UserLogin from '@/app/ui/userLogin';
 import { LoginRequest, LoginStatus } from '@/app/lib/definition';
-import { userLogin, userProfile } from '@/app/lib/data';
+import { userLogin, userProfile } from '@/app/lib/data/user';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useUser } from '@/app/context/userContext';
@@ -59,7 +59,9 @@ const UserLoginForm: React.FC = () => {
       }
     }, []);
     return (
-      <div className='LoginContainer'>
+
+      <div className='LoginContainer h-screen mt-8'>
+
         <UserLogin onSubmit={handleLogin}
         onGitHubLogin={handleGitHubLogin}
 />

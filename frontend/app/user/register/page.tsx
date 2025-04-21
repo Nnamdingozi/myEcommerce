@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import UserForm from '@/app/ui/userForm';
 import { User } from '@/app/lib/definition';
-import { registerUser, userProfile } from '@/app/lib/data';
+import { registerUser, userProfile } from '@/app/lib/data/user';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useUser } from '@/app/context/userContext';

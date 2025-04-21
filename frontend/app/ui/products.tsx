@@ -1,26 +1,23 @@
 
-import { useState, useEffect } from 'react';
+'use client'
+
+import { useState } from 'react';
 import Image from 'next/image';
 import { useUser } from '@/app/context/userContext';
-import { ProductDetails, NewCart } from '@/app/lib/definition';
+import { useCart } from '@/app/context/cartContext'; // Import CartContext
+import { Product } from '@/app/lib/definition';
 
 interface ProductProps {
-  products: ProductDetails[];
-  addToCart: (token: string, productId: number, quantity?: number) => Promise<NewCart | null | undefined>;
-  cart: NewCart[];
+  products: Product[];
 }
 
-const Products: React.FC<ProductProps> = ({ products, addToCart, cart }) => {
+const Products: React.FC<ProductProps> = ({ products }) => {
   const [successMessage, setSuccessMessage] = useState('');
   const { token } = useUser();
+  const { addToCart, cart } = useCart(); // Access addToCart and cart from CartContext
 
-  const handleAddToCart = async (token: string, productId: number) => {
-    if (!token) {
-      setSuccessMessage('Please register or log in to add items to your cart.');
-      setTimeout(() => setSuccessMessage(''), 3000);
-      return;
-    }
-
+  const handleAddToCart = async (productId: number) => {
+  
     // Check if the product is already in the cart
     const isProductInCart = cart.some((item) => item.id === productId);
     if (isProductInCart) {
@@ -30,7 +27,9 @@ const Products: React.FC<ProductProps> = ({ products, addToCart, cart }) => {
     }
 
     try {
-      const addedCartItem = await addToCart(token, productId); // Add to cart
+
+      const addedCartItem = await addToCart(productId); // Use addToCart from CartContext
+
       const product = products.find((p) => p.id === productId);
       if (addedCartItem && product) {
         setSuccessMessage(`${product.name} added to cart successfully!`);
@@ -65,7 +64,7 @@ const Products: React.FC<ProductProps> = ({ products, addToCart, cart }) => {
             </div>
             <button
               className="bg-red-700 text-white w-full py-2 mt-2 rounded-lg hover:bg-red-600 transition-colors duration-200"
-              onClick={() => handleAddToCart(token!, product.id)}
+              onClick={() => handleAddToCart(product.id!)}
             >
               Add to Cart
             </button>

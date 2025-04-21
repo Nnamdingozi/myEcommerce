@@ -1,24 +1,31 @@
+'use client'
 
-import { ProductDetails, NewCart } from '@/app/lib/definition';
+import { Product} from '@/app/lib/definition';
 import Image from 'next/image';
 import { useUser } from '../context/userContext';
 import { useCart } from '@/app/context/cartContext';
+import { useState } from 'react';
 
 interface CategoryproductProps {
-  categoryproducts: ProductDetails[];
-  addToCart: (token: string, productId: number, quantity?: number) => Promise<NewCart | null | undefined>;
-  setSuccessMessage: (message: string | null) => void;
-  successMessage: string | null;
+  categoryproducts: Product[];
+
 }
 
 const CategoryProducts: React.FC<CategoryproductProps> = ({
   categoryproducts,
-  addToCart,
-  setSuccessMessage,
-  successMessage,
 }) => {
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const { token } = useUser();
-  const { cart } = useCart();
+  const { cart, addToCart } = useCart();
+
+
+
+  // useEffect(() => {
+  //   console.log('Category ID has changed:', categoryId);
+  //   // You can trigger data fetching here if needed, 
+  //   // but make sure it's only done once per category change.
+  // }, [categoryId]); // This will run only when categoryId changes
+
 
   console.log('categoryproducts value in props:', categoryproducts);
 
@@ -42,7 +49,7 @@ const CategoryProducts: React.FC<CategoryproductProps> = ({
     }
 
     try {
-      await addToCart(token, productId); // Add to cart
+      await addToCart(productId); // Add to cart
       setSuccessMessage('Product added to cart successfully!');
       setTimeout(() => {
         setSuccessMessage(null);
@@ -56,9 +63,8 @@ const CategoryProducts: React.FC<CategoryproductProps> = ({
     }
   };
 
-  if (!categoryproducts || categoryproducts.length === 0) {
-    return <p>No products found for this category</p>;
-  }
+  if (!categoryproducts) return <p>Loading products...</p>;
+
 
   return (
     <div className="w-full h-screen grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 mt-16">
@@ -81,7 +87,7 @@ const CategoryProducts: React.FC<CategoryproductProps> = ({
           </div>
           <button
             className="bg-red-800 text-rose-100 w-[60%] mx-auto h-6 rounded-lg hover:bg-rose-100 hover:text-red-800"
-            onClick={() => handleAddToCart(token!, categoryproduct.id)}
+            onClick={() => handleAddToCart(token!, categoryproduct.id!)}
           >
             Add to Cart
           </button>

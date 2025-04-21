@@ -4,11 +4,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+
 import { ProductDetails } from "@/app/lib/definition";
 import { useProduct } from "@/app/context/productContext";
 import { useCart } from "@/app/context/cartContext";
-import { useUser } from "../context/userContext";
+
 import Image from "next/image";
 
 const SearchResultsPage: React.FC = () => {
@@ -16,7 +16,7 @@ const SearchResultsPage: React.FC = () => {
   const [searchResults, setSearchResults] = useState<ProductDetails[]>([]);
   const [successMessage, setSuccessMessage] = useState("");
 
-  const { token } = useUser();
+
   const { addToCart, cart = [] } = useCart();
   const { products = [] } = useProduct() as { products: ProductDetails[] };
   const [isClient, setIsClient] = useState(false); // Track if we're on the client
@@ -48,17 +48,12 @@ const SearchResultsPage: React.FC = () => {
     }
   }, [searchQuery, products]);
 
-  const handleAddToCart = async (token: string, productId: number) => {
-    if (!token) {
-      setSuccessMessage("Please register or log in to add items to your cart.");
-      setTimeout(() => setSuccessMessage(""), 3000);
-      return;
-    }
-
+  const handleAddToCart = async (productId: number) => {
+   
     try {
       const productAlreadyInCart = cart.some((item) => item.id === productId);
       if (!productAlreadyInCart) {
-        await addToCart(token, productId);
+        await addToCart(productId);
       }
 
       const product = searchResults.find((p) => p.id === productId);
@@ -107,7 +102,7 @@ const SearchResultsPage: React.FC = () => {
               </div>
               <button
                 className="bg-red-700 text-white w-full py-2 mt-2 rounded-lg hover:bg-red-600 transition-colors duration-200"
-                onClick={() => handleAddToCart(token!, product.id)}
+                onClick={() => handleAddToCart( product.id)}
               >
                 Add to Cart
               </button>

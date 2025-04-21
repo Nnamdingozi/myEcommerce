@@ -5,19 +5,19 @@ FROM node:20
 WORKDIR /app
 
 # Copy package.json and lockfile
-COPY package.json pnpm-lock.yaml ./
+COPY package.json package-lock.json ./
 
-# Install dependencies
-RUN npm install -g pnpm && pnpm install
+# Install dependencies using npm
+RUN npm install
 
 # Copy the rest of the application files
 COPY . .
 
-# Build the application
-RUN pnpm run build
+# Build the application using npm
+RUN npm run build
 
 # Expose the port
 EXPOSE 3000
 
-# Start the application
-CMD ["pnpm", "start"]
+# Start the application using npm
+CMD ["npm", "start"]

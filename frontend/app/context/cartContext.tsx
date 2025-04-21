@@ -1,25 +1,24 @@
+'use client';
 
-
-'use client'
-
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { NewCart } from '@/app/lib/definition';
-import { cartHookLogic } from '@/app/lib/hooks/cartHooks';
+import { addItemsToCart, fetchUserCart, updateCartItem, deleteUserItem } from '@/app/lib/data/cart';
 import { useUser } from '@/app/context/userContext';
 
-interface CartContextType  {
+interface CartContextType {
   cart: NewCart[];
   loading: boolean;
   error: string | null;
   cartSubTotal: number;
   count: number;
-  addToCart: ( token: string, productId: number, quantity?: number) => Promise<NewCart | null | undefined>;
-  removeItemFromCart: (token: string, cartItemId: number) => Promise<void>;
-  newQuantity: (token: string, cartItemId: number, newqty: number) => Promise<void>;
-  getUserCart: (token: string) => Promise<NewCart[] | undefined>;
+  fetchCartData: () => Promise<void>;
+  addToCart: (productId: number, quantity?: number) => Promise<NewCart | null | undefined>;
+  removeItemFromCart: (cartItemId: number) => Promise<void>;
+  newQuantity: (cartItemId: number, newQty: number) => Promise<void>;
   clearCart: () => void;
+  deleteMessage: string | null;
   setCart: React.Dispatch<React.SetStateAction<NewCart[]>>;
-};
+}
 
 const CartContext = createContext<CartContextType | null>(null);
 
@@ -28,80 +27,143 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cartSubTotal, setCartSubTotal] = useState<number>(0);
-  const [count, setCount] = useState<number>(0);
+  const [deleteMessage, setDeleteMessage] = useState<string | null>(null);
 
-  const { getUserCart, addToCart, removeItemFromCart, newQuantity } = cartHookLogic({ setCart, setLoading, setError});
-  const { user, token } = useUser(); // Getting savedToken from useUser context
-  
-  useEffect(() => {
-    const fetchUserCart = async (): Promise<NewCart[] | undefined> => {
+  const { token } = useUser();
+
+  const calculateCartSubTotal = useCallback(
+    (cart: NewCart[]) => cart.reduce((sum, item) => sum + parseFloat(item.total?.toString() || '0'), 0),
+    []
+  );
+
+  const fetchCartData = useCallback(async () => {
+    if (!token) return;
+
+    setLoading(true);
+    setError(null);
+    try {
+      const items: NewCart[] = await fetchUserCart(token) || [];
+      setCart(items);
+    } catch (err) {
+      setError('Failed to fetch cart items');
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  const addToCart = useCallback(
+    async (productId: number, quantity: number = 1): Promise<NewCart | null> => {
       if (!token) {
-        console.warn('No token provided. Skipping cart fetch.');
-        setCart([]); // Clear cart if no user is logged in
-        return;
+        alert('Log in to Add Items to Cart');
+        return null;
       }
-  
+
       setLoading(true);
+      setError(null);
       try {
-        const userCart = await getUserCart(token); // Fetch cart from API
-        setCart(userCart || []); // Set cart to fetched data or an empty array
-      } catch (err: any) {
-        console.error('Error fetching cart items:', err.response?.data || err.message || err);
-        setError(err.message);
+        const newItem = await addItemsToCart(token, productId, quantity);
+        if (!newItem) throw new Error('Failed to add item to cart');
+        setCart((prevCart) => [...prevCart, newItem]);
+        return newItem;
+      } catch (err) {
+        setError('Failed to add item to cart');
+        console.error(err);
+        alert('Failed to add item to cart');
+        return null;
       } finally {
         setLoading(false);
       }
-    };
-  
-    // Only call fetchUserCart if the token exists (user is logged in)
-    if (token) {
-      fetchUserCart();
+    },
+    [token]
+  );
+
+  const removeItemFromCart = useCallback(
+    async (cartItemId: number): Promise<void> => {
+      if (!token) return;
+
+      setLoading(true);
+      setError(null);
+      try {
+        const deleted = await deleteUserItem(token, cartItemId);
+        if (deleted) {
+          setDeleteMessage(deleted);
+          setCart((prevCart) => prevCart.filter((item) => item.id !== cartItemId));
+        } else {
+          setError('Failed to delete item from cart');
+        }
+      } catch (err) {
+        setError('Failed to remove item from cart');
+        console.error(err);
+        setDeleteMessage('Failed to delete cart item');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [token]
+  );
+
+  useEffect(() => {
+    if (deleteMessage !== null) {
+      const timer = setTimeout(() => setDeleteMessage(null), 3000);
+      return () => clearTimeout(timer);
     }
-  }, [token]); // Only trigger when the token changes or is available
-  
-  
+  }, [deleteMessage]);
 
-  const calculateCartSubTotal = (cart: NewCart[]) => {
-    return cart.reduce((sum, item) => {
-      const itemTot = parseFloat(item.total?.toString() || '0');
-      return sum + itemTot;
-    }, 0);
-  };
+  const newQuantity = useCallback(
+    async (cartItemId: number, newQty: number): Promise<void> => {
+      if (newQty < 1 || !token) return;
 
-  const clearCart = () => {
-    setCart([]); // Clear the cart, this will reset count to 0
-  };
+      setLoading(true);
+      setError(null);
+      try {
+        const updatedItem = await updateCartItem(token, cartItemId, newQty);
+        setCart((prevCart) =>
+          prevCart.map((item) =>
+            item.id === cartItemId
+              ? { ...item, quantity: updatedItem?.quantity, total: updatedItem?.total }
+              : item
+          )
+        );
+      } catch (err) {
+        setError('Failed to update item quantity');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [token]
+  );
 
   useEffect(() => {
     setCartSubTotal(calculateCartSubTotal(cart));
-  }, [cart]);
+  }, [cart, calculateCartSubTotal]);
 
-  useEffect(() => {
-    if (token && user && cart) {
-      setCount(cart.length);
-    }
-  }, [token, cart, user]);
+  const clearCart = useCallback(() => {
+    setCart([]);
+  }, []);
 
   return (
-    <CartContext.Provider value={{
-      cart,
-      loading,
-      error,
-      cartSubTotal,
-      count,
-      addToCart,
-      removeItemFromCart,
-      newQuantity,
-      getUserCart,
-      clearCart,
-      setCart
-    }}>
+    <CartContext.Provider
+      value={{
+        cart,
+        loading,
+        error,
+        cartSubTotal,
+        count: cart.length,
+        fetchCartData,
+        addToCart,
+        removeItemFromCart,
+        newQuantity,
+        clearCart,
+        deleteMessage,
+        setCart
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
 };
 
-// Custom hook to use the CartContext
 export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) {
