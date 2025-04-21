@@ -1,3 +1,5 @@
+
+'use client'
 import { useUser } from "../context/userContext";
 import { useCart } from "../context/cartContext";
 import { useEffect } from "react";
