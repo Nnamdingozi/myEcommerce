@@ -54,12 +54,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   /**
    * Clears the user state and token from all storages, then navigates to the home page.
    */
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser({ id: null, email: null, username: null });
     syncToken(null);
     router.push('/');
-  };
-
+  }, [router]);
   /**
    * Authenticates the user using the provided token.
    */
