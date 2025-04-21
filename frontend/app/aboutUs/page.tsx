@@ -3,7 +3,6 @@
 import Link from 'next/link';
 
 const AboutUsPage = () => {
-
   return (
     <div className="flex flex-col md:flex-row items-center gap-8 px-6 py-12 md:py-20 max-w-7xl mx-auto">
       {/* Image Section */}
@@ -20,7 +19,7 @@ const AboutUsPage = () => {
         <p className="text-lg leading-relaxed mb-6">
           Welcome to <strong>Family Shop</strong>, your one-stop destination for a seamless online shopping experience.
           We are dedicated to bringing you a wide selection of high-quality products tailored to meet the diverse needs
-          of every shopper. Whether you're looking for trendy apparel, cutting-edge electronics, home essentials, or
+          of every shopper. Whether you&apos;re looking for trendy apparel, cutting-edge electronics, home essentials, or
           unique gift items, we have you covered.
         </p>
 
