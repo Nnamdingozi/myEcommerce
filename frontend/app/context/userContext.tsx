@@ -25,8 +25,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserProfile>({ id: null, email: null, username: null });
   const [token, setToken] = useState<string | null>(null);
   const router = useRouter();
-
-
   const syncToken = (newToken: string | null) => {
     setToken(newToken);
 
@@ -96,16 +94,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     // The empty dependency array ensures this effect runs only once after mounting.
   }, [authenticateUser]);
 
+
   return (
     <UserContext.Provider value={{ user, setUser, token, logout, saveToken }}>
       {children}
     </UserContext.Provider>
   );
 };
-
-/**
- * Custom hook to consume the UserContext.
- */
+ 
 export const useUser = () => {
   const context = useContext(UserContext);
   if (!context) {

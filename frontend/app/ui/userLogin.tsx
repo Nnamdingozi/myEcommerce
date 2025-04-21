@@ -80,7 +80,9 @@ const UserLogin: React.FC<UserLoginProps> = ({ onSubmit, onGitHubLogin }) => {
       <button
           type='button'
           onClick={onGitHubLogin}
+
           className='bg-gray-800 text-white h-8  mb-5 border-3 w-[50%] mt-8 border-gray-800 rounded focus:bg-gray-900 focus:text-gray-100'
+
         >
           Log in with GitHub
         </button>
