@@ -41,7 +41,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     };
 
     fetchByCat();
-  }, [params.id, getProductsByCategoryId]);
+  }, [params.id, getProductsByCategoryId, baseUrl]);
 
   if (loading) return <p>Loading products...</p>;
   if (error) return <p>{error}</p>;

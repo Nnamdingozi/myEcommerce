@@ -50,7 +50,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     } finally {
       setLoading(false);
     }
-  }, [baseUrl]);
+  }, [formatImageUrls]);
 
   const getProductsByCategoryId = useCallback(async (id: number): Promise<Product[]> => {
     setLoading(true);
@@ -67,7 +67,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
       setLoading(false);
     }
     return []
-  }, [baseUrl]);
+  }, []);
 
   const contextValue = useMemo(
     () => ({
