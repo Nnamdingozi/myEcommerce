@@ -4,6 +4,7 @@
 import { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { userProfile } from '../lib/data/user';
+import { useCallback } from 'react';
 
 interface UserProfile {
   id: number | null;
@@ -62,7 +63,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   /**
    * Authenticates the user using the provided token.
    */
-  const authenticateUser = async (currentToken: string) => {
+  const authenticateUser = useCallback(async (currentToken: string) => {
     try {
       const userProfileData = await userProfile(currentToken);
       if (userProfileData) {
@@ -72,13 +73,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error: any) {
       console.error('Authentication failed:', error);
-      // If authentication fails (e.g., token is invalid), log out the user.
       if (error.response?.status === 401) {
         logout();
       }
     }
-  };
-
+  }, []); 
   /**
    * On mount, check for a stored token in localStorage.
    * Since localStorage and cookies are browser-only, we do this inside useEffect.
