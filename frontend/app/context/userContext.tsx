@@ -77,7 +77,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         logout();
       }
     }
-  }, []); 
+  }, [logout]); 
   /**
    * On mount, check for a stored token in localStorage.
    * Since localStorage and cookies are browser-only, we do this inside useEffect.

@@ -30,13 +30,14 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [error, setError] = useState<string | null>(null);
 
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:5000';
-
-  const formatImageUrls = (items: Product[]) =>
-    items.map((product) => ({
+ 
+  const formatImageUrls = useCallback((items: Product[]) => {
+    return items.map((product) => ({
       ...product,
       image_url: `${baseUrl}${product.image_url}`,
     }));
-
+  }, [baseUrl]);
+  
   const getProducts = useCallback(async () => {
     setLoading(true);
     setError(null);
