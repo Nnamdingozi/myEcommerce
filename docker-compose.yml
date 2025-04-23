@@ -32,8 +32,8 @@ services:
 
   backend:
     build:
-      context: ./backend        # Relative to docker-compose.yml
-      dockerfile: docker/Dockerfile  # Relative to the context directory
+      context: ./backend              # Build context is the backend directory
+      dockerfile: Dockerfile    
     container_name: backend
     ports:
       - "5000:5000"
