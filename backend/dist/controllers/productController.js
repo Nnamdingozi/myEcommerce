@@ -1,13 +1,4 @@
 "use strict";
-// const { 
-//     createProduct, 
-//     getAllProducts, 
-//     getProductById, 
-//     getAllCategories, 
-//     getProductByCategory, 
-//     updateProduct, 
-//     deleteProduct 
-// } = require('../services/productService');
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteProductHandler = exports.updateProductHandler = exports.getProductByCategoryIdHandler = exports.getAllCategoriesHandler = exports.getProductByIdHandler = exports.getAllProductsHandler = exports.createProductHandler = void 0;
 const productService_1 = require("../services/productService");

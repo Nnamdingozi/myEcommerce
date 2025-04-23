@@ -1,6 +1,4 @@
 "use strict";
-// const loginSchema = require('../validation/loginSchema');
-// const registrationSchema = require('../validation/registrationSchema');
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateRegistration = exports.validateLogin = void 0;
 const loginSchema_1 = require("../validation/loginSchema");
@@ -9,11 +7,10 @@ const validate = (schema) => {
     return async (req, res, next) => {
         try {
             // Validate the body data against the schema
-            await schema.validate(req.body, { abortEarly: false }); // abortEarly: false allows for multiple validation errors to be caught
-            next(); // If valid, proceed to the next middleware or route handler
+            await schema.validate(req.body, { abortEarly: false });
+            next();
         }
         catch (err) {
-            // If validation fails, send a detailed error message
             res.status(400).json({
                 message: 'Validation failed',
                 errors: err.inner.map((e) => ({

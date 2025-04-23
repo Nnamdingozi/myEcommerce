@@ -1,6 +1,4 @@
 "use strict";
-// const { initializeTransaction, verifyTransaction } = require('../services/paystackCheckoutService');
-// const { Order } = require('../database/models');
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -52,17 +50,16 @@ const verifyCheckoutHandler = async (req, res) => {
         }
         // Verify transaction with Paystack
         const response = await (0, paystackCheckoutService_1.verifyTransaction)(reference);
-        // Check if the inner data status is "success"
         if (response.data && response.data.status === "success") {
             const transactionData = response.data;
             const customerEmail = transactionData.customer.email;
             const transactionMessage = transactionData.gateway_response;
-            const paidAt = transactionData.paid_at; // Already a string, may be null in some cases
+            const paidAt = transactionData.paid_at;
             // Update order status if payment is successful
             await order_1.default.update({ payment_status: "paid" }, { where: { transaction_reference: reference } });
             res.status(200).json({
                 status: true,
-                message: response.message, // e.g., "Verification successful"
+                message: response.message,
                 transaction: {
                     reference: transactionData.reference,
                     amount: transactionData.amount,
