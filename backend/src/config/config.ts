@@ -4,11 +4,12 @@ import { Dialect } from 'sequelize';
 dotenv.config();
 
 export interface DBConfig {
-  username: string;
-  password: string | null;
-  database: string;
-  host: string;
-  dialect: Dialect;
+  username?: string;
+  password?: string | null;
+  database?: string;
+  host?: string;
+  dialect?: Dialect;
+  url?: string;
 }
 
 type Env = 'development' | 'swagger-autogen' | 'production';
@@ -30,11 +31,8 @@ const config: Config = {
     dialect: 'postgres',
   },
   production: {
-    username: process.env.DB_USERNAME || 'root',
-    password: process.env.DB_PASSWORD || null,
-    database: process.env.DB_DATABASE || 'database_production',
-    host: process.env.DB_HOST || '127.0.0.1',
     dialect: 'postgres',
+    url: process.env.DATABASE_URL, // 👈 add this line
   },
 };
 
