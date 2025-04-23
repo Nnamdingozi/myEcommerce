@@ -153,6 +153,6 @@
     "typeRoots": ["src/types", "./node_modules/@types"],
     "types": ["node", "express"]
   },
-  "include": ["src", "src/types"],
+  "include": ["src", "src/types", "src/config"],
   "exclude": ["node_modules", "public"]
 }
