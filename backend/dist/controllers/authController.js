@@ -1,5 +1,4 @@
 "use strict";
-// 'use strict';
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -46,7 +45,6 @@ const register = async (req, res) => {
 };
 exports.register = register;
 const login = async (req, res, next) => {
-    // Remove the explicit IUser type here; let it be Express.User (which is augmented to IUserPayload)
     passport_1.default.authenticate('local', { session: false }, (err, user, info) => {
         if (err) {
             return res.status(500).json({ error: err.message });
@@ -54,7 +52,6 @@ const login = async (req, res, next) => {
         if (!user) {
             return res.status(400).json({ error: info.message });
         }
-        // Now user is of type Express.User (augmented to be IUserPayload)
         const authReq = req;
         authReq.logIn(user, { session: false }, (loginErr) => {
             if (loginErr) {
