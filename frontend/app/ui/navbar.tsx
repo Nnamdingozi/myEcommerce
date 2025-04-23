@@ -9,7 +9,7 @@ import { MagnifyingGlassIcon, ShoppingCartIcon, Cog8ToothIcon } from '@heroicons
 import { ChatBubbleLeftIcon, UserIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { ProductDetails } from '../lib/definition';
+import { ProductDetails, Product } from '../lib/definition';
 import { useCart} from '@/app/context/cartContext';
 import { useProduct } from '../context/productContext';
 import { lusitana } from '@/app/ui/font'
@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredProducts, setFilteredProducts] = useState<ProductDetails[] | []>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[] | []>([]);
   const [loading, setLoading] = useState(false); 
 
   const {products} = useProduct()
@@ -47,10 +47,11 @@ const Navbar: React.FC = () => {
 
     setLoading(true); // Start loading
     const timer = setTimeout(() => {
+
       const filtered = products.filter(
         (product) =>
-          product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          product.description.toLowerCase().includes(searchQuery.toLowerCase())
+          product.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.description?.toLowerCase().includes(searchQuery.toLowerCase())
       );
 
       setFilteredProducts(filtered);
