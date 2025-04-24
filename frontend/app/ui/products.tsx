@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useUser } from '@/app/context/userContext';
-import { useCart } from '@/app/context/cartContext'; // Import CartContext
+import { useCart } from '@/app/context/cartContext'; 
 import { Product } from '@/app/lib/definition';
 
 interface ProductProps {
@@ -14,7 +14,7 @@ interface ProductProps {
 const Products: React.FC<ProductProps> = ({ products }) => {
   const [successMessage, setSuccessMessage] = useState('');
   const { token } = useUser();
-  const { addToCart, cart } = useCart(); // Access addToCart and cart from CartContext
+  const { addToCart, cart } = useCart(); 
 
   const handleAddToCart = async (productId: number) => {
   
@@ -28,7 +28,7 @@ const Products: React.FC<ProductProps> = ({ products }) => {
 
     try {
 
-      const addedCartItem = await addToCart(productId); // Use addToCart from CartContext
+      const addedCartItem = await addToCart(productId); 
 
       const product = products.find((p) => p.id === productId);
       if (addedCartItem && product) {

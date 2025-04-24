@@ -1,10 +1,9 @@
 
-
 'use client';
 import { NewCart } from '../lib/definition';
 import Image from 'next/image';
 import OrderForm from './order';
-import { useState} from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface MyCartProps {
@@ -26,15 +25,10 @@ export const MyCart: React.FC<MyCartProps> = ({
     const router = useRouter();
     const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-
-    
-
-    // This function will handle the removal and show delete message
+   
     const handleRemoveItem = (itemId: number) => {
+        removeItemFromCart(itemId); 
     
-            removeItemFromCart(itemId); // Call the removeItem function
-
-        
     };
 
     const handleClick = () => {
@@ -120,7 +114,7 @@ export const MyCart: React.FC<MyCartProps> = ({
                                     <p className="font-semibold">Total: ${Number(item.total).toFixed(2)}</p>
                                     <button
                                         className="mt-4 bg-red-500 text-white px-4 py-1 rounded-lg hover:bg-red-600"
-                                        onClick={() => handleRemoveItem(item.id!)} // Use handleRemoveItem on button click
+                                        onClick={() => handleRemoveItem(item.id!)} 
                                     >
                                         Remove
                                     </button>
@@ -128,7 +122,7 @@ export const MyCart: React.FC<MyCartProps> = ({
 
                                 {deleteMessage && (
                                     <div className="fixed top-32 right-32 bg-green-700 text-white px-4 py-2 rounded shadow-lg transition-opacity duration-300">
-                                        {deleteMessage} {/* Display delete message from context */}
+                                        {deleteMessage} 
                                     </div>
                                 )}
                             </div>

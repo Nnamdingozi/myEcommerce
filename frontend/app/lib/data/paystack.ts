@@ -4,11 +4,12 @@ import {  Paystack  } from '@/app/lib/definition';
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
   console.log(backendUrl);
   
-  const configWithToken = (token: string | null) => ({
-    headers: {
-      Authorization: token ? `Bearer ${token}` : '',
-    },
-  });
+  
+  // const configWithToken = (token: string | null) => ({
+  //   headers: {
+  //     Authorization: token ? `Bearer ${token}` : '',
+  //   },
+  // });
   
   
 

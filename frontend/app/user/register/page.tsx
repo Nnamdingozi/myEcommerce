@@ -11,7 +11,7 @@ import { useUser } from '@/app/context/userContext';
 
 
 const UserRegistration = () => {
-  const { saveToken, setUser } = useUser(); // Use saveToken and setUser from UserContext
+  const { saveToken, setUser } = useUser(); 
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -20,7 +20,7 @@ const UserRegistration = () => {
   // Function to fetch user profile
   const fetchUserProfile = async (token: string): Promise<void> => {
     try {
-      const profileData = await userProfile(token); // Pass token to API
+      const profileData = await userProfile(token); 
       if (profileData) {
         console.log('profileData fetched after registration:', profileData)
         setUser({
@@ -28,7 +28,7 @@ const UserRegistration = () => {
           email: profileData.email,
           username: profileData.username,
         });
-        router.push('/'); // Redirect to homepage after successful login
+        router.push('/'); 
       }
     } catch (err) {
       setErrorMessage('Failed to retrieve profile data. Please log in again.');
@@ -43,13 +43,13 @@ const UserRegistration = () => {
     setSuccessMessage('');
 
     try {
-      const { token } = await registerUser(user); // Call API to register user and get the token
+      const { token } = await registerUser(user); 
 
       if (token) {
         console.log('token received after registration:', token)
-        saveToken(token); // Use the saveToken function from UserContext
+        saveToken(token); 
         setSuccessMessage('Registration successful! Redirecting...');
-        await fetchUserProfile(token); // Fetch profile using the saved token
+        await fetchUserProfile(token); 
       }
     } catch (err) {
       if (err instanceof Error) {
@@ -81,7 +81,7 @@ const UserRegistration = () => {
           {loading ? (
             <div className="text-center text-rose-600">Processing...</div>
           ) : (
-            <UserForm onSubmit={handleRegister} /> // Your form component
+            <UserForm onSubmit={handleRegister} /> 
           )}
         </div>
       </div>
