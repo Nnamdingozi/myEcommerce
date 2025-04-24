@@ -14,9 +14,7 @@ import { useCart} from '@/app/context/cartContext';
 import { useProduct } from '../context/productContext';
 import { lusitana } from '@/app/ui/font'
 
-// interface NavBarProps {
-//   products: ProductDetails[];
-// }
+
 
 const Navbar: React.FC = () => {
   const { user, logout, token } = useUser();

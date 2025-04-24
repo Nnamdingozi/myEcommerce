@@ -14,7 +14,7 @@ const registrationSchema = yup.object({
   username: yup
     .string()
     .min(3, 'Username must be at least 3 characters long')
-    .max(10, 'Username must not exceed 10 characters')  // Adjusted max length to 10
+    .max(10, 'Username must not exceed 10 characters')  
     .required('Username is required'),
   
   email: yup
@@ -38,7 +38,7 @@ const registrationSchema = yup.object({
 
   country_code: yup
     .string()
-    .required('Please select a country code'),  // Country code is required and selected from dropdown
+    .required('Please select a country code'), 
 });
 
 const UserForm: React.FC<UserFormProps> = ({ onSubmit }) => {
@@ -58,7 +58,7 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit }) => {
 
   const validateField = async (fieldName: keyof typeof userInput) => {
     try {
-      await registrationSchema.validateAt(fieldName, userInput);  // Use validateAt instead of yup.reach
+      await registrationSchema.validateAt(fieldName, userInput);  
       setError((prev) => ({ ...prev, [fieldName]: '' }));
     } catch (err: any) {
       if (err instanceof yup.ValidationError) {

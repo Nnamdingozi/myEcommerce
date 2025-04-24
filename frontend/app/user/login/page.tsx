@@ -21,9 +21,6 @@ const UserLoginForm: React.FC = () => {
   
         if (response) {
           const { token } = response;
-          console.log('Login successful, token received:', token);
-  
-          // Use context function to save the token
           saveToken(token);
   
           // Retrieve and set user profile

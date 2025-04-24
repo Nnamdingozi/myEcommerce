@@ -43,6 +43,7 @@ The front end  is designed with React and, user interface is made sleek and resp
   - Swagger
   - Next.js
   - Tailwind Css
+  - TypeScript
     
 
   
