@@ -6,8 +6,8 @@
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "migrate": "echo 'Running migrations...' && npx sequelize-cli db:migrate",
-    "seed": "echo 'Running seeders...' && npx sequelize-cli db:seed:all",
+    "migrate": "ts-node -r tsconfig-paths/register node_modules/.bin/sequelize-cli db:migrate",
+    "seed": "ts-node -r tsconfig-paths/register node_modules/.bin/sequelize-cli db:seed:all",
     "dev": "nodemon src/index.ts",
     "start": "node dist/index.js"
   },
