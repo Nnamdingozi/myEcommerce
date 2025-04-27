@@ -20,7 +20,7 @@ if (env === 'production' && process.env.DATABASE_URL) {
 else {
     const config = config_1.default[env];
     if (!config.database || !config.username || !config.host) {
-        throw new Error(` Missing database configuration for env: ${env}`);
+        throw new Error(`❌ Missing database configuration for env: ${env}`);
     }
     sequelize = new sequelize_1.Sequelize(config.database, config.username, config.password ?? undefined, {
         host: config.host,
