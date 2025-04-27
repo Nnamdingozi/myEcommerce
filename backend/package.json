@@ -6,12 +6,9 @@
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "premigrate": "npm run build",
     "migrate": "echo 'Running migrations...' && npx sequelize-cli db:migrate",
-    "preseed": "npm run build",
     "seed": "echo 'Running seeders...' && npx sequelize-cli db:seed:all",
     "dev": "nodemon src/index.ts",
-    "prestart": "npm run build",
     "start": "node dist/index.js"
   },
   "keywords": [],
