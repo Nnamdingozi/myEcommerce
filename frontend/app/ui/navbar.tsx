@@ -24,6 +24,8 @@ const Navbar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredProducts, setFilteredProducts] = useState<Product[] | []>([]);
   const [loading, setLoading] = useState(false); 
+  const [hasMounted, setHasMounted] = useState(false);
+
 
   const {products} = useProduct()
 
@@ -35,6 +37,11 @@ const Navbar: React.FC = () => {
     router.push('/cart');
   };
 
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+  
   // Handle search logic
   useEffect(() => {
     if (searchQuery.trim() === '') {
@@ -139,7 +146,7 @@ const Navbar: React.FC = () => {
           <div className="flex items-center space-x-4">
             <UserIcon className="h-6 w-6 text-red-800" />
             <span className="text-sm hidden md:inline">
-              {token && user && user.username ? (
+              {hasMounted && token && user && user.username ? (
                 <>
                   Welcome, {user.username}{' '}
                   <button
@@ -164,7 +171,7 @@ const Navbar: React.FC = () => {
             <span><Link href={'/contacts'} className='cursor-pointer font-bold hover:text-blue-600 shadow-sm'>Contact</Link></span>
             <div className="relative">
               <ShoppingCartIcon className="h-6 w-9 text-red-800 cursor-pointer font-bold hover:text-blue-600 shadow-sm" onClick={handleCartClick} />
-              {count > 0 && <span className="absolute top-3 text-black">{count}</span>}
+              {hasMounted && count > 0 && <span className="absolute top-3 text-black">{count}</span>}
             </div>
           </div>
         </div>
@@ -190,7 +197,7 @@ const Navbar: React.FC = () => {
             <div className="flex items-center space-x-2">
               <UserIcon className="h-6 w-6 text-red-800" />
               <span className="text-sm">
-                {token && user && user.username ? (
+                {hasMounted &&  token && user && user.username ? (
                   <>
                     Hello, {user.username}{' '}
                     <button

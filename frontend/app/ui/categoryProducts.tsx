@@ -21,10 +21,7 @@ const CategoryProducts: React.FC<CategoryproductProps> = ({
 
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
 
-
-
-
-  console.log('categoryproducts value in props:', catProducts);
+  
 
   const handleAddToCart = async (token: string, productId: number) => {
     if (!token) {
