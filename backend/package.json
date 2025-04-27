@@ -5,8 +5,8 @@
   "type": "commonjs",
   "scripts": {
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",   
-  "premigrate": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "premigrate": "npm run build",
     "migrate": "echo 'Running migrations...' && npx sequelize-cli db:migrate",
     "preseed": "npm run build",
     "seed": "echo 'Running seeders...' && npx sequelize-cli db:seed:all",
@@ -45,14 +45,13 @@
     "swagger-autogen": "^2.23.7",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "yup": "^1.4.0",
-    "typescript": "^5.8.3",
-    "@types/node": "^22.14.0",
-    "@types/express": "^5.0.1"
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.15.2",
     "@types/passport": "^1.0.17",
     "@types/passport-github2": "^1.2.9",
     "@types/passport-jwt": "^4.0.1",
@@ -63,6 +62,5 @@
     "@types/swagger-ui-express": "^4.1.8",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2"
-    
   }
 }
