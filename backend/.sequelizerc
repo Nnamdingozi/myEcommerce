@@ -10,13 +10,14 @@
 
 
 // sequelize.config.js
-require('ts-node').register();  // Register ts-node to allow TypeScript files to be used
+// .sequelizerc (for production)
+
 
 const path = require('path');
 
 module.exports = {
-  'config': path.resolve('src', 'config', 'config.ts'),  // Point to the TypeScript config file
-  'models-path': path.resolve('src', 'database', 'models'),
-  'migrations-path': path.resolve('src', 'database', 'migrations'),
-  'seeders-path': path.resolve('src', 'database', 'seeders')
+  'config': path.resolve('dist', 'config', 'config.js'),
+  'models-path': path.resolve('dist', 'database', 'models'),
+  'migrations-path': path.resolve('dist', 'database', 'migrations'),
+  'seeders-path': path.resolve('dist', 'database', 'seeders'),
 };
