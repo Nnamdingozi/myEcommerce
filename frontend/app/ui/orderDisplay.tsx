@@ -23,7 +23,6 @@ export default function UserOrderDisplay({ userOrder }: UserOrderDisplayProps) {
           <p className="text-gray-600 mt-2"><span className="font-medium">Shipping Address:</span> {order.shipping_address}</p>
           <p className="text-gray-600 mt-2"><span className="font-medium">Shipping Method:</span> {order.shipping_method}</p>
           <p className="text-gray-600 mt-2"><span className="font-medium">Total:</span> {order.currency} {order.total_amount}</p>
-          {/* Add other order details as needed */}
         </div>
       ))}
     </div>

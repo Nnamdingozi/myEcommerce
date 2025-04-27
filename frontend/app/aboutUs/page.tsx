@@ -13,7 +13,7 @@ const AboutUsPage = () => {
 
       {/* Text Section */}
       <div className="w-full md:w-2/3 shadow-md">
-        
+
         {/* About Us */}
         <h1 className="text-3xl font-bold mb-4 text-red-800">About Us</h1>
         <p className="text-lg leading-relaxed mb-6">
@@ -32,7 +32,7 @@ const AboutUsPage = () => {
 
         {/* Why Choose Us */}
         <h2 className="text-2xl font-bold mb-4 text-red-800">Why Choose Us?</h2>
-        
+
         <ul className="list-disc list-inside text-lg leading-relaxed mb-6">
           <li>
             <strong>Wide Product Range:</strong> A thoughtfully curated collection of products to suit all tastes and preferences.

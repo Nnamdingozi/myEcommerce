@@ -39,4 +39,15 @@ import {
     }
   }
   
+
+  export async function fetchProductId(id: number): Promise<Product | null> {
+    try {
+      const response = await axios.get(`${backendUrl}/product/${id}`);
+      return response.data;
+    } catch (err: any) {
+      console.error('Error fetching products by category:', err);
+      return null;
+    }
+  }
+  
   

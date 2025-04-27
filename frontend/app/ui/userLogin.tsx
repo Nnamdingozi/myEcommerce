@@ -28,8 +28,7 @@ const UserLogin: React.FC<UserLoginProps> = ({ onSubmit, onGitHubLogin }) => {
     setError(null);
 
     try {
-      console.log('User input passed to submit:', userInput);
-      await onSubmit(userInput); // the logic of storing the token is handled outside
+      await onSubmit(userInput); 
 
     } catch (err) {
       setError(`User login failed: ${err}`);

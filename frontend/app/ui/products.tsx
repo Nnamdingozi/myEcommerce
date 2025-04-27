@@ -4,8 +4,9 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useUser } from '@/app/context/userContext';
-import { useCart } from '@/app/context/cartContext'; // Import CartContext
+import { useCart } from '@/app/context/cartContext'; 
 import { Product } from '@/app/lib/definition';
+import Link from 'next/link';
 
 interface ProductProps {
   products: Product[];
@@ -14,7 +15,7 @@ interface ProductProps {
 const Products: React.FC<ProductProps> = ({ products }) => {
   const [successMessage, setSuccessMessage] = useState('');
   const { token } = useUser();
-  const { addToCart, cart } = useCart(); // Access addToCart and cart from CartContext
+  const { addToCart, cart } = useCart(); 
 
   const handleAddToCart = async (productId: number) => {
   
@@ -28,7 +29,7 @@ const Products: React.FC<ProductProps> = ({ products }) => {
 
     try {
 
-      const addedCartItem = await addToCart(productId); // Use addToCart from CartContext
+      const addedCartItem = await addToCart(productId); 
 
       const product = products.find((p) => p.id === productId);
       if (addedCartItem && product) {
@@ -45,10 +46,14 @@ const Products: React.FC<ProductProps> = ({ products }) => {
   return (
     <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4 mt-16">
       {products.map((product) => (
-        <div
-          key={product.id}
-          className="bg-gray-50 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 rounded-lg overflow-hidden border border-gray-200 h-[420px] flex flex-col"
-        >
+           <Link
+           key={product.id}
+           href={`/itemView/${product.id}`}
+           className="block"
+         >
+           <div
+             className="bg-gray-50 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 rounded-lg overflow-hidden border border-gray-200 h-[420px] flex flex-col"
+           >
           <Image
             src={product.image_url || '/images/img-1.jpg'}
             alt={product.name}
@@ -56,6 +61,7 @@ const Products: React.FC<ProductProps> = ({ products }) => {
             width={500}
             height={500}
           />
+         
           <div className="p-4 flex-grow flex flex-col justify-between">
             <div className="flex flex-col items-start mb-4">
               <h2 className="text-lg font-semibold text-gray-800">{product.name}</h2>
@@ -70,6 +76,7 @@ const Products: React.FC<ProductProps> = ({ products }) => {
             </button>
           </div>
         </div>
+        </Link>
       ))}
 
       {/* Success Message Notification */}
@@ -78,6 +85,7 @@ const Products: React.FC<ProductProps> = ({ products }) => {
           {successMessage}
         </div>
       )}
+     
     </div>
   );
 };
