@@ -16,5 +16,11 @@
     "types": ["node", "express"]
   },
   "include": ["src", "src/types", "src/config"],
-  "exclude": ["node_modules", "public"]
+  "exclude": ["node_modules", "public", 
+  "dist",
+  "build",
+  ".next",
+  "coverage",
+  "test"
+]
 }
