@@ -3,14 +3,34 @@ import dotenv from 'dotenv';
 import { Dialect } from 'sequelize';
 dotenv.config();
 
-export interface DBConfig {
-  username?: string;
-  password?: string | null;
-  database?: string;
-  host?: string;
+export interface StandardDBConfig {
+  username: string;
+  password: string | null;
+  database: string;
+  host: string;
   dialect: Dialect | string;
-  url?: string;
 }
+
+export interface ProductionDBConfig {
+  use_env_variable: string;
+  dialect: Dialect | string;
+  protocol: string;
+  dialectOptions: {
+    ssl: {
+      require: boolean;
+      rejectUnauthorized: boolean;
+    };
+  };
+  logging: boolean;
+}
+
+// Final type for all environments
+export type DBConfigs = {
+  development: StandardDBConfig;
+  'swagger-autogen': StandardDBConfig;
+  production: ProductionDBConfig;
+};
+
 
 export default {
   development: {
@@ -40,4 +60,5 @@ export default {
     logging: false,
   },
 };
+
 
