@@ -3,9 +3,9 @@ services:
     image: postgres:latest
     container_name: postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: ecommerce
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
@@ -28,24 +28,26 @@ services:
     ports: 
       - "6379:6379"
     volumes:
-      - redis-data:/data"
+      - redis-data:/data
 
   backend:
     build:
-      context: ./backend        # Relative to docker-compose.yml
-      dockerfile: docker/Dockerfile  # Relative to the context directory
+      context: ./backend              # Build context is the backend directory
+      dockerfile: Dockerfile    
     container_name: backend
     ports:
       - "5000:5000"
     environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/ecommerce
+      DATABASE_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_DATABASE}
     depends_on:
       - postgres
       - redis
+    env_file:
+      - ./backend/.env  # Explicitly load .env from the backend folder
 
   frontend:
     build:
-      context: ./frontend/myecommerce   # Relative to docker-compose.yml
+      context: ./frontend  # Relative to docker-compose.yml
       dockerfile: Dockerfile            # Dockerfile inside 'myecommerce' directory
     container_name: frontend
     ports:
@@ -58,3 +60,6 @@ services:
 volumes:
   postgres-data:
   redis-data:
+
+
+

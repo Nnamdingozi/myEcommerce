@@ -1,18 +1,18 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.ts",
+  "type": "commonjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js",
-    "migrate": "echo 'Running migrations...' && npx sequelize-cli db:migrate",
-    "seed": "echo 'Running seeders...' && npx sequelize-cli db:seed:all",
-    "start": " echo 'Starting application...' && node index.js"
+    "build": "tsc",
+    "migrate": "npx sequelize-cli db:migrate",
+    "seed": "npx sequelize-cli db:seed:all",
+    "dev": "nodemon src/index.ts",
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "axios": "^1.7.4",
     "bcrypt": "^5.1.1",
@@ -32,11 +32,11 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
-    "pg": "^8.12.0",
+    "pg": "^8.15.6",
     "pg-hstore": "^2.3.4",
     "react-icons": "^5.3.0",
     "redis": "^4.7.0",
-    "sequelize": "^6.37.3",
+    "sequelize": "^6.37.7",
     "sequelize-cli": "^6.6.2",
     "swagger-autogen": "^2.23.7",
     "swagger-jsdoc": "^6.2.8",
@@ -44,7 +44,19 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4"
-  },
-  "packageManager": "pnpm@9.7.0+sha512.dc09430156b427f5ecfc79888899e1c39d2d690f004be70e05230b72cb173d96839587545d09429b55ac3c429c801b4dc3c0e002f653830a420fa2dd4e3cf9cf"
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.15.2",
+    "@types/passport": "^1.0.17",
+    "@types/passport-github2": "^1.2.9",
+    "@types/passport-jwt": "^4.0.1",
+    "@types/passport-local": "^1.0.38",
+    "@types/pg": "^8.11.11",
+    "@types/sequelize": "^4.28.20",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2"
+  }
 }

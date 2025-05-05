@@ -1,26 +1,27 @@
 
-import { ProductDetails, NewCart } from '@/app/lib/definition';
+'use client'
+
+import { Product } from '@/app/lib/definition';
 import Image from 'next/image';
 import { useUser } from '../context/userContext';
 import { useCart } from '@/app/context/cartContext';
+import { useState } from 'react';
 
 interface CategoryproductProps {
-  categoryproducts: ProductDetails[];
-  addToCart: (token: string, productId: number, quantity?: number) => Promise<NewCart | null | undefined>;
-  setSuccessMessage: (message: string | null) => void;
-  successMessage: string | null;
+  catProducts: Product[]
+
 }
 
 const CategoryProducts: React.FC<CategoryproductProps> = ({
-  categoryproducts,
-  addToCart,
-  setSuccessMessage,
-  successMessage,
+  catProducts
 }) => {
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const { token } = useUser();
-  const { cart } = useCart();
+  const { cart, addToCart } = useCart();
 
-  console.log('categoryproducts value in props:', categoryproducts);
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+
+  
 
   const handleAddToCart = async (token: string, productId: number) => {
     if (!token) {
@@ -42,7 +43,7 @@ const CategoryProducts: React.FC<CategoryproductProps> = ({
     }
 
     try {
-      await addToCart(token, productId); // Add to cart
+      await addToCart(productId); // Add to cart
       setSuccessMessage('Product added to cart successfully!');
       setTimeout(() => {
         setSuccessMessage(null);
@@ -56,32 +57,30 @@ const CategoryProducts: React.FC<CategoryproductProps> = ({
     }
   };
 
-  if (!categoryproducts || categoryproducts.length === 0) {
-    return <p>No products found for this category</p>;
-  }
+
 
   return (
     <div className="w-full h-screen grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 mt-16">
-      {categoryproducts.map((categoryproduct) => (
+      {catProducts.map((catProduct) => (
         <div
-          key={categoryproduct.id}
+          key={catProduct.id}
           className="bg-gray-100 shadow-md rounded-lg overflow-hidden border-2 border-red-400 h-[500px] flex flex-col"
         >
           <Image
-            src={categoryproduct.image_url || '/images/img-1.jpg'}
-            alt={categoryproduct.name}
+            src={catProduct.image_url || '/images/img-1.jpg'}
+            alt={catProduct.name}
             className="w-full h-1/2 object-cover"
             width={500}
             height={500}
           />
           <div className="p-4 mx-auto w-full h-[180px]">
-            <h2 className="text-xl font-semibold">{categoryproduct.name}</h2>
-            <p className="text-gray-600">{categoryproduct.description}</p>
-            <p className="text-green-500 font-bold">${categoryproduct.price}</p>
+            <h2 className="text-xl font-semibold">{catProduct.name}</h2>
+            <p className="text-gray-600">{catProduct.description}</p>
+            <p className="text-green-500 font-bold">${catProduct.price}</p>
           </div>
           <button
             className="bg-red-800 text-rose-100 w-[60%] mx-auto h-6 rounded-lg hover:bg-rose-100 hover:text-red-800"
-            onClick={() => handleAddToCart(token!, categoryproduct.id)}
+            onClick={() => handleAddToCart(token!, catProduct.id!)}
           >
             Add to Cart
           </button>
@@ -99,4 +98,11 @@ const CategoryProducts: React.FC<CategoryproductProps> = ({
 };
 
 export default CategoryProducts;
+
+
+
+
+
+
+
 

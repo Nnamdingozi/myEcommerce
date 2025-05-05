@@ -5,7 +5,7 @@ const nextConfig = {
       {
         source: '/',
         destination: '/home',
-        permanent: true, // Set this to true or false based on your redirect preference
+        permanent: true, 
       },
     ];
   },

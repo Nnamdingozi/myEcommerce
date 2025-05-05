@@ -1,0 +1,96 @@
+[33m0636c330[m[33m ([m[1;36mHEAD -> [m[1;32mproduct-view[m[33m, [m[1;31morigin/product-view[m[33m)[m add logic for productView
+[33m282e1101[m[33m ([m[1;31morigin/optimize[m[33m, [m[1;32moptimize[m[33m)[m format logic
+[33m5fe29ef5[m modify config.js delete config.json
+[33m2ebfeccf[m resolve build config error
+[33m7309a53c[m modify production env
+[33m95081b2c[m modify docker-compose.yml
+[33m8221508e[m move Dockerfile to root
+[33m7dec26c8[m correct build errors
+[33me7db0285[m[33m ([m[1;31morigin/backend-typescript[m[33m, [m[1;32mbackend-typescript[m[33m)[m add getStaticParams to dynamic page
+[33m6b819be9[m modify categoryProduct id param
+[33m123b4d04[m add useCallBack and eslint rules
+[33mc652a0cc[m modify frontend package.json
+[33mbd505916[m optimse for build and production
+[33mad775b54[m add use client to cart page
+[33m5044671b[m resolve merge conflicts
+[33m71773189[m format backend for readability
+[33m8ff906df[m remove node-modules
+[33m0b4e493c[m[33m ([m[1;32mmain[m[33m)[m Merge pull request #15 from Nnamdingozi/third-party-login
+[33mc1e378f6[m[33m ([m[1;31morigin/third-party-login[m[33m, [m[1;32mthird-party-login[m[33m)[m modify controller, changeg to npm
+[33m63d92f3c[m Merge pull request #14 from Nnamdingozi/contact
+[33m23de5332[m[33m ([m[1;31morigin/contact[m[33m, [m[1;32mcontact[m[33m)[m adjust footer margin
+[33m4757bf78[m Merge pull request #13 from Nnamdingozi/contact
+[33mc70336e8[m add contact and sell page, modify register logic, add yup
+[33ma2e9ff18[m Merge pull request #12 from Nnamdingozi/contact
+[33m326f8fd5[m add mailto to email link
+[33mbea2a36c[m add logic for contac page
+[33m4bc35297[m add isClient to resolve render issues
+[33mdf3eb5d0[m modify search page logic
+[33mcd0cfb26[m remove unused userOrder folder
+[33m508c4426[m modify order display logic
+[33m5d38b1d9[m modify view order logic
+[33mfed7feba[m optimize code, create search and success page logic
+[33mf7e54358[m add successpage, searchpage, optimize logic
+[33m5f4d4f0f[m add token to orderDisplay
+[33m210e436d[m modify order to use token
+[33m0147f166[m modify category to use token
+[33m5fcc6493[m remove redis and session, add jwt_token
+[33m04456807[m modify passport.js logic
+[33me50715da[m modify redis
+[33m1d53806d[m modfity redis and cart logic
+[33md0729379[m add ioredis and samesite: none to index.js
+[33ma087c5c1[m modify docker CMd and improved styling
+[33m62927e69[m set secure true for https request
+[33m0d5278b8[m modifify package.json to use npx sequelize-cli
+[33mcc3b110f[m modify userContext to store session in cookies
+[33m0093db94[m modify next.config file
+[33m8d91f450[m modify product image path
+[33mb75e70ea[m remove init.sh cmd from dockerfile
+[33mc7c5e9dc[m modify seeder files
+[33m9aa59cc2[m modify image path
+[33m320cd23d[m install sequelize-cli
+[33m0e3ceb0e[m update docker to run migration
+[33m917821e3[m add migrate and seed to script in package.json
+[33m30f91ad8[m add redis url from render to env
+[33m3d485f9a[m modify redis host name
+[33md2b8acd5[m add render frontend origin to cors
+[33md27e2c68[m removed order success page temporarily
+[33m9085027c[m modify params logic in category[id] folder
+[33mea500c96[m modify category id page to include Promise
+[33mf2d6c1ff[m modifty id type in category[id] logic
+[33m8e5083f1[m modify category page code
+[33m54b9f369[m remove [id] folder fron cart
+[33m53c3e240[m add env file to frontend
+[33m49b7b9bf[m modify config, index.js and dockerfile
+[33m5f43e6e2[m modify index.js
+[33m6ed032bd[m Merge pull request #11 from Nnamdingozi/paystack
+[33mb674680c[m[33m ([m[1;31morigin/paystack[m[33m, [m[1;32mpaystack[m[33m)[m modify docker-compose and Dockerfiles
+[33md87c93a2[m Merge pull request #10 from Nnamdingozi/paystack
+[33m9b1a7284[m add Dockerfile to frontend and backend
+[33mb72161d4[m Merge pull request #9 from Nnamdingozi/paystack
+[33me9d06975[m add logic for paystack payment method
+[33mfd0b4ef6[m[33m ([m[1;31morigin/order-frontend[m[33m, [m[1;32morder-frontend[m[33m)[m add order logic for frontend
+[33ma540a59b[m[33m ([m[1;31morigin/cart-frontend[m[33m, [m[1;32mcart-frontend[m[33m)[m add logic for cart and reddis
+[33m19ef0fad[m Merge pull request #8 from Nnamdingozi/cart-frontend
+[33md80ac3e0[m add frontend cart logic and userContext
+[33m5098ea09[m Merge pull request #7 from Nnamdingozi/user-registration
+[33mddf52e33[m[33m ([m[1;31morigin/user-registration[m[33m, [m[1;32muser-registration[m[33m)[m access userId and username  globally
+[33m9650b3ad[m Merge pull request #6 from Nnamdingozi/user-registration
+[33m252da581[m add user registration and login to frontend
+[33mf0031eec[m Merge pull request #5 from Nnamdingozi/frontend-products
+[33m1f8a6a5e[m[33m ([m[1;31morigin/frontend-products[m[33m, [m[1;32mfrontend-products[m[33m)[m add logic for products in frontend
+[33m7f31bb32[m Update README.md
+[33m9f460e86[m Update README.md
+[33m0ebc200b[m Update README.md
+[33m634c3dbd[m Merge pull request #4 from Nnamdingozi/swagger-documentation
+[33mb5207f52[m[33m ([m[1;31morigin/swagger-documentation[m[33m, [m[1;32mswagger-documentation[m[33m)[m add swagger documentation for APIs
+[33m33b65ed0[m[33m ([m[1;31morigin/checkout[m[33m, [m[1;32mcheckout[m[33m)[m add checkout with paystack
+[33m60c1282e[m Create README.md
+[33m5bcf0576[m Merge pull request #3 from Nnamdingozi/order
+[33m78435638[m[33m ([m[1;31morigin/order[m[33m, [m[1;32morder[m[33m)[m add CRUD logic for order
+[33me205f8fc[m Merge pull request #2 from Nnamdingozi/cart
+[33m56a9958a[m[33m ([m[1;31morigin/cart[m[33m, [m[1;32mcart[m[33m)[m add CRUD logic for cart
+[33mc4f94725[m[33m ([m[1;31morigin/registration-login[m[33m, [m[1;32mregistration-login[m[33m)[m add CRUD logic for user registration, login and products
+[33m0bf730fe[m Merge pull request #1 from Nnamdingozi/user-requests
+[33m85f17aa3[m[33m ([m[1;31morigin/user-requests[m[33m, [m[1;32muser-requests[m[33m)[m add logic for user related CRUD operations
+[33md878b8f8[m create models and associations

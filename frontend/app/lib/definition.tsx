@@ -1,16 +1,23 @@
 export type Product = {
-    id: number;
+  id?: number;
     name: string;
+    merchant_id: number;
     price: number;
-    description: string;
-    image_url: string;
-    quantity: number
+    status: string;
+    category_id: number;
+    description?: string;
+    image_url?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+    
   };
+  
 
   export type Category = {
-    id: string;
+    id: number;
     category_name: string;
-    
+    createdAt?: Date;
+    updatedAt?: Date;
 
   };
 
@@ -38,16 +45,7 @@ export type Product = {
 
   export type LoginStatus = 200 | 201 | 400 | 500;
 
-  // export type Cart = {
-  //   id: number;
-  //   name: string;
-  //   quantity: number;
-  //   price: number;
-  //   description: string;
-  //   image_url: string;
-  //   total: number;
-
-  // };
+ 
   export type  ProductDetails = {
     id: number;         
     name: string;        
@@ -110,13 +108,14 @@ export type Product = {
 
 
   export type VerifyTransactionResponse = {
-    status: string;
-    data: {
-      status: string; 
-      reference: string;
+    status: boolean;
+    message: string;
+    transaction: {
+      reference: string; 
       amount: number;
-      currency: string;
-      [key: string]: any; 
+      message: string;
+      customer_email: string;
+      paid_at: string
     };
   }
 

@@ -1,58 +1,58 @@
-// 
 
-'use client';
-
-import { useEffect, useState } from 'react';
+'use client'
 import Hero from '@/app/ui/hero';
 import Products from '@/app/ui/products';
 import Categories from '@/app/ui/categories';
-import { Category } from '@/app/lib/definition';
-import { fetchCategories } from '@/app/lib/data';
-import { useCart } from '../context/cartContext';
-import { useProduct } from '@/app/context/productContext';
+import { useProduct } from '../context/productContext';
+import { useEffect, useState } from 'react';
+import { fetchCategories } from '@/app/lib/data/product';
+import { Category } from '../lib/definition';
 
 export default function Home() {
-  const { products, loading, error } = useProduct(); // Using ProductProvider context
-  const [categoryData, setCategoryData] = useState<Category[] | null>(null);
+  const { products, getProducts, loading, error } = useProduct();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryError, setCategoryError] = useState<string | null>(null);
 
-  const { addToCart, cart } = useCart();
-
-  // Fetch categories
+  // Fetch Products on Component Mount
   useEffect(() => {
-    const fetchCategoryData = async () => {
+    getProducts();
+  }, [getProducts]);
+
+  useEffect(() => {
+    console.log("getProducts function changed");
+  }, [getProducts]);
+  
+
+  // Fetch Categories on Component Mount
+  useEffect(() => {
+    const loadCategories = async () => {
       try {
-        const response = await fetchCategories();
-        if (response) {
-          setCategoryData(response);
-        }
-      } catch (error) {
-        console.error('Error fetching categories', error);
+        const categoriesData = await fetchCategories();
+        setCategories(categoriesData || []);
+      } catch (err) {
+        setCategoryError('Failed to fetch categories');
       }
     };
-
-    fetchCategoryData();
+    loadCategories();
   }, []);
 
-  // Handle loading and error states for products
   if (loading) return <p>Loading products...</p>;
   if (error) return <p>{error}</p>;
+  if (categoryError) return <p>{categoryError}</p>;
 
   if (!products || products.length === 0) {
-    return <p className=''>No products found</p>;
+    return <p>No products found</p>;
   }
 
   return (
-    <div className='flex flex-col lg:flex-row min-h-screen'>
+    <div className="flex flex-col lg:flex-row min-h-screen">
       <div>
-        <Categories categories={categoryData} />
+        <Categories categories={categories} />
       </div>
-      <div className='mt-8 flex flex-col'>
+      <div className="mt-8 flex flex-col">
         <Hero />
-        <Products 
-          products={products} 
-          addToCart={addToCart} 
-          cart={cart} 
-        />
+        <Products products={products} />
+
       </div>
     </div>
   );

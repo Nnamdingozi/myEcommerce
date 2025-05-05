@@ -1,11 +1,34 @@
-const path = require('path')
+
+// const path = require('path');
+
+// module.exports = {
+//   'config': path.resolve('src', 'config', 'config.ts'),
+//   'models-path': path.resolve('src', 'database', 'models'),
+//   'migrations-path': path.resolve('src', 'database', 'migrations'),
+//   'seeders-path': path.resolve('src', 'database', 'seeders')
+// };
+
+
+// sequelize.config.js
+// .sequelizerc (for production)
+
+
+// const path = require('path');
+
+// module.exports = {
+//   'config': path.resolve('dist', 'config', 'config.cjs'),
+//   'models-path': path.resolve('dist', 'database', 'models'),
+//   'migrations-path': path.resolve('dist', 'database', 'migrations'),
+//   'seeders-path': path.resolve('dist', 'database', 'seeders'),
+// };
+
+
+// .sequelizerc
+const path = require('path');
 
 module.exports = {
-
-  config: path.resolve('./database/config', 'config.js' ),
-  // config: path.resolve('./database/config', 'config.js'),
-
-  'models-path': path.resolve('./database/models'),
-  'seeders-path': path.resolve('./database/seeders'),
-  'migrations-path': path.resolve('./database/migrations'),
-}
+  'config': path.resolve('config', 'config.js'),  // This points to your JS config file
+  'models-path': path.resolve('dist/database/models'),  // Compiled models after TypeScript build
+  'migrations-path': path.resolve('dist/database/migrations'),  // Compiled migrations
+  'seeders-path': path.resolve('dist/database/seeders'),  // Compiled seeders
+};

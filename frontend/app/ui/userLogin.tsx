@@ -28,8 +28,7 @@ const UserLogin: React.FC<UserLoginProps> = ({ onSubmit, onGitHubLogin }) => {
     setError(null);
 
     try {
-      console.log('User input passed to submit:', userInput);
-      await onSubmit(userInput); // the logic of storing the token is handled outside
+      await onSubmit(userInput); 
 
     } catch (err) {
       setError(`User login failed: ${err}`);
@@ -80,7 +79,9 @@ const UserLogin: React.FC<UserLoginProps> = ({ onSubmit, onGitHubLogin }) => {
       <button
           type='button'
           onClick={onGitHubLogin}
-          className='bg-gray-800 text-white h-8 w-32 mb-5 border-3 border-gray-800 rounded focus:bg-gray-900 focus:text-gray-100'
+
+          className='bg-gray-800 text-white h-8  mb-5 border-3 w-[50%] mt-8 border-gray-800 rounded focus:bg-gray-900 focus:text-gray-100'
+
         >
           Log in with GitHub
         </button>
