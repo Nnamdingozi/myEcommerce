@@ -44,24 +44,25 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  /**
-   * Call this function to store a new token.
-   */
+
+  // Call this function to store a new token.
+
   const saveToken = (newToken: string) => {
     syncToken(newToken);
   };
 
-  /**
-   * Clears the user state and token from all storages, then navigates to the home page.
-   */
+
+  // Clears the user state and token from all storages, then navigates to the home page.
+
   const logout = useCallback(() => {
     setUser({ id: null, email: null, username: null });
     syncToken(null);
     router.push('/');
   }, [router]);
-  /**
-   * Authenticates the user using the provided token.
-   */
+
+
+  //  Authenticates the user using the provided token.
+
   const authenticateUser = useCallback(async (currentToken: string) => {
     try {
       const userProfileData = await userProfile(currentToken);
@@ -76,11 +77,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         logout();
       }
     }
-  }, [logout]); 
-  /**
-   * On mount, check for a stored token in localStorage.
-   * Since localStorage and cookies are browser-only, we do this inside useEffect.
-   */
+  }, [logout]);
+
+  // On mount, check for a stored token in localStorage.
+
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedToken = localStorage.getItem('token');
@@ -89,7 +90,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         authenticateUser(storedToken);
       }
     }
-    // The empty dependency array ensures this effect runs only once after mounting.
+
+
   }, [authenticateUser]);
 
 
@@ -99,7 +101,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     </UserContext.Provider>
   );
 };
- 
+
 export const useUser = () => {
   const context = useContext(UserContext);
   if (!context) {

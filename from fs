@@ -1,0 +1,681 @@
+[33mcommit 2fc4041a274695210fb1773c6a3ab647b65b5fad[m[33m ([m[1;36mHEAD -> [m[1;32mproduct-view[m[33m, [m[1;31morigin/product-view[m[33m)[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Mon Apr 28 14:58:36 2025 +0100
+
+    optimize sequlize files
+
+[33mcommit 92205a6a0d396d544cc1bf1ece4061be0e73143c[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Apr 27 23:53:10 2025 +0100
+
+    add config.cjs file
+
+[33mcommit 62094f8559ca2aa86abbd4560b868a8d1d83391d[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Apr 27 23:32:18 2025 +0100
+
+    modify .sequelizerc to point to dist
+
+[33mcommit 2b0cffed91b4c80e77bf31f30a71e0899e207efd[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Apr 27 23:18:41 2025 +0100
+
+    optimise for production
+
+[33mcommit ac30fa2aaf6cf65d260ae3b31b5e1becbe2d3855[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Apr 27 22:33:24 2025 +0100
+
+    change migration,seed cmd for production
+
+[33mcommit b6e6ad7b290271bdf5b6d8612957a3ae4cfdfeac[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Apr 27 21:33:48 2025 +0100
+
+    modify package.json
+
+[33mcommit 011f2a1d0660c49e14d735c17e6133bf9d42f1b0[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Apr 27 21:00:33 2025 +0100
+
+    build for production
+
+[33mcommit dbf6fa60a46bea44fb7537024711fe9032c4ac4f[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Apr 27 19:49:09 2025 +0100
+
+    move types to dependencies
+
+[33mcommit c2c1b58af4e5fcf4c4620f0241c571cb9e95ab6c[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Apr 27 19:34:09 2025 +0100
+
+    move typescript to dependencies
+
+[33mcommit 596a8bc930cb9fbba30bdd1067bff965dcd75629[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Apr 27 19:18:36 2025 +0100
+
+    run npm build
+
+[33mcommit 0636c33016e5817ed9f7ddf466d5a2ed3f732586[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Apr 27 19:04:54 2025 +0100
+
+    add logic for productView
+
+[33mcommit 282e1101ca144df102cc015b44b581689f933ce3[m[33m ([m[1;31morigin/optimize[m[33m, [m[1;32moptimize[m[33m)[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Thu Apr 24 18:43:42 2025 +0100
+
+    format logic
+
+[33mcommit 5fe29ef51a3effe6a9e340ff3c1ae7d9a3ff8227[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Wed Apr 23 19:11:55 2025 +0100
+
+    modify config.js delete config.json
+
+[33mcommit 2ebfeccf9413f6b2d713975dd8a6e3c6ec9b822c[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Wed Apr 23 18:20:37 2025 +0100
+
+    resolve build config error
+
+[33mcommit 7309a53cc0bb46c55eadbd63de2ce70431971a2b[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Wed Apr 23 16:49:45 2025 +0100
+
+    modify production env
+
+[33mcommit 95081b2c63236be76268f279eb7cee9255e58b93[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Wed Apr 23 13:24:48 2025 +0100
+
+    modify docker-compose.yml
+
+[33mcommit 8221508efdbbed726c96b247810ad72fb4112408[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Wed Apr 23 13:04:05 2025 +0100
+
+    move Dockerfile to root
+
+[33mcommit 7dec26c840e9d8301a2861cb54d795cd5baa4b64[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Wed Apr 23 12:23:49 2025 +0100
+
+    correct build errors
+
+[33mcommit e7db02855dae734cec311cd43c40c8014f5cc862[m[33m ([m[1;31morigin/backend-typescript[m[33m, [m[1;32mbackend-typescript[m[33m)[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Mon Apr 21 20:58:59 2025 +0100
+
+    add getStaticParams to dynamic page
+
+[33mcommit 6b819be9f83e2d1fa9bc86709a69463addb8ace3[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Mon Apr 21 18:51:32 2025 +0100
+
+    modify categoryProduct id param
+
+[33mcommit 123b4d04433fd987f4fa538b9c17fb76b2041574[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Mon Apr 21 17:30:37 2025 +0100
+
+    add useCallBack and eslint rules
+
+[33mcommit c652a0ccf71bd1a4f87d5694441b98f09de66495[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Mon Apr 21 17:16:21 2025 +0100
+
+    modify frontend package.json
+
+[33mcommit bd5059169691ddb7f913def53d6e32e2e20e9fe7[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Mon Apr 21 17:04:27 2025 +0100
+
+    optimse for build and production
+
+[33mcommit ad775b5426600c2fff853d9df8ebe8db649d004a[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Mon Apr 21 16:42:47 2025 +0100
+
+    add use client to cart page
+
+[33mcommit 5044671ba481e6c3d4dabc104b58ca1b128dcc9d[m
+Merge: 71773189 0b4e493c
+Author: joerald <ngozika1105@gmail.com>
+Date:   Mon Apr 21 01:19:05 2025 +0100
+
+    resolve merge conflicts
+
+[33mcommit 7177318943561de8293c8937c1bee675460e07bc[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Apr 20 18:22:00 2025 +0100
+
+    format backend for readability
+
+[33mcommit 8ff906df1d6609f1bdef32d8c602ac88f4fb1c7e[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Apr 20 00:41:09 2025 +0100
+
+    remove node-modules
+
+[33mcommit 0b4e493cda33e528306e31278cb9e8fc5e706ca6[m[33m ([m[1;32mmain[m[33m)[m
+Merge: 63d92f3c c1e378f6
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Sun Jan 26 11:12:42 2025 +0100
+
+    Merge pull request #15 from Nnamdingozi/third-party-login
+    
+    modify controller, change to npm
+
+[33mcommit c1e378f64aa7b391eccd0a4d0abb3321167608be[m[33m ([m[1;31morigin/third-party-login[m[33m, [m[1;32mthird-party-login[m[33m)[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Fri Jan 24 17:10:38 2025 +0100
+
+    modify controller, changeg to npm
+
+[33mcommit 63d92f3c37d6d28e03b4c32cb07353f6149af2a5[m
+Merge: 4757bf78 23de5332
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Sun Dec 1 12:07:16 2024 +0100
+
+    Merge pull request #14 from Nnamdingozi/contact
+    
+    adjust footer margin
+
+[33mcommit 23de533261701a3d4de75132fe8bcd753f855b68[m[33m ([m[1;31morigin/contact[m[33m, [m[1;32mcontact[m[33m)[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Dec 1 11:24:46 2024 +0100
+
+    adjust footer margin
+
+[33mcommit 4757bf78c0a024f75e0c973ac406b3ba8c0e285c[m
+Merge: a2e9ff18 c70336e8
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Sun Dec 1 11:20:55 2024 +0100
+
+    Merge pull request #13 from Nnamdingozi/contact
+    
+    add contact and sell page, modify register logic, add yup
+
+[33mcommit c70336e84e93504bd53de225e52c923e1c5a7ee7[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Dec 1 11:11:24 2024 +0100
+
+    add contact and sell page, modify register logic, add yup
+
+[33mcommit a2e9ff18da50f615aea3cf2d07b4c2ea6fc51182[m
+Merge: 4bc35297 326f8fd5
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Sun Nov 24 23:09:44 2024 +0100
+
+    Merge pull request #12 from Nnamdingozi/contact
+    
+    Contact
+
+[33mcommit 326f8fd598f180f128b2d6db7926752b5fb0132e[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Nov 24 22:59:56 2024 +0100
+
+    add mailto to email link
+
+[33mcommit bea2a36cf1484aa9af758cd0095f8315cf46fe16[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Nov 24 22:38:10 2024 +0100
+
+    add logic for contac page
+
+[33mcommit 4bc352977e2f88510c350f545f4f88170c3bd358[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Fri Nov 22 17:02:57 2024 +0100
+
+    add isClient to resolve render issues
+
+[33mcommit df3eb5d0a0db784df9eecd5fd8b8793198b14c99[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Fri Nov 22 16:52:43 2024 +0100
+
+    modify search page logic
+
+[33mcommit cd0cfb26de567a01eabbc89421d83bb445442351[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Fri Nov 22 16:42:00 2024 +0100
+
+    remove unused userOrder folder
+
+[33mcommit 508c44263c0a98308b6bb303121f5fd4370ef49a[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Fri Nov 22 16:35:04 2024 +0100
+
+    modify order display logic
+
+[33mcommit 5d38b1d95901d3d35bf7017941d648d8050bb5ed[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Thu Nov 21 20:16:43 2024 +0100
+
+    modify view order logic
+
+[33mcommit fed7feba68cdc7a8cfd8877419a6f984d12745b5[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Thu Nov 21 18:43:12 2024 +0100
+
+    optimize code, create search and success page logic
+
+[33mcommit f7e54358aebf2ae8afe01f875ce268da7cb297f2[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Wed Nov 20 16:08:08 2024 +0100
+
+    add successpage, searchpage, optimize logic
+
+[33mcommit 5f4d4f0f185e80d3cf059c16e50ef3c2151e0616[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Nov 17 00:13:29 2024 +0100
+
+    add token to orderDisplay
+
+[33mcommit 210e436da46c169e8a328790b309d0a912bdc673[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Nov 17 00:01:17 2024 +0100
+
+    modify order to use token
+
+[33mcommit 0147f1669d0deb55988aff9b2b70843ed511bc44[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Fri Nov 15 07:54:05 2024 +0100
+
+    modify category to use token
+
+[33mcommit 5fcc6493774770c6811a7128772a6f2e1d1ed59f[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Fri Nov 15 07:40:51 2024 +0100
+
+    remove redis and session, add jwt_token
+
+[33mcommit 044568075c733a284e8ba772573e96d550caad9c[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Tue Nov 12 03:25:39 2024 +0100
+
+    modify passport.js logic
+
+[33mcommit e50715dabc63172e718afa0efd66c59a9576be5a[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Tue Nov 12 00:55:33 2024 +0100
+
+    modify redis
+
+[33mcommit 1d53806d0fce37cd290075f55fbadf89e4059bb9[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Mon Nov 11 23:01:19 2024 +0100
+
+    modfity redis and cart logic
+
+[33mcommit d072937973c8d70b494328ca95e0e6af6dcb28c1[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Mon Nov 11 12:32:20 2024 +0100
+
+    add ioredis and samesite: none to index.js
+
+[33mcommit a087c5c14c531391fcc19588959a851a4829d45e[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Mon Nov 11 10:07:37 2024 +0100
+
+    modify docker CMd and improved styling
+
+[33mcommit 62927e69fde04aee03d5654cb7325822df382e61[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Mon Nov 11 07:25:10 2024 +0100
+
+    set secure true for https request
+
+[33mcommit 0d5278b879777f1b3afab239be5b418f68f24c00[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Mon Nov 11 06:51:18 2024 +0100
+
+    modifify package.json to use npx sequelize-cli
+
+[33mcommit cc3b110f5379d6a9aa7983693f45732cb5683731[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Nov 10 23:21:22 2024 +0100
+
+    modify userContext to store session in cookies
+
+[33mcommit 0093db9468eee4db3b8c4afeadafa49ad314089d[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Nov 10 12:42:23 2024 +0100
+
+    modify next.config file
+
+[33mcommit 8d91f45045d2584524d22761df5043a6d7b2e303[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Nov 10 11:57:45 2024 +0100
+
+    modify product image path
+
+[33mcommit b75e70eab2d5543aa6109131e55c14e3f564b34f[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Nov 10 11:15:30 2024 +0100
+
+    remove init.sh cmd from dockerfile
+
+[33mcommit c7c5e9dcb54d639b5e06f994f1ea283978999998[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Nov 10 10:44:07 2024 +0100
+
+    modify seeder files
+
+[33mcommit 9aa59cc293d8d948633dc943723c46621c617c93[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Nov 10 09:46:00 2024 +0100
+
+    modify image path
+
+[33mcommit 320cd23d9c18dee153c1969e4ee7dcabffd7cbdf[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Nov 10 09:16:58 2024 +0100
+
+    install sequelize-cli
+
+[33mcommit 0e3ceb0e2de6066fe9e2f61dd6ef3425e77f2baa[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Nov 10 08:51:30 2024 +0100
+
+    update docker to run migration
+
+[33mcommit 917821e3302ad47a78e9b85cb88dcf1ae1fcbf83[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Nov 10 08:36:56 2024 +0100
+
+    add migrate and seed to script in package.json
+
+[33mcommit 30f91ad8d740fb033eed56d0d17a885aea3bc073[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Nov 10 08:08:15 2024 +0100
+
+    add redis url from render to env
+
+[33mcommit 3d485f9a981ba9d47afd37de0757c276cf364796[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sat Nov 9 16:07:39 2024 +0100
+
+    modify redis host name
+
+[33mcommit d2b8acd5af1b015546dc15f797b835dc4f44f409[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sat Nov 9 14:42:16 2024 +0100
+
+    add render frontend origin to cors
+
+[33mcommit d27e2c68181a26169a3669042d9b8b5700e73a83[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sat Nov 9 12:05:17 2024 +0100
+
+    removed order success page temporarily
+
+[33mcommit 9085027cf0982d02823fc2f84178e7d7df3fe220[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Fri Nov 8 22:31:03 2024 +0100
+
+    modify params logic in category[id] folder
+
+[33mcommit ea500c968eac7a8c04dadc6c0c99a50e677e637f[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Fri Nov 8 21:41:37 2024 +0100
+
+    modify category id page to include Promise
+
+[33mcommit f2d6c1ff493d2516810c61032ac05fa6203c7d9a[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Fri Nov 8 21:26:29 2024 +0100
+
+    modifty id type in category[id] logic
+
+[33mcommit 8e5083f12f095dfc5de94ae43ba5b5be94a05c50[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Fri Nov 8 21:12:09 2024 +0100
+
+    modify category page code
+
+[33mcommit 54b9f3694d6140c1e09e151c8756d83ff8a21982[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Fri Nov 8 21:02:34 2024 +0100
+
+    remove [id] folder fron cart
+
+[33mcommit 53c3e240458d9c15c929b1acbd99871d25b90293[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Fri Nov 8 20:36:04 2024 +0100
+
+    add env file to frontend
+
+[33mcommit 49b7b9bf4560cb82a3f0051197927cfbbcfcd57a[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Fri Nov 8 17:17:58 2024 +0100
+
+    modify config, index.js and dockerfile
+
+[33mcommit 5f43e6e222bdb9dfe722ff01e95cce8317ccc17d[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Fri Nov 8 16:19:26 2024 +0100
+
+    modify index.js
+
+[33mcommit 6ed032bdf1d320bc4cc3d121a0363852bd13878b[m
+Merge: d87c93a2 b674680c
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Fri Nov 8 14:50:46 2024 +0100
+
+    Merge pull request #11 from Nnamdingozi/paystack
+    
+    modify docker-compose and Dockerfiles
+
+[33mcommit b674680c9621cb02fa65dd69e70746544923aaeb[m[33m ([m[1;31morigin/paystack[m[33m, [m[1;32mpaystack[m[33m)[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Fri Nov 8 14:00:27 2024 +0100
+
+    modify docker-compose and Dockerfiles
+
+[33mcommit d87c93a205d733b882809c60a13e1162a31749d6[m
+Merge: b72161d4 9b1a7284
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Tue Nov 5 22:18:46 2024 +0100
+
+    Merge pull request #10 from Nnamdingozi/paystack
+    
+    add Dockerfile to frontend and backend
+
+[33mcommit 9b1a7284c3dd45ebce40e7cabf70e0eca4254ddf[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Tue Nov 5 22:14:40 2024 +0100
+
+    add Dockerfile to frontend and backend
+
+[33mcommit b72161d42eb53a4f702380c43e3d9375205679a1[m
+Merge: 19ef0fad e9d06975
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Mon Nov 4 17:11:44 2024 +0100
+
+    Merge pull request #9 from Nnamdingozi/paystack
+    
+    Paystack
+
+[33mcommit e9d06975fa6822003a71b41acbd328af9c92cf6b[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Mon Nov 4 17:03:34 2024 +0100
+
+    add logic for paystack payment method
+
+[33mcommit fd0b4ef63225ed1c3a19f239bfde7c17074a785c[m[33m ([m[1;31morigin/order-frontend[m[33m, [m[1;32morder-frontend[m[33m)[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Mon Oct 28 12:48:44 2024 +0100
+
+    add order logic for frontend
+
+[33mcommit a540a59b387aeb4fc61cc4f02986bd1bb7fd3bf7[m[33m ([m[1;31morigin/cart-frontend[m[33m, [m[1;32mcart-frontend[m[33m)[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Thu Oct 24 08:02:48 2024 +0100
+
+    add logic for cart and reddis
+
+[33mcommit 19ef0fad794923121b55bc168b401b9c4153785e[m
+Merge: 5098ea09 d80ac3e0
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Fri Sep 27 12:07:48 2024 +0100
+
+    Merge pull request #8 from Nnamdingozi/cart-frontend
+    
+    add frontend cart logic and userContext
+
+[33mcommit d80ac3e083562fd17732628244df79c760a3901f[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Fri Sep 27 11:42:57 2024 +0100
+
+    add frontend cart logic and userContext
+
+[33mcommit 5098ea09b49e5f7f84492bf8d7c06dce0e31258d[m
+Merge: 9650b3ad ddf52e33
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Fri Sep 20 10:28:27 2024 +0100
+
+    Merge pull request #7 from Nnamdingozi/user-registration
+    
+    access userId and username  globally
+
+[33mcommit ddf52e330001448a32417347eea6aff846e2269e[m[33m ([m[1;31morigin/user-registration[m[33m, [m[1;32muser-registration[m[33m)[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Fri Sep 20 10:24:35 2024 +0100
+
+    access userId and username  globally
+
+[33mcommit 9650b3ad42a0848a098cf33ff58cc471058992f5[m
+Merge: f0031eec 252da581
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Tue Sep 10 23:14:53 2024 +0100
+
+    Merge pull request #6 from Nnamdingozi/user-registration
+    
+    add user registration and login to frontend
+
+[33mcommit 252da58186e298c6ab5d46d346b9da087a6b438d[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Tue Sep 10 21:39:19 2024 +0100
+
+    add user registration and login to frontend
+
+[33mcommit f0031eecbb225ec7e070a7e78cc2e5a8aae0594e[m
+Merge: 7f31bb32 1f8a6a5e
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Thu Sep 5 08:33:51 2024 +0100
+
+    Merge pull request #5 from Nnamdingozi/frontend-products
+    
+    add logic for products in frontend
+
+[33mcommit 1f8a6a5eb9d1c696535b9e3b9a10672dea184753[m[33m ([m[1;31morigin/frontend-products[m[33m, [m[1;32mfrontend-products[m[33m)[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Thu Sep 5 08:29:51 2024 +0100
+
+    add logic for products in frontend
+
+[33mcommit 7f31bb32ca9d1997dafb7be6a9342e422dc80fa1[m
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Mon Aug 26 14:16:04 2024 +0100
+
+    Update README.md
+
+[33mcommit 9f460e8612fb455306522efab3bedf5690f92ac3[m
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Mon Aug 26 14:15:43 2024 +0100
+
+    Update README.md
+
+[33mcommit 0ebc200be597e88543f12667a98cc58dce8d6f90[m
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Mon Aug 26 14:13:42 2024 +0100
+
+    Update README.md
+
+[33mcommit 634c3dbd4697885ac3ff7c29fc887fe57e008ff3[m
+Merge: 60c1282e b5207f52
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Mon Aug 19 12:42:11 2024 +0100
+
+    Merge pull request #4 from Nnamdingozi/swagger-documentation
+    
+    Swagger documentation
+
+[33mcommit b5207f5242b6865e55ec99eb9456d744605a2c09[m[33m ([m[1;31morigin/swagger-documentation[m[33m, [m[1;32mswagger-documentation[m[33m)[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Mon Aug 19 12:35:36 2024 +0100
+
+    add swagger documentation for APIs
+
+[33mcommit 33b65ed0dd769718d986478efc2b0a6f7e57b0e0[m[33m ([m[1;31morigin/checkout[m[33m, [m[1;32mcheckout[m[33m)[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sat Aug 17 20:35:47 2024 +0100
+
+    add checkout with paystack
+
+[33mcommit 60c1282e3f0ec720c0d82e93a31da065f7d66166[m
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Tue Aug 13 16:02:25 2024 +0100
+
+    Create README.md
+
+[33mcommit 5bcf0576b1c43b476cd599c0f059688127bca96e[m
+Merge: e205f8fc 78435638
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Mon Aug 12 21:54:03 2024 +0100
+
+    Merge pull request #3 from Nnamdingozi/order
+    
+    add CRUD logic for order
+
+[33mcommit 78435638acc7058da475953475a2a77a9b5f386c[m[33m ([m[1;31morigin/order[m[33m, [m[1;32morder[m[33m)[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Mon Aug 12 21:47:03 2024 +0100
+
+    add CRUD logic for order
+
+[33mcommit e205f8fcf42d10caf16a0a93e3a896fc3afa9812[m
+Merge: 0bf730fe 56a9958a
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Sun Aug 11 23:33:32 2024 +0100
+
+    Merge pull request #2 from Nnamdingozi/cart
+    
+    Cart
+
+[33mcommit 56a9958aed8defd01210e393d47c6a55a5dad26f[m[33m ([m[1;31morigin/cart[m[33m, [m[1;32mcart[m[33m)[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Sun Aug 11 23:28:43 2024 +0100
+
+    add CRUD logic for cart
+
+[33mcommit c4f94725ed5da53614f623fe50dffa2322a5253f[m[33m ([m[1;31morigin/registration-login[m[33m, [m[1;32mregistration-login[m[33m)[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Tue Aug 6 14:43:42 2024 +0100
+
+    add CRUD logic for user registration, login and products
+
+[33mcommit 0bf730fe03b985a75f87623b700b0d3f431451cb[m
+Merge: d878b8f8 85f17aa3
+Author: NGOZI <115154069+Nnamdingozi@users.noreply.github.com>
+Date:   Wed Jul 10 23:47:37 2024 +0100
+
+    Merge pull request #1 from Nnamdingozi/user-requests
+    
+    add logic for user related CRUD operations
+
+[33mcommit 85f17aa3f2e31f352edc1776b3542cf2e7e9286c[m[33m ([m[1;31morigin/user-requests[m[33m, [m[1;32muser-requests[m[33m)[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Wed Jul 10 23:36:57 2024 +0100
+
+    add logic for user related CRUD operations
+
+[33mcommit d878b8f80f04c32eef97022a363c9bb25e9f6878[m
+Author: joerald <ngozika1105@gmail.com>
+Date:   Thu Jul 4 01:50:47 2024 +0100
+
+    create models and associations

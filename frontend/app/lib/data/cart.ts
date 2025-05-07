@@ -25,32 +25,7 @@ import { NewCart } from '@/app/lib/definition';
       return null;
     }
   }
-  
-//   export async function fetchUserCart(token: string): Promise<NewCart[] | undefined> {
-//     try {
-//       const response = await axios.get<NewCart[]>(`${backendUrl}/cart`, configWithToken(token));
-//       return response.data;
-//     } catch (err: any) {
-//       console.error('Error fetching cart items:', err.response?.data || err.message || err);
-//       return undefined;
-//     }
-//   }
 
-
-// export async function fetchUserCart(token?: string): Promise<NewCart[] | undefined> {
-//     if (!token) {
-//       console.warn('fetchUserCart was called without a token.');
-//       return undefined;
-//     }
-  
-//     try {
-//       const response = await axios.get<NewCart[]>(`${backendUrl}/cart`, configWithToken(token));
-//       return response.data;
-//     } catch (err: any) {
-//       console.error('Error fetching cart items:', err.response?.data || err.message || err);
-//       return undefined;
-//     }
-//   }
 
 
 export async function fetchUserCart(token?: string): Promise<NewCart[] | undefined> {

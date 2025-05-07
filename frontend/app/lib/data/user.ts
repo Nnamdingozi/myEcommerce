@@ -13,8 +13,8 @@ import {   UserProfile } from '@/app/lib/definition';
     try {
       const response = await axios.post(`${backendUrl}/auth/register`, user);
       return { token: response.data.token };
+    
     } catch (error) {
-      // console.error('Error registering user:', error);
       throw new Error('Failed to register user');
     }
   }
