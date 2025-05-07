@@ -22,8 +22,9 @@
 const path = require('path');
 
 module.exports = {
-  'config': path.resolve(__dirname, 'config.js'),  // ✅ Using the compiled bridge instead of JSON
+  'config': path.resolve(__dirname, 'dist/config/config.js'),  // Pointing to compiled JS
   'models-path': path.resolve('src', 'database', 'models'),
   'migrations-path': path.resolve('src', 'database', 'migrations'),
   'seeders-path': path.resolve('src', 'database', 'seeders')
 };
+
