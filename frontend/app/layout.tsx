@@ -9,6 +9,7 @@ import { PaystackProvider } from "./context/paystackContext";
 import NavBar from "@/app/ui/navbar";
 import Footer from '@/app/ui/footer';
 import { OrderProvider } from '@/app/context/orderContext';
+import { Toaster } from "@/components/ui/sonner"; 
 
 
 
@@ -25,7 +26,7 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+       <body className={inter.className}>
         <UserProvider>
           <CartProvider>
             <OrderProvider>
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <PaystackProvider>
                   <NavBar />
                   <main className="h-auto bg-gray-100">{children}</main>
+                  <Toaster/>
                   <Footer />
                 </PaystackProvider>
               </ProductProvider>

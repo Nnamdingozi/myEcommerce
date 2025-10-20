@@ -1,99 +1,90 @@
+// src/controllers/orderController.ts
 
 import { RequestHandler } from 'express';
-import { createOrder, getAllOrder, getOrderById } from '../services/orderService';
-import { OrderInput } from 'interface/OrderAttributes';
+import { 
+  createOrder, 
+  getAllOrdersForUser, 
+  getOrderByIdForUser 
+} from '../services/orderService';
+import { handleErrorResponse } from '../lib/error/handleErrorResponse';
+import { JwtPayload } from './authController'; // Assuming you exported this
+import logger from '../lib/logger';
 
-
-// Create Order Handler
-export const createOrderHandler: RequestHandler = async (req, res)=> {
+export const createOrderHandler: RequestHandler = async (req, res) => {
   try {
-    const userId = Number(req.user?.id);
-
-    if (!userId) {
-    res.status(400).json({ message: 'User ID is required' });
-    return;
-    }
-
-    const { paymentMtd, shippingAddy, shippingMtd, curr} = req.body;
-
-    if (!paymentMtd || !shippingAddy || !shippingMtd || !curr) {
-     res.status(400).json({ message: 'All required order fields must be provided' });
-     return;
-    }
-
-    const orderData: OrderInput = {
-      payment_method: paymentMtd,
-      shipping_address: shippingAddy,
-      shipping_method: shippingMtd,
-      currency: curr,
-    };
-   
-
-    const newOrder = await createOrder(orderData, userId);
-
-    if (newOrder) {
-    res.status(201).json(newOrder);
-    } else {
-     res.status(400).json({ message: 'Error while creating order' });
-    }
-
-  } catch (error: any) {
-    console.error('Error creating order:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-};
-
-
-// Get All Orders Handler
-export const getAllOrderHandler: RequestHandler = async (req, res, next) => {
-  try {
-    const userId = Number(req.user?.id);
-    if (!userId) {
-      res.status(400).json({ message: 'User ID is required' });
+    const user = req.user as JwtPayload;
+    const userId = user.id!
+    console.log('USER ID and TYPE:', userId, typeof user.id)
+    if (!user?.id) {
+      res.status(401).json({ message: 'Authentication required' });
       return;
     }
 
-    const orders = await getAllOrder(userId);
-    if (!orders || orders.length === 0) {
-      res.status(404).json({ message: 'No orders found' });
-      return; 
+    // Expect camelCase from the API request body
+    const { paymentMethod, shippingAddress, shippingMethod, currency } = req.body;
+
+    if (!paymentMethod || !shippingAddress || !shippingMethod || !currency) {
+      res.status(400).json({ message: 'All required order fields must be provided' });
+      return;
     }
 
-    res.status(200).json(orders);
-  } catch (err: any) {
-    console.error('Error fetching orders:', err);
-    res.status(500).json({ message: 'Internal server error' });
+    const newOrder = await createOrder({
+      paymentMethod,
+      shippingAddress,
+      shippingMethod,
+      currency,
+    }, user.id);
+
+    res.status(201).json(newOrder);
+  } catch (error) {
+    handleErrorResponse(error, res);
+    logger.error("--- ERROR INSIDE createOrder SERVICE ---");
+    logger.error(error); // Log the full, detailed Prisma error
+    throw error; // Re-throw the error to be handled by the controller
   }
 };
 
-// Get Order By ID Handler
+export const getAllOrdersHandler: RequestHandler = async (req, res) => {
+  try {
+    const user = req.user as JwtPayload;
+    if (!user?.id) {
+      res.status(401).json({ message: 'Authentication required' });
+      return;
+    }
+
+    const orders = await getAllOrdersForUser(user.id);
+    // It's okay to return an empty array if the user has no orders.
+    // This is not a "not found" error.
+    res.status(200).json(orders);
+  } catch (error) {
+    handleErrorResponse(error, res);
+  }
+};
+
 export const getOrderByIdHandler: RequestHandler = async (req, res) => {
   try {
-    const userId = Number(req.user?.id);
-    const { orderId } = req.params;
+    const user = req.user as JwtPayload;
+    const orderId = parseInt(req.params.orderId, 10);
 
-    if (!userId) {
-    res.status(400).json({ message: 'User ID is required' });
-    return;
+    if (!user?.id) {
+      res.status(401).json({ message: 'Authentication required' });
+      return;
     }
 
-    // Convert orderId to a number for the service call
-    if (!orderId || isNaN(Number(orderId))) {
-    res.status(400).json({ message: 'Valid order ID is required' });
-    return;
+    if (isNaN(orderId)) {
+      res.status(400).json({ message: 'Valid order ID is required' });
+      return;
     }
 
-    const order = await getOrderById(Number(orderId), userId);
+    const order = await getOrderByIdForUser(orderId, user.id);
+
     if (!order) {
-    res.status(404).json({ message: 'Order not found' });
-    return;
+      res.status(404).json({ message: 'Order not found or you do not have permission to view it.' });
+      return;
     }
 
-  res.status(200).json(order);
-  } catch (err: any) {
-    console.error('Error fetching order by ID:', err);
-  res.status(500).json({ message: 'Internal server error' });
+    res.status(200).json(order);
+  } catch (error) {
+    handleErrorResponse(error, res);
   }
 };
-
-

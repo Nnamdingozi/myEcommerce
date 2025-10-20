@@ -1,70 +1,49 @@
-'use client'
+'use client';
 
-import UserLogin from '@/app/ui/userLogin';
-import { LoginRequest, LoginStatus } from '@/app/lib/definition';
-import { userLogin, userProfile } from '@/app/lib/data/user';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+
+// --- Import the correct types, context, and API functions ---
+import { LoginRequest} from '@/app/lib/definition';
 import { useUser } from '@/app/context/userContext';
+import { userLogin } from '@/app/lib/data/user';
+import UserLogin from '@/app/ui/userLogin'; 
+
+export default function LoginPage() {
+  const router = useRouter();
+  // --- 1. Get the `setUser` function from the context ---
+
+  const { setUser } = useUser();
+
+  const handleLogin = async (credentials: LoginRequest) => {
+    try {
+ 
+      const { user } = await userLogin(credentials);
+
+      setUser(user);
+      
+      // Redirect to a protected page on successful login
+      router.push('/home'); 
+    } catch (error: any) {
+      console.error('Login error:', error);
 
 
-
-
-const UserLoginForm: React.FC = () => {
-    const [error, setError] = useState<string | null>(null);
-    const { setUser, saveToken } = useUser(); // Use context to handle state & token
-    const router = useRouter();
-  
-    const handleLogin = async (user: LoginRequest): Promise<void> => {
-      try {
-        const response = await userLogin(user);
-  
-        if (response) {
-          const { token } = response;
-          saveToken(token);
-  
-          // Retrieve and set user profile
-          const profileData = await userProfile(token);
-          if (profileData) {
-            setUser({ id: profileData.id, email: profileData.email, username: profileData.username });
-            router.push('/');
-          } else {
-            setError('Failed to fetch user profile.');
-          }
-        }
-      } catch (err) {
-        console.error('Login error:', err);
-        setError('An error occurred during login.');
-      }
-    };
-
-    const handleGitHubLogin = async (): Promise<void> => {
-      try {
-        // Redirect the user to GitHub OAuth endpoint
-        window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/github`; 
-      } catch (err) {
-        console.error('GitHub login error:', err);
-        setError('An error occurred during GitHub login.');
-      }
-    };
-
-    useEffect(() => {
-      // Check for token on component mount
-      const token = localStorage.getItem('authToken');
-      if (token) {
-        userProfile(token);
-      }
-    }, []);
-    return (
-
-      <div className='LoginContainer h-screen mt-8'>
-
-        <UserLogin onSubmit={handleLogin}
-        onGitHubLogin={handleGitHubLogin}
-/>
-        {error && <p className='error-text'>{error}</p>}
-      </div>
-    );
+      throw error;
+    }
   };
 
-  export default UserLoginForm; 
+  const handleGitHubLogin = () => {
+
+    window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/github`; 
+  };
+
+ 
+  return (
+    <div className='max-w-md mx-auto mt-10'>
+ 
+      <UserLogin 
+        onSubmit={handleLogin}
+        onGitHubLogin={handleGitHubLogin}
+      />
+    </div>
+  );
+};

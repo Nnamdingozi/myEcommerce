@@ -1,138 +1,28 @@
+// src/routes/productRouter.ts
 
 import express from 'express';
 import {
     createProductHandler,
-    getAllProductsHandler,
+    getProductsHandler, 
     getProductByIdHandler,
-    getAllCategoriesHandler,
-    getProductByCategoryIdHandler,
     updateProductHandler,
-    deleteProductHandler
+    deleteProductHandler,
+    getAllCategoriesHandler
 } from "../controllers/productController";
 
 const productRouter = express.Router();
 
-/**
- * @swagger
- * /products:
- *   get:
- *     summary: Retrieve all products
- *     description: Retrieves a list of all products available in the database.
- *     responses:
- *       200:
- *         description: A list of all products
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                   name:
- *                     type: string
- *                   merchant_id: 
- *                     type: integer
- *                   price:
- *                     type: float
- *                   status:
- *                     type: string
- *                   category_id:
- *                     type: integer
- *                   createdAt:
- *                     type: string
- *                     format: date-time
- *                   updatedAt:
- *                     type: string
- *                     format: date-time
- *                   description:
- *                     type: text
- *                   image_url:
- *                     type: string
- *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- */
-productRouter.post('/', createProductHandler);
-productRouter.get('/', getAllProductsHandler);
-productRouter.get('/categories', getAllCategoriesHandler);
-productRouter.get('/categoryProduct/:id', getProductByCategoryIdHandler);
+productRouter.route('/')
+    .post(createProductHandler)
+    .get(getProductsHandler);
 
-/**
- * @swagger
- * /products/{id}:
- *   get:
- *     summary: Retrieve a product by ID
- *     description: Fetches a single product from the database by its ID.
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: The ID of the product to retrieve
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Product retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                 name:
- *                   type: string
- *                 merchant_id:
- *                   type: integer
- *                 price:
- *                   type: float
- *                 status:
- *                   type: string
- *                 category_id:
- *                   type: integer
- *                 createdAt:
- *                   type: string
- *                   format: date-time
- *                 updatedAt:
- *                   type: string
- *                   format: date-time
- *                 description:
- *                   type: text
- *                 image_url:
- *                   type: string
- *       404:
- *         description: Product not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Product not found
- *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- */
+// Route for a single product resource
+productRouter.route('/:id')
+    .get(getProductByIdHandler)
+    .put(updateProductHandler)
+    .delete(deleteProductHandler);
 
-
-productRouter.get('/category/:categoryId', getProductByCategoryIdHandler);
-productRouter.put('/:id', updateProductHandler);
-productRouter.delete('/:id', deleteProductHandler);
-productRouter.get('/:id', getProductByIdHandler);
+// Route for categories
+productRouter.get('/categories/all', getAllCategoriesHandler); // Using a more descriptive path
 
 export default productRouter;

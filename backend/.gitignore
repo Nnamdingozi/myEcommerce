@@ -1,4 +1,13 @@
-.env
+# .gitignore
 
-node_modules/
-**/node_modules/
+# Dependencies
+/node_modules
+
+# Build output
+/dist
+
+# Environment variables
+.env
+/src/generated/prisma
+
+/src/generated/prisma

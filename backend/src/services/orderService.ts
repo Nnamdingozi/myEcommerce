@@ -1,112 +1,108 @@
+// src/services/orderService.ts
 
-import  Cart from '../database/models/cart';
-import Order from '../database/models/order';
-import OrderItem from '../database/models/orderitem';
-import Product from '../database/models/product'
-import { OrderAttributes, OrderInput, OrderCreation } from 'interface/OrderAttributes';
+import { PrismaClient, Order } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
-interface OrderItemData {
-    order_id: number;
-    product_id: number;
-    quantity: number;
-}
+const prisma = new PrismaClient();
 
+// Define a type for the input data needed to create an order
 
-export const createOrder = async (orderData: OrderInput, userId: number): Promise<OrderAttributes> => {
+type OrderInputData = Pick<
+  Prisma.OrderCreateInput,
+  'paymentMethod' | 'shippingAddress' | 'shippingMethod' | 'currency'
+>;
 
-  if (!userId) {
-    throw new Error('User ID is required');
-  }
-
-  // Fetch cart items based on userId
-  const cartItems = await Cart.findAll({
-    where: { user_id: userId },
-    include: [{
-      model: Product,
-      as: 'cartproduct',
-    }],
-  });
-
-  // Calculate the total amount from cart items
-  const totalAmount = cartItems.reduce((acc, cartItem) => acc + Number(cartItem.total), 0);
-  if (totalAmount === 0) {
-    throw new Error('Cart is empty');
-  }
-
-  // Generate a tracking number for the order
-  const trackingNumber = (): string => Math.floor(Math.random() * 1000000).toString();
-  const newTrackingNumber = trackingNumber();
-
-  const NewOrderData: OrderCreation  = {
-    user_id: userId,
-    status: 'pending',
-    total_amount: totalAmount, 
-    payment_status: 'unpaid',
-    ...orderData, 
-    tracking_number: newTrackingNumber,
-  }
-
-  // Create the order 
-  const order = await Order.create(NewOrderData);
-
-  // Prepare order items for bulk insertion
-  const orderItems: OrderItemData[] = cartItems.map(cartItem => ({
-    order_id: order.id,
-    product_id: cartItem.product_id,
-    quantity: cartItem.quantity,
-  }));
-
-  // Insert the order items into the database
-  await OrderItem.bulkCreate(orderItems);
-
-  // Clear the cart after the order has been created
-  await Cart.destroy({ where: { user_id: userId } });
-
-  // Fetch the order with the populated details
-  const orderWithDetails = await Order.findOne({
-    where: { id: order.id },
-    include: [{
-      model: OrderItem,
-      as: 'orderItems',
-      include: [{
-        model: Product,
-        as: 'product',
-      }],
-    }],
-  });
-
-  return orderWithDetails?.get({ plain: true }) as OrderAttributes;
-};
-
-// get all order for a user
-export const getAllOrder = async (userId: number): Promise<OrderAttributes[]> => {
-    const orders = await Order.findAll({
-        where: { user_id: userId },
-        include: [{
-            model: OrderItem,
-            as: 'orderItems'
-        }],
-        order: [['createdAt', 'DESC']]
+export const createOrder = async (orderData: OrderInputData, userId: number): Promise<Order> => {
+  // Use a transaction to ensure all operations succeed or none do.
+  const newOrder = await prisma.$transaction(async (tx) => {
+    // 1. Fetch the user's cart items AND lock the rows for the transaction
+    // This prevents race conditions where the cart might change during checkout.
+    const cartItems = await tx.cart.findMany({
+      where: { userId },
+      include: { product: true },
     });
 
-if (!orders.length) {
-        throw new Error('No orders found');
+    if (cartItems.length === 0) {
+      throw new Error('Cannot create an order with an empty cart.');
     }
 
-    return orders as OrderAttributes[];
-};
+    // 2. Calculate the total amount
+    const totalAmount = cartItems.reduce((acc, item) => {
+      // Ensure product price is a number for calculation
+      const price = new Prisma.Decimal(item.product.price);
+      return acc.add(price.mul(item.quantity));
+    }, new Prisma.Decimal(0));
 
-export const getOrderById = async (orderId: number, userId: number): Promise<OrderAttributes> => {
-    const order = await Order.findOne({
-        where: {
-            id: orderId,
-            user_id: userId
+    // Generate a random tracking number
+    const trackingNumber = Math.random().toString(36).substring(2, 10).toUpperCase();
+
+    // 3. Create the Order record
+    const order = await tx.order.create({
+      data: {
+        userId,
+        totalAmount,
+        trackingNumber,
+        status: 'PENDING',
+        paymentStatus: 'UNPAID',
+        ...orderData, 
+
+        // 4. Create the associated OrderItems in a nested write
+        items: {
+          create: cartItems.map((item) => ({
+            productId: item.productId,
+            quantity: item.quantity,
+            price: item.product.price, 
+          })),
         },
-        include: [{
-            model: OrderItem,
-            as: 'orderItems',
-        }]
+      },
+      include: {
+        items: true, // Include the newly created items in the return value
+      },
     });
 
-    return order as OrderAttributes;
+    // 5. Clear the user's cart
+    await tx.cart.deleteMany({
+      where: { userId },
+    });
+
+   
+    return order;
+  });
+
+  return newOrder;
+};
+
+// Get all orders for a specific user
+export const getAllOrdersForUser = async (userId: number): Promise<Order[]> => {
+  const orders = await prisma.order.findMany({
+    where: { userId },
+    include: {
+      items: { // Include the items for each order
+        include: {
+          product: true // And the product details for each item
+        }
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+  return orders;
+};
+
+// Get a single order by its ID, ensuring it belongs to the correct user
+export const getOrderByIdForUser = async (orderId: number, userId: number): Promise<Order | null> => {
+  const order = await prisma.order.findUnique({
+    where: {
+      id: orderId,
+      userId: userId, // Security check: user can only access their own orders
+    },
+    include: {
+      items: {
+        include: {
+          product: true,
+        },
+      },
+      customer: true, // Optionally include customer details
+    },
+  });
+  return order;
 };

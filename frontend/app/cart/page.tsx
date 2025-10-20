@@ -1,57 +1,70 @@
 
-'use client'
-import { useUser } from "../context/userContext";
-import { useCart } from "../context/cartContext";
-import { useEffect } from "react";
-import { MyCart } from "../ui/cart";
+'use client';
 
+import { useCart } from '../context/cartContext';
+
+// --- Import our professional UI components ---
+import { MyCart } from '../ui/cart';
+import { ErrorCard } from '../ui/errorCard'; // Our reusable error component
+import { Skeleton } from '@/components/ui/skeleton';
+import { ShoppingCart, Frown } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+
+// A simple, reusable skeleton for the cart page
+const CartPageSkeleton = () => (
+  <div className="container mx-auto px-4 py-8 pt-24 md:pt-32">
+    <Skeleton className="h-10 w-48 mb-8" />
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="lg:col-span-2 space-y-4">
+        <Skeleton className="h-32 w-full rounded-lg" />
+        <Skeleton className="h-32 w-full rounded-lg" />
+      </div>
+      <div className="lg:col-span-1">
+        <Skeleton className="h-64 w-full rounded-lg" />
+      </div>
+    </div>
+  </div>
+);
 
 const CartPage: React.FC = () => {
-  const { user } = useUser();
 
-  const {
-    cart,
-    loading,
-    error,
-    newQuantity,
-    removeItemFromCart,
-    cartSubTotal,
-    deleteMessage,
-    fetchCartData
-  } = useCart();
+  const { cart, isLoading, error, updateQuantity, removeFromCart, cartSubtotal } = useCart();
 
-  // Fetch cart data only if the user is logged in
-  useEffect(() => {
-    if (user.id) {
-      fetchCartData();
-    }
-  }, [user.id, fetchCartData]);
 
-  // Handle different cart states
-  if (!user.id) {
-    return <div className="mt-60 w-full h-36 text-red-600 text-center">Please log in to view cart</div>;
+  // --- 2. Handle Loading State ---
+  if (isLoading) {
+    return <CartPageSkeleton />;
   }
 
-  if (loading) {
-    return <div className="mt-60 w-full h-36 text-red-600 text-center">Loading cart ...</div>;
-  }
-
+  // --- 3. Handle Error State ---
   if (error) {
-    return <div className="mt-60 w-full h-36 text-red-600 text-center">Error Loading cart: {error}</div>;
+    return <ErrorCard errorMessage={error} title="Could Not Load Cart" />;
   }
 
-  if (cart.length === 0) {
-    return <div className="mt-60 w-full h-36 text-red-600 mx-auto text-center">Cart is empty</div>;
+  // --- 4. Handle Empty State ---
+  if (!cart || cart.length === 0) {
+    return (
+      <div className="container flex flex-col items-center justify-center text-center text-muted-foreground min-h-[60vh] pt-28">
+        <ShoppingCart className="w-20 h-20 mb-6 text-gray-300" />
+        <h2 className="text-2xl font-semibold">Your Cart is Empty</h2>
+        <p className="mt-2 mb-6">Looks like you haven't added anything to your cart yet.</p>
+        <Frown className="w-5 h-5 mb-6 text-gray-300"/>
+        <Link href="/home" passHref>
+          <Button>Start Shopping</Button>
+        </Link>
+      </div>
+    );
   }
 
-  // Render the cart component
+  // --- 5. Success State: Render the cart display component ---
   return (
     <MyCart
-      cart={cart}
-      newQuantity={newQuantity}
-      removeItemFromCart={removeItemFromCart}
-      cartSubTotal={cartSubTotal}
-      deleteMessage={deleteMessage}
+      cartItems={cart}
+      onQuantityChange={updateQuantity}
+      onRemoveItem={removeFromCart}
+      subtotal={cartSubtotal}
+
     />
   );
 };

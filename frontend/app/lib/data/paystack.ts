@@ -1,51 +1,53 @@
-import {  Paystack  } from '@/app/lib/definition';
-  import axios from 'axios';
-  
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-  console.log(backendUrl);
-  
-  
-  // const configWithToken = (token: string | null) => ({
-  //   headers: {
-  //     Authorization: token ? `Bearer ${token}` : '',
-  //   },
-  // });
-  
-  
 
+// app/lib/data/paystack.ts
 
+import api from '../axiosApi'; 
+import { PaystackInitResponse, VerifyTransactionResponse } from '@/app/lib/definition'; 
 
-export async function initializePaystack(orderId: number): Promise<Paystack | null> {
-    try {
-      const response = await axios.post(`${backendUrl}/checkout/initialize/${orderId}`, {});
-      console.log('Paystack payment initialized:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Error initializing Paystack payment:', error);
-      return null;
-    }
+/**
+ * Initializes a Paystack transaction for a given order.
+ * Relies on the HttpOnly session cookie for authentication.
+ * @param orderId - The ID of the order to initialize payment for.
+ * @returns The Paystack authorization data (authorization_url, reference, etc.).
+ */
+
+export async function initializePaystack(orderId: number): Promise<PaystackInitResponse> {
+  try {
+
+    const response = await api.post<PaystackInitResponse>(`/checkout/initialize/${orderId}`);
+    return response.data;
+  } catch (err: any) {
+    const errorMessage = err.response?.data?.error || 'Failed to initialize payment. Please try again.';
+
+    throw new Error(errorMessage);
   }
-  
-  
-  export async function verifyPaystack(reference: string): Promise<{ status: boolean; message: string; transaction: any } | null> {
-    console.log('verifypaystack endpoint hit')
-    console.log('reference in verifyPaystack data.ts', reference);
-    try {
-      // Send request to backend endpoint with reference as a query parameter
-      const response = await axios.get(`${backendUrl}/checkout/verify`, {
-        params: { reference }
-      });
-  
-      console.log("verify pay value in data.ts:", response.data);
-  
-      // Ensure response structure aligns with backend
-      return {
-        status: response.data?.status ?? false, // Fallback to false if undefined
-        message: response.data?.message || "No message provided",
-        transaction: response.data?.transaction
-      };
-    } catch (error) {
-      console.error("Error verifying Paystack payment:", error);
-      return null;
-    }
+}
+
+/**
+ * Verifies a Paystack transaction with your backend.
+ * Relies on the HttpOnly session cookie for authentication.
+ * @param reference - The transaction reference provided by Paystack.
+ * @returns The verified transaction data from the backend.
+ */
+
+export async function verifyPaystack(reference: string): Promise<VerifyTransactionResponse> {
+  try {
+
+   
+        console.log('[STEP 5 - API Service]: Making GET request to /checkout/verify with reference:', reference);
+    
+    const response = await api.get<VerifyTransactionResponse>('/checkout/verify', {
+      params: { reference }
+    });
+    console.log('[STEP 6 - API Service]: Received response from backend:', response.data);
+    return response.data;
+  } catch (err: any) {
+
+    const errorMessage = err.response?.data?.error || 'Payment verification failed.';
+
+    
+        console.error('[STEP 7 - API Service]: Axios request failed!', err.response?.data || err.message);
+
+    throw new Error(errorMessage);
   }
+}

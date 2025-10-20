@@ -1,51 +1,117 @@
-import { PhoneArrowDownLeftIcon } from "@heroicons/react/24/solid";
-import Link from "next/link";
-import { FaGithub } from "react-icons/fa6";
-import { GrLinkedin } from "react-icons/gr";
-import { TfiEmail } from "react-icons/tfi";
+'use client';
+
+import Link from 'next/link';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+
+import { Phone, Mail, Github, Linkedin, MapPin } from 'lucide-react';
 
 const ContactPage = () => {
-  return ( <div className="relative">
-    <div className="h-10 w-10 rounded-full bg-red-800 top-10 left-28 absolute opacity-2"></div>
-    <div className="h-10 w-10 rounded-full bg-green-800 top-36 left-52 absolute opacity-2"></div>
-    <div className="h-10 w-10 rounded-full bg-yellow-500 top-10 right-28 absolute opacity-2"></div>
-    <div className="h-10 w-10 rounded-full bg-purple-800 top-36 right-52 absolute opacity-2"></div>
-    <div className="p-6 max-w-md mx-auto bg-white  rounded-md h-auto flex flex-col justify-center  mt-16 shadow-xl">
-       
-      <h1 className="text-2xl font-bold mb-14 text-center text-red-800">Contact Me</h1>
-      <div className="flex  gap-2 mb-4 justify-start ml-4">
-        <PhoneArrowDownLeftIcon className="h-7 w-7 text-blue-600" />
-        <p className="text-gray-700 text-lg font-bold pl-3">08101408378</p>
+  return (
+    <div className="container mx-auto max-w-6xl px-4 py-12 pt-24 md:pt-32">
+      <div className="text-center mb-12">
+        <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Get In Touch</h1>
+        <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
+          We&apos;d love to hear from you! Whether you have a question about our products, pricing, or anything else, our team is ready to answer all your questions.
+        </p>
       </div>
-      <div className="flex items-center gap-2 mb-4 justify-start ml-4">
-  <TfiEmail className="h-5 w-5 text-blue-600" />
-  <Link
-    href="mailto:ngozika1105@gmail.com?subject=Hello&body=I would like to connect with you."
-    className="text-blue-600 hover:underline text-lg font-bold pl-3"
-  >
-    ngozika1105@gmail.com
-  </Link>
-</div>
-      
-      <div className="flex items-center gap-2 mb-4 justify-start ml-4">
-        <FaGithub className="h-5 w-5 text-gray-700" />
-        <Link
-          href="https://github.com/Nnamdingozi"
-          className="text-blue-600 hover:underline text-lg font-bold pl-3"
-        >
-          GitHub
-        </Link>
-      </div>
-      <div className="flex items-center gap-2 mb-4 justify-start ml-4">
-        <GrLinkedin className="h-5 w-5 text-blue-700" />
-        <Link
-          href="https://www.linkedin.com/in/geraldine-nnamdi-b58a25220"
-          className="text-blue-600 hover:underline text-lg font-bold pl-3"
-        >
-          LinkedIn
-        </Link>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+        
+        {/* --- Left Column: Contact Information --- */}
+        <div className="space-y-8">
+          <h2 className="text-2xl font-semibold">Contact Information</h2>
+          <div className="space-y-6">
+            <ContactInfoItem
+              icon={<Phone className="h-5 w-5 text-primary" />}
+              title="Phone Number"
+              content="08101408378"
+              href="tel:08101408378"
+            />
+            <ContactInfoItem
+              icon={<Mail className="h-5 w-5 text-primary" />}
+              title="Email Address"
+              content="ngozika1105@gmail.com"
+              href="mailto:ngozika1105@gmail.com"
+            />
+            <ContactInfoItem
+              icon={<MapPin className="h-5 w-5 text-primary" />}
+              title="Our Location"
+              content="123 Commerce Street, Lagos, Nigeria"
+            />
+          </div>
+          
+          <div className="pt-4">
+             <h3 className="text-xl font-semibold mb-4">Follow Us</h3>
+             <div className="flex items-center gap-4">
+                <Link href="https://github.com/Nnamdingozi" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                    <Button variant="outline" size="icon"><Github className="h-5 w-5" /></Button>
+                </Link>
+                 <Link href="https://www.linkedin.com/in/geraldine-nnamdi-b58a25220" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                    <Button variant="outline" size="icon"><Linkedin className="h-5 w-5" /></Button>
+                </Link>
+                {/* Add other social links here */}
+             </div>
+          </div>
+        </div>
+
+        {/* --- Right Column: Contact Form --- */}
+        <div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Send us a Message</CardTitle>
+              <CardDescription>Fill out the form below and we&apos;ll get back to you as soon as possible.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input id="firstName" placeholder="John" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input id="lastName" placeholder="Doe" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" type="email" placeholder="you@example.com" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="message">Message</Label>
+                  <Textarea id="message" placeholder="How can we help you?" className="min-h-[120px]" />
+                </div>
+                <Button type="submit" className="w-full">Send Message</Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
+  );
+};
+
+// A reusable component for the contact info items to keep the main component clean
+const ContactInfoItem = ({ icon, title, content, href }: { icon: React.ReactNode, title: string, content: string, href?: string }) => {
+  const contentElement = <p className="text-muted-foreground">{content}</p>;
+  
+  return (
+    <div className="flex items-start gap-4">
+      <div className="flex-shrink-0">{icon}</div>
+      <div>
+        <h3 className="font-semibold">{title}</h3>
+        {href ? (
+          <a href={href} className="text-muted-foreground hover:text-primary hover:underline">
+            {content}
+          </a>
+        ) : (
+          contentElement
+        )}
+      </div>
     </div>
   );
 };

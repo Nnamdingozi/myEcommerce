@@ -1,114 +1,83 @@
 
 import bcrypt from 'bcryptjs';
-import User from '../database/models/user';
-import { IUser, ICreateUser } from '../interface/IUser';
-import { getUserByEmail } from './userService';
+import { PrismaClient, User } from '@prisma/client';
 
 
-export interface IUserProfile {
+const prisma = new PrismaClient();
+
+// This interface is for external profiles (e.g., from GitHub)
+export interface IOAuthProfile {
   id: string;
   emails?: { value: string }[];
   username?: string;
   displayName?: string;
-  [key: string]: any;
 }
 
 // Register a new user
-export const register = async (input: ICreateUser): Promise<IUser> => {
-  try {
-    const hashedPassword = await bcrypt.hash(input.password, 10);
-    const user = await User.create({
+
+type RegisterPayload = Pick<User, 'username' | 'email' | 'phone' | 'password' | 'countryCode'>;
+
+export const register = async (input: RegisterPayload): Promise<User> => {
+  const hashedPassword = await bcrypt.hash(input.password, 10);
+
+  //  create a  the user 
+  const user = await prisma.user.create({
+    data: {
       username: input.username,
       email: input.email,
       phone: input.phone,
       password: hashedPassword,
-      country_code: input.country_code,
-    });
-    return user.get({ plain: true }) as IUser;
-  } catch (error) {
-    console.error('Error during user registration:', error);
-    throw new Error('User registration failed.');
-  }
+      countryCode: input.countryCode,
+    },
+  });
+
+  return user;
 };
 
-// Find user by email
-export const findUserByEmail = async (email: string): Promise<User> => {
-  try {
-    const user = await getUserByEmail(email);
-    return user;
-  } catch (error) {
-    console.error('Error finding user by email:', error);
-    throw new Error('Error finding user.');
-  }
-};
-
-// Find user by ID
-export const findUserById = async (userId: number): Promise<IUser | null> => {
-  try {
-    const user = await User.findByPk(userId);
-    return user ? (user.get({ plain: true }) as IUser) : null;
-  } catch (error) {
-    console.error('Error finding user by ID:', error);
-    throw new Error('Error finding user.');
-  }
-};
-
-// Compare plain password with hashed password
+// Compare plain password with hashed password 
 export const comparePassword = async (password: string, hashedPassword: string): Promise<boolean> => {
-  try {
-    return await bcrypt.compare(password, hashedPassword);
-  } catch (error) {
-    console.error('Error comparing passwords:', error);
-    throw new Error('Error comparing passwords.');
-  }
+  return bcrypt.compare(password, hashedPassword);
 };
 
-// Find or create a user based on OAuth profile
-export const findOrCreateUser = async (profile: IUserProfile, provider: string): Promise<User> => {
-  try {
-    const whereClause = { [`${provider}Id`]: profile.id };
-    let user = await User.findOne({ where: whereClause });
+// Find or create a user based on OAuth profile using Prisma's `upsert`
+export const findOrCreateUser = async (profile: IOAuthProfile): Promise<User> => {
 
-    if (!user) {
-      const email = profile.emails?.[0]?.value || `${profile.username || 'user'}-${profile.id}@placeholder.com`;
-      const phoneNumber = '09000000000';
+  const user = await prisma.user.upsert({
+    where: {
+      githubId: profile.id, 
+    },
+    update: {},
+    create: { 
+      githubId: profile.id,
+      email: profile.emails?.[0]?.value || `${profile.id}@github.placeholder.com`,
+      username: profile.displayName || profile.username || `user${profile.id}`,
+      phone: '0000000000', 
+      countryCode: 'NG',  
 
-      user = await User.create({
-        username: profile.displayName || profile.username || 'OAuthUser',
-        email,
-        phone: phoneNumber,
-        password: await bcrypt.hash(Math.random().toString(36).slice(-8), 10),
-        country_code: '+234',
-        [`${provider}Id`]: profile.id,
-      });
-    }
-
-    return user
-  } catch (error) {
-    console.error('Error finding or creating user:', error);
-    throw new Error('Error finding or creating user.');
-  }
+      // Create a random password since OAuth users don't have one
+      password: await bcrypt.hash(Math.random().toString(36).slice(-8), 10),
+    },
+  });
+  return user;
 };
-
-// Get limited user details (safe to return)
-export const getUserDetails = (user: IUser): { id: number; username: string; email: string } => {
-  if (!user) {
-    throw new Error('User not found');
-  }
+//Get use details
+export const getUserDetails = (user: User): { id: number; username: string; email: string; phone: string; countryCode: string; } => {
+  
+  // Exclude password from the returned value
   return {
     id: user.id,
     username: user.username,
     email: user.email,
+    phone: user.phone,
+    countryCode: user.countryCode,
   };
 };
 
 const authService = {
   register,
-  findUserByEmail,
   comparePassword,
   findOrCreateUser,
   getUserDetails,
-  findUserById,
 };
 
 export default authService;

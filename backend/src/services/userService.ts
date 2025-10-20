@@ -1,68 +1,52 @@
-import User from '../database/models/user';
-import { IUser } from '../interface/IUser';
+// src/services/userService.ts
+
+import { PrismaClient, User } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 // Get all users
-export const getAllUsers = async (): Promise<IUser[]> => {
-  const users: IUser[] = await User.findAll();
-  if (users) {
-    return users;
-  }
-  throw new Error('Invalid operation');
+export const getAllUsers = async (): Promise<User[]> => {
+
+  const users = await prisma.user.findMany();
+  return users;
 };
 
 // Get a user by ID
-export const getUserById = async (id: number): Promise<User> => {
-  if (!id) {
-    throw new Error('Invalid ID provided');
-  }
+export const getUserById = async (id: number): Promise<User | null> => {
 
-  const user: User | null = await User.findByPk(id);
-  if (user) {
-    return user;
-  }
-
-  throw new Error(`User with ID ${id} not found`);
+  const user = await prisma.user.findUnique({
+    where: { id },
+  });
+  return user;
 };
 
 // Get a user by email
-export const getUserByEmail = async (email: string): Promise<User> => {
-  const user = await User.findOne({ where: { email } });
+export const getUserByEmail = async (email: string): Promise<User | null> => {
 
-  if (user) {
-    return user;
-  }
-
-  throw new Error('Unable to get user by email');
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+  return user;
 };
 
 // Update a user
 export const updateUser = async (
   userId: number,
-  userData: Partial<IUser>
-): Promise<IUser> => {
-  const [updated] = await User.update(userData, {
+  userData: Prisma.UserUpdateInput // Use Prisma's specific input type for type-safety
+): Promise<User> => {
+  const updatedUser = await prisma.user.update({
     where: { id: userId },
+    data: userData,
   });
-
-  if (updated) {
-    const updatedUser: IUser | null = await User.findByPk(userId);
-    if (updatedUser) {
-      return updatedUser;
-    }
-  }
-
-  throw new Error('User not found');
+  return updatedUser;
 };
 
 // Delete a user
-export const deleteUser = async (userId: number): Promise<boolean> => {
-  const deleted: number = await User.destroy({
+export const deleteUser = async (userId: number): Promise<User> => {
+
+  const deletedUser = await prisma.user.delete({
     where: { id: userId },
   });
-
-  if (deleted) {
-    return true;
-  }
-
-  throw new Error('User not found');
+  return deletedUser;
 };

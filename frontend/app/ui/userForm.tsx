@@ -1,90 +1,76 @@
-
 'use client';
 
-import { User } from '@/app/lib/definition';
 import { useState } from 'react';
 import * as yup from 'yup';
+import { RegistrationPayload } from '@/app/lib/definition'; // Use our API payload type
+import Link from 'next/link';
+
+// --- Import shadcn/ui components and lucide-react icons ---
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
 interface UserFormProps {
-  onSubmit: (userInput: User) => Promise<void>;
+  onSubmit: (userInput: RegistrationPayload) => Promise<void>;
 }
 
-// Yup schema for validation
+// Yup schema with camelCase for form state alignment
 const registrationSchema = yup.object({
-  username: yup
-    .string()
-    .min(3, 'Username must be at least 3 characters long')
-    .max(10, 'Username must not exceed 10 characters')  
-    .required('Username is required'),
-  
-  email: yup
-    .string()
-    .email('Invalid email format')
-    .required('Email is required'),
-
-  phone: yup
-    .string()
-    .matches(/^[0-9]{10,15}$/, 'Phone number must be between 10 and 15 digits')
-    .required('Phone number is required'),
-
-  password: yup
-    .string()
-    .min(8, 'Password must be at least 8 characters long')
-    .matches(
-      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/,
-      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
-    )
-    .required('Password is required'),
-
-  country_code: yup
-    .string()
-    .required('Please select a country code'), 
+  username: yup.string().min(3).required('Username is required'),
+  email: yup.string().email('Invalid email format').required('Email is required'),
+  phone: yup.string().matches(/^[0-9]{10,15}$/, 'Enter a valid phone number').required('Phone is required'),
+  password: yup.string().min(8, 'Password must be at least 8 characters').required('Password is required'),
+  countryCode: yup.string().required('Country is required'),
 });
 
+// Define the shape of our form state and errors
+type FormState = yup.InferType<typeof registrationSchema>;
+type FormErrors = Partial<Record<keyof FormState | 'general', string>>;
+
 const UserForm: React.FC<UserFormProps> = ({ onSubmit }) => {
-  const [userInput, setUserInput] = useState({
+  const [userInput, setUserInput] = useState<FormState>({
     username: '',
     email: '',
     phone: '',
     password: '',
-    country_code: '',
+    countryCode: '',
   });
-  const [error, setError] = useState<{ [key: string]: string }>({});
+  const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserInput({ ...userInput, [e.target.name]: e.target.value });
   };
-
-  const validateField = async (fieldName: keyof typeof userInput) => {
-    try {
-      await registrationSchema.validateAt(fieldName, userInput);  
-      setError((prev) => ({ ...prev, [fieldName]: '' }));
-    } catch (err: any) {
-      if (err instanceof yup.ValidationError) {
-        setError((prev) => ({ ...prev, [fieldName]: err.message }));
-      }
-    }
+  
+  // Special handler for the shadcn/ui Select component
+  const handleCountryChange = (value: string) => {
+    setUserInput({ ...userInput, countryCode: value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErrors({});
 
     try {
       await registrationSchema.validate(userInput, { abortEarly: false });
       await onSubmit(userInput);
-      setUserInput({ username: '', email: '', phone: '', password: '', country_code: '' });
-      setError({});
-    } catch (err) {
+    } catch (err: any) {
       if (err instanceof yup.ValidationError) {
-        const newErrors: { [key: string]: string } = {};
+        const newErrors: FormErrors = {};
         err.inner.forEach((error) => {
-          newErrors[error.path || 'general'] = error.message;
+          if (error.path) {
+            newErrors[error.path as keyof FormState] = error.message;
+          }
         });
-        setError(newErrors);
+        setErrors(newErrors);
       } else {
-        setError({ general: 'An error occurred, please try again.' });
+        // Handle server-side errors passed from the page component
+        setErrors({ general: err.message || 'An unknown error occurred.' });
       }
     } finally {
       setLoading(false);
@@ -92,120 +78,111 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit }) => {
   };
 
   return (
-    <form
-      className="h-auto p-8 border border-gray-200 w-full max-w-md mx-auto rounded-lg shadow-md"
-      onSubmit={handleSubmit}
-    >
-      <h2 className="font-semibold text-center text-red-800 mb-4">Register a new account</h2>
-
-      <div className="mb-4">
-        <label htmlFor="username" className="sr-only">Username</label>
-        <input
-          id="username"
-          className="h-10 w-full p-2 border border-rose-300 rounded focus:outline-none focus:border-red-600 text-black"
-          type="text"
-          name="username"
-          placeholder="Username"
-          value={userInput.username}
-          onChange={handleInputChange}
-          onBlur={() => validateField('username')}
-          aria-invalid={!!error.username}
-          aria-describedby="username-error"
-          required
-        />
-        {error.username && <p id="username-error" className="text-red-600 text-sm">{error.username}</p>}
-       
+  
+      <div className="flex items-center justify-center min-h-screen bg-background px-4">
+ 
+        <Card className="w-full max-w-lg"> 
+          <CardHeader>
+            <CardTitle className="text-2xl">Create an Account</CardTitle>
+            <CardDescription>Enter your details below to create your new account.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="grid gap-6"> {/* Increased gap for better spacing */}
+              
+              {/* --- USERNAME FIELD --- */}
+              <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                <Label htmlFor="username" className="md:text-right">Username</Label>
+                <div className="md:col-span-2">
+                  <Input
+                    id="username" name="username" placeholder="johnny"
+                    value={userInput.username} onChange={handleInputChange} disabled={loading}
+                  />
+                  {errors.username && <p className="text-sm text-destructive mt-1">{errors.username}</p>}
+                </div>
+              </div>
+  
+              {/* --- EMAIL FIELD --- */}
+              <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                <Label htmlFor="email" className="md:text-right">Email</Label>
+                <div className="md:col-span-2">
+                  <Input
+                    id="email" name="email" type="email" placeholder="m@example.com"
+                    value={userInput.email} onChange={handleInputChange} disabled={loading}
+                  />
+                  {errors.email && <p className="text-sm text-destructive mt-1">{errors.email}</p>}
+                </div>
+              </div>
+  
+              {/* --- PHONE FIELD --- */}
+              <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                <Label htmlFor="phone" className="md:text-right">Phone Number</Label>
+                <div className="md:col-span-2">
+                  <Input
+                    id="phone" name="phone" type="tel" placeholder="8123456789"
+                    value={userInput.phone} onChange={handleInputChange} disabled={loading}
+                  />
+                  {errors.phone && <p className="text-sm text-destructive mt-1">{errors.phone}</p>}
+                </div>
+              </div>
+              
+              {/* --- PASSWORD FIELD --- */}
+              <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                <Label htmlFor="password" className="md:text-right">Password</Label>
+                <div className="relative md:col-span-2">
+                  <Input
+                    id="password" name="password" type={showPassword ? 'text' : 'password'} placeholder="••••••••"
+                    value={userInput.password} onChange={handleInputChange} disabled={loading} className="pr-10"
+                  />
+                  <Button
+                    type="button" variant="ghost" size="icon"
+                    className="absolute top-1/2 right-2 -translate-y-1/2 h-7 w-7 text-muted-foreground"
+                    onClick={() => setShowPassword((prev) => !prev)} disabled={loading}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
+                {/* Place error message here */}
+                <div className="md:col-start-2 md:col-span-2">
+                  {errors.password && <p className="text-sm text-destructive -mt-3">{errors.password}</p>}
+                </div>
+              </div>
+  
+              {/* --- COUNTRY FIELD --- */}
+              <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                  <Label htmlFor="countryCode" className="md:text-right">Country</Label>
+                  <div className="md:col-span-2">
+                      <Select name="countryCode" onValueChange={handleCountryChange} value={userInput.countryCode} disabled={loading}>
+                          <SelectTrigger>
+                              <SelectValue placeholder="Select your country" />
+                          </SelectTrigger>
+                          <SelectContent>
+                              <SelectItem value="+1">United States (+1)</SelectItem>
+                              <SelectItem value="+44">United Kingdom (+44)</SelectItem>
+                              <SelectItem value="+91">India (+91)</SelectItem>
+                              <SelectItem value="+234">Nigeria (+234)</SelectItem>
+                              <SelectItem value="+61">Australia (+61)</SelectItem>
+                          </SelectContent>
+                      </Select>
+                      {errors.countryCode && <p className="text-sm text-destructive mt-1">{errors.countryCode}</p>}
+                  </div>
+              </div>
+              
+              {errors.general && <p className="text-sm font-medium text-destructive text-center">{errors.general}</p>}
+              
+              <Button type="submit" className="w-full mt-2" disabled={loading}>
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Create account
+              </Button>
+            </form>
+          </CardContent>
+          <CardFooter className="text-center text-sm text-muted-foreground">
+            Already have an account?{' '}
+            <Link href="/user/login" passHref>
+              <span className="underline">Log in</span>
+            </Link>
+          </CardFooter>
+        </Card>
       </div>
-
-      <div className="mb-4">
-        <label htmlFor="email" className="sr-only">Email</label>
-        <input
-          id="email"
-          className="h-10 w-full p-2 border border-rose-300 rounded focus:outline-none focus:border-red-600 text-black"
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={userInput.email}
-          onChange={handleInputChange}
-          onBlur={() => validateField('email')}
-          aria-invalid={!!error.email}
-          aria-describedby="email-error"
-          required
-        />
-        {error.email && <p id="email-error" className="text-red-600 text-sm">{error.email}</p>}
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="phone" className="sr-only">Phone Number</label>
-        <input
-          id="phone"
-          className="h-10 w-full p-2 border border-rose-300 rounded focus:outline-none focus:border-red-600 text-gray-700"
-          type="tel"
-          name="phone"
-          placeholder="Phone Number"
-          value={userInput.phone}
-          onChange={handleInputChange}
-          onBlur={() => validateField('phone')}
-          aria-invalid={!!error.phone}
-          aria-describedby="phone-error"
-          required
-        />
-        {error.phone && <p id="phone-error" className="text-red-600 text-sm">{error.phone}</p>}
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="password" className="sr-only">Password</label>
-        <input
-          id="password"
-          className="h-10 w-full p-2 border border-rose-300 rounded focus:outline-none focus:border-red-600 text-gray-700"
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={userInput.password}
-          onChange={handleInputChange}
-          onBlur={() => validateField('password')}
-          aria-invalid={!!error.password}
-          aria-describedby="password-error"
-          required
-        />
-        {/* <small className="text-gray-500">Password must include uppercase, lowercase, number, and special character.</small> */}
-        {error.password && <p id="password-error" className="text-red-600 text-sm">{error.password}</p>}
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="country_code" className="sr-only">Country Code</label>
-        <select
-          id="country_code"
-          className="h-10 w-full p-2 border border-rose-300 rounded focus:outline-none focus:border-red-600 text-gray-700"
-          name="country_code"
-          value={userInput.country_code}
-          onChange={handleInputChange}
-          onBlur={() => validateField('country_code')}
-          aria-invalid={!!error.country_code}
-          aria-describedby="country_code-error"
-          required
-        >
-          <option value="" disabled>Select Country Code</option>
-          <option value="+1">United States (+1)</option>
-          <option value="+44">United Kingdom (+44)</option>
-          <option value="+91">India (+91)</option>
-          <option value="+234">Nigeria (+234)</option>
-          <option value="+61">Australia (+61)</option>
-        </select>
-        {error.country_code && <p id="country_code-error" className="text-red-600 text-sm">{error.country_code}</p>}
-      </div>
-
-      <button
-        className="bg-rose-100 text-red-800 font-semibold h-12 w-full rounded mt-6 hover:bg-red-800 hover:text-rose-100"
-        type="submit"
-        disabled={loading}
-      >
-        {loading ? 'Registering...' : 'Register'}
-      </button>
-    </form>
-  );
-};
-
+    )
+    }
 export default UserForm;
-
-

@@ -17,7 +17,7 @@
                             className='rounded-lg shadow-lg bg-rose-100 hover:bg-rose-200 transition-all duration-200 transform hover:-translate-y-1'
                         >
                             <Link href={`/category/${category.id}`} className='block py-2 px-4 text-red-800 font-semibold text-center'>
-                                {category.category_name}
+                                {category.categoryName}
                             </Link>
                         </li>
                     ))}
