@@ -1,224 +1,180 @@
 
-
 'use client';
 
-import { HomeIcon } from '@heroicons/react/16/solid';
 import Link from 'next/link';
-import { useUser } from '@/app/context/userContext';
-import { MagnifyingGlassIcon, ShoppingCartIcon, Cog8ToothIcon } from '@heroicons/react/24/solid';
-import { ChatBubbleLeftIcon, UserIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { ProductDetails, Product } from '../lib/definition';
-import { useCart} from '@/app/context/cartContext';
+import { useUser } from '@/app/context/userContext';
+import { useCart } from '@/app/context/cartContext';
 import { useProduct } from '../context/productContext';
-import { lusitana } from '@/app/ui/font'
+import { Product } from '../lib/definition';
 
-
+// --- Import shadcn/ui components and lucide-react icons ---
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Home, Search, ShoppingCart, Menu, X, User as UserIcon } from 'lucide-react';
+import { lusitana } from '@/app/ui/font';
 
 const Navbar: React.FC = () => {
-  const { user, logout, token } = useUser();
-  const { count } = useCart();
+  const { user, logout } = useUser();
+  const { itemCount } = useCart(); // Correctly get the cart item count
+  const { products } = useProduct();
   const router = useRouter();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredProducts, setFilteredProducts] = useState<Product[] | []>([]);
-  const [loading, setLoading] = useState(false); 
-  const [hasMounted, setHasMounted] = useState(false);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  console.log('User object from context:', user)
 
-  const {products} = useProduct()
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleCartClick = () => {
-    router.push('/cart');
-  };
-
-
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
-  
-  // Handle search logic
+  // Debounced search effect
   useEffect(() => {
     if (searchQuery.trim() === '') {
       setFilteredProducts([]);
-      setLoading(false); // Stop loading if search query is empty
       return;
     }
-
-    setLoading(true); // Start loading
     const timer = setTimeout(() => {
-
       const filtered = products.filter(
-        (product) =>
-          product.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          product.description?.toLowerCase().includes(searchQuery.toLowerCase())
+        (product) => product.name?.toLowerCase().includes(searchQuery.toLowerCase())
       );
-
-      setFilteredProducts(filtered);
-      setLoading(false); // Stop loading after filtering
-    }, 500); // Adding a debounce to avoid excessive filtering
-
-    return () => clearTimeout(timer); // Cleanup for debounce
+      setFilteredProducts(filtered.slice(0, 5)); // Limit results to 5
+    }, 300);
+    return () => clearTimeout(timer);
   }, [searchQuery, products]);
-
-  const handleSearchSubmit = () => {
-    if (searchQuery.trim() !== '') {
-      router.push(`/search?query=${encodeURIComponent(searchQuery)}`);
-      setSearchQuery('');
-      setFilteredProducts([]);
-    }
+  
+  const handleSearchSelect = (productName: string) => {
+    router.push(`/search?query=${encodeURIComponent(productName)}`);
+    setSearchQuery('');
+    setFilteredProducts([]);
+    setIsSearchFocused(false);
   };
 
-  if(loading) {
-    return (
-      <div className="absolute top-full left-0 w-full bg-white shadow-lg border border-gray-200 rounded-md mt-1 z-50 flex justify-center items-center py-4">
-        <Cog8ToothIcon className="w-6 h-6 text-gray-500 animate-spin" />
-      </div>
-    )
-  }
-
   return (
-    <nav className="bg-rose-100 w-full h-[50px] fixed top-0 flex items-center z-50">
-      <div className="flex justify-between items-center h-full w-full p-2">
-        {/* Brand and Home Icon */}
-        <div className="flex items-center space-x-2 w-[20%]">
-          <h2 className={`text-red-800 ${lusitana.className}` }>Family Shop</h2>
-          <Link href={'/'}>
-            <HomeIcon className="w-6 h-6 text-red-800" />
-          </Link>
-        </div>
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center justify-between">
+        {/* === Left Section: Brand === */}
+        <Link href="/" className="flex items-center gap-2">
+          <ShoppingCart className="h-6 w-6 text-primary" /> {/* Use a relevant icon */}
+          <span className={`${lusitana.className} text-xl font-bold`}>FamilyShop</span>
+        </Link>
 
-        {/* Hamburger icon for small screens */}
-        <div className="lg:hidden md:hidden flex items-center">
-          <button onClick={toggleMenu} className="text-red-800 focus:outline-none">
-            <Bars3Icon className="w-6 h-6" />
-          </button>
-        </div>
-
-        {/* Search bar, User section, and Cart icon for large and medium screens */}
-        <div className="hidden md:flex w-full justify-between items-center">
-          {/* Search Bar */}
-          <div className="relative w-[50%] max-w-sm">
-            <input
-              type="text"
-              placeholder="Search by name or category"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-8 py-2 pl-10 pr-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-800 focus:outline-none"
-            />
-           <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-  {/* Wrapping the spinner logic in a container */}
-  <div >
-    <MagnifyingGlassIcon
-      className="w-5 h-5 text-gray-500 cursor-pointer"
-      onClick={handleSearchSubmit}
-    />
-  </div>
-</div>
-
-
-
-
-            {/* Dropdown for search results */}
-            {filteredProducts.length > 0 && !loading && (
-              <div className="absolute top-full left-0 w-full bg-white shadow-lg border border-gray-200 rounded-md mt-1 z-50">
-                <ul className="divide-y divide-gray-200">
-                  {filteredProducts.map((product) => (
-                    <li
-                      key={product.id}
-                      onClick={() => router.push(`/search?query=${encodeURIComponent(product.name)}`)}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer transition-colors duration-200"
-                    >
-                      {product.name}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {/* User Section */}
-          <div className="flex items-center space-x-4">
-            <UserIcon className="h-6 w-6 text-red-800" />
-            <span className="text-sm hidden md:inline">
-              {hasMounted && token && user && user.username ? (
-                <>
-                  Welcome, {user.username}{' '}
-                  <button
-                    className="ml-2 h-6 text-red-800 font-bold px-4 rounded-md hover:border border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
-                    onClick={logout}
+        {/* === Center Section: Search (Desktop) === */}
+        <div className="relative hidden md:flex flex-1 max-w-lg mx-8">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search products..."
+            className="w-full pl-10"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+          />
+          {isSearchFocused && filteredProducts.length > 0 && (
+            <div className="absolute top-full left-0 w-full bg-background shadow-lg border rounded-md mt-2 z-50">
+              <ul>
+                {filteredProducts.map((product) => (
+                  <li
+                    key={product.id}
+                    onMouseDown={() => handleSearchSelect(product.name)}
+                    className="px-4 py-2 hover:bg-accent cursor-pointer"
                   >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link href={'/user/register'} className='cursor-pointer font-bold hover:text-blue-600 shadow-sm'>Sign up</Link> /{' '}
-                  <Link href={'/user/login'} className='cursor-pointer font-bold hover:text-blue-600 shadow-sm '>Log In</Link>
-                </>
-              )}
-            </span>
-          </div>
-
-          {/* Contact and Cart */}
-          <div className="flex items-center space-x-4">
-            <ChatBubbleLeftIcon className="h-6 w-6 text-red-800 cursor-pointer" />
-            <span><Link href={'/contacts'} className='cursor-pointer font-bold hover:text-blue-600 shadow-sm'>Contact</Link></span>
-            <div className="relative">
-              <ShoppingCartIcon className="h-6 w-9 text-red-800 cursor-pointer font-bold hover:text-blue-600 shadow-sm" onClick={handleCartClick} />
-              {hasMounted && count > 0 && <span className="absolute top-3 text-black">{count}</span>}
+                    {product.name}
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Dropdown menu for small screens */}
-        {isMenuOpen && (
-          <div className="lg:hidden absolute top-12 right-2 w-64 bg-gray-200 shadow-lg rounded-lg p-4 flex flex-col space-y-4">
-            {/* Search Bar in Dropdown */}
+        {/* === Right Section: Icons and User Menu (Desktop) === */}
+        <div className="hidden md:flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={() => router.push('/cart')}>
             <div className="relative">
-              <input
-                type="text"
-                placeholder="Search by name or category"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-8 py-2 pl-10 pr-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-red-800 focus:outline-none"
-              />
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                <MagnifyingGlassIcon className="w-5 h-5 text-gray-500" />
-              </div>
+              <ShoppingCart className="h-5 w-5" />
+              {itemCount > 0 && (
+                <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+                  {itemCount}
+                </span>
+              )}
             </div>
+            <span className="sr-only">Open Cart</span>
+          </Button>
+          
+          {user && user.username ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src="/avatars/01.png" alt={user.username } />
+                    <AvatarFallback>{user.username?.[0]?.toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user.username}</p>
+                    <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => router.push('/profile')}>Profile</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push('/orderPages/orderDisplay')}>My Orders</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={logout}>Log out</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <div className='flex items-center gap-2'>
+              <Button variant="ghost" onClick={() => router.push('/user/login')}>Log In</Button>
+              <Button className='bg-rose-400 text-gray-200 hover:text-rose-400 hover:bg-gray-200' onClick={() => router.push('/user/register')}>Create Account</Button>
+            </div>
+          )}
+        </div>
 
-            {/* User Section in Dropdown */}
-            <div className="flex items-center space-x-2">
-              <UserIcon className="h-6 w-6 text-red-800" />
-              <span className="text-sm">
-                {hasMounted &&  token && user && user.username ? (
-                  <>
-                    Hello, {user.username}{' '}
-                    <button
-                      className="ml-2 h-6 text-red-800 font-bold px-4 rounded-md hover:border border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500"
-                      onClick={logout}
-                    >
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link href={'/user/register'}>Sign up</Link> /{' '}
-                    <Link href={'/user/login'}>Log In</Link>
-                  </>
+        {/* === Mobile Menu Trigger === */}
+        <div className="md:hidden flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={() => router.push('/cart')}>
+                <div className="relative">
+                <ShoppingCart className="h-5 w-5" />
+                {itemCount > 0 && (
+                    <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+                    {itemCount}
+                    </span>
                 )}
-              </span>
-            </div>
-          </div>
-        )}
+                </div>
+            </Button>
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Open menu</span>
+                </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-3/4">
+                <div className="flex flex-col gap-6 pt-10 text-gray-800">
+                <Link href="/" className="font-bold" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
+                <Link href="/home" className="font-bold" onClick={() => setIsMobileMenuOpen(false)}>All Products</Link>
+                <Link href="/contact" className="font-bold" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
+                {/* Add other mobile links here */}
+                </div>
+            </SheetContent>
+            </Sheet>
+        </div>
       </div>
-    </nav>
+    </header>
   );
 };
 

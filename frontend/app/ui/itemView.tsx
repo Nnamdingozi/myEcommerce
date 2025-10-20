@@ -1,191 +1,166 @@
 
-// 'use client'
-
-// import { Product } from '@/app/lib/definition';
-// import Image from 'next/image';
-// import { useUser } from '../context/userContext';
-// import { useCart } from '@/app/context/cartContext';
-// import { useState } from 'react';
-
-// interface ProductViewProps {
-//   product: Product | null
-
-// }
-
-// const ProductView: React.FC<ProductViewProps> = ({
-//   product
-// }) => {
-//   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-//   const { token } = useUser();
-//   const { cart, addToCart } = useCart();
-
-//   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-
-//   const handleAddToCart = async (token: string, productId: number) => {
-//     if (!token) {
-//       setSuccessMessage('Please register or log in to add items to your cart.');
-//       setTimeout(() => {
-//         setSuccessMessage(null);
-//       }, 3000);
-//       return;
-//     }
-
-//     // Check if the product is already in the cart
-//     const isProductInCart = cart.some((item) => item.id === productId);
-//     if (isProductInCart) {
-//       setSuccessMessage('Product is already in the cart.');
-//       setTimeout(() => {
-//         setSuccessMessage(null);
-//       }, 3000);
-//       return;
-//     }
-
-//     try {
-//       await addToCart(productId); // Add to cart
-//       setSuccessMessage('Product added to cart successfully!');
-//       setTimeout(() => {
-//         setSuccessMessage(null);
-//       }, 3000);
-//     } catch (error) {
-//       console.error('Error adding item to cart:', error);
-//       setSuccessMessage('Failed to add product to cart.');
-//       setTimeout(() => {
-//         setSuccessMessage(null);
-//       }, 3000);
-//     }
-//   };
-
-
-
-//   return (
-//     <div className="w-full h-screen grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 mt-16">
-//         <div
-//           key={product!.id}
-//           className="bg-gray-100 shadow-md rounded-lg overflow-hidden border-2 border-red-400 h-[500px] flex flex-col"
-//         >
-//           <Image
-//             src={product!.image_url || '/images/img-1.jpg'}
-//             alt={product!.name}
-//             className="w-full h-1/2 object-cover"
-//             width={500}
-//             height={500}
-//           />
-//           <div className="p-4 mx-auto w-full h-[180px]">
-//             <h2 className="text-xl font-semibold">{product!.name}</h2>
-//             <p className="text-gray-600">{product!.description}</p>
-//             <p className="text-green-500 font-bold">${product!.price}</p>
-//           </div>
-//           <button
-//             className="bg-red-800 text-rose-100 w-[60%] mx-auto h-6 rounded-lg hover:bg-rose-100 hover:text-red-800"
-//             onClick={() => handleAddToCart(token!, product!.id!)}
-//           >
-//             Add to Cart
-//           </button>
-//         </div>
-
-//       {/* Success Message Notification */}
-//       {successMessage && (
-//         <div className="fixed top-32 right-16 bg-green-700 text-white px-4 py-2 rounded shadow-lg transition-opacity duration-300">
-//           {successMessage}
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default ProductView;
-
-
-
-
-
 'use client';
 
-import { Product } from '@/app/lib/definition';
-import Image from 'next/image';
-import { useUser } from '../context/userContext';
-import { useCart } from '@/app/context/cartContext';
 import { useState } from 'react';
+import Image from 'next/image';
+import { Product } from '@/app/lib/definition';
+import { useCart } from '@/app/context/cartContext';
 
-interface ProductViewProps {
+// --- Import shadcn/ui components and lucide-react icons ---
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { toast } from 'sonner';
+import { ShoppingCart, Minus, Plus, Star, ShieldCheck, Truck, Share2, Loader2 } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { } from 'lucide-react';
+
+// A simple utility to format currency (assuming it's in another file)
+const formatCurrency = (amount: number | string) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'NGN',
+  }).format(Number(amount));
+};
+
+const assetBaseUrl = process.env.NEXT_PUBLIC_ASSET_BASE_URL || 'http://localhost:5000';
+
+interface ItemViewProps {
   product: Product | null;
 }
 
-const ProductView: React.FC<ProductViewProps> = ({ product }) => {
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const { token } = useUser();
-  const { cart, addToCart } = useCart();
+const ItemView: React.FC<ItemViewProps> = ({ product }) => {
+  const { upsertToCart } = useCart();
+  const [quantity, setQuantity] = useState(1);
+  const [isAdding, setIsAdding] = useState(false);
 
-  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+  const handleAddToCart = async () => {
+    if (!product) return;
 
-  const handleAddToCart = async (token: string, productId: number) => {
-    if (!token) {
-      setSuccessMessage('Please register or log in to add items to your cart.');
-      setTimeout(() => setSuccessMessage(null), 3000);
-      return;
-    }
-
-    const isProductInCart = cart.some((item) => item.id === productId);
-    if (isProductInCart) {
-      setSuccessMessage('Product is already in the cart.');
-      setTimeout(() => setSuccessMessage(null), 3000);
-      return;
-    }
-
+    setIsAdding(true);
     try {
-      await addToCart(productId);
-      setSuccessMessage('Product added to cart successfully!');
-      setTimeout(() => setSuccessMessage(null), 3000);
-    } catch (error) {
-      console.error('Error adding item to cart:', error);
-      setSuccessMessage('Failed to add product to cart.');
-      setTimeout(() => setSuccessMessage(null), 3000);
+      await upsertToCart(product.id, quantity);
+      toast.success(`${quantity} x ${product.name} added to cart!`);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to add item to cart.');
+    } finally {
+      setIsAdding(false);
     }
   };
 
-  if (!product) return <div className="text-center py-10">Product not found</div>;
+  if (!product) {
+
+    return <div className="text-center py-20 text-muted-foreground">Product not found.</div>;
+  }
+
+  const imageSrc = product.imageUrl ? `${assetBaseUrl}${product.imageUrl}` : '/images/img-1.jpg';
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6 pt-28">
-      <div className="max-w-3xl w-full bg-white shadow-lg rounded-2xl overflow-hidden flex flex-col md:flex-row">
-        {/* Product Image */}
-        <div className="relative w-full md:w-1/2 h-64 md:h-auto">
-          <Image
-            src={product.image_url || '/images/img-1.jpg'}
-            alt={product.name}
-            fill
-            className="object-cover"
-          />
+    <div className="container mx-auto max-w-5xl px-4 py-8 pt-24 md:pt-32">
+      <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+        {/* --- Left Column: Product Image Gallery --- */}
+        <div className="grid gap-4">
+          <div className="aspect-square relative overflow-hidden rounded-lg border">
+            <Image
+              src={imageSrc}
+              alt={product.name}
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+          {/* Placeholder for thumbnail images if you have them */}
+          <div className="grid grid-cols-4 gap-4">
+            <div className="aspect-square bg-muted rounded-lg animate-pulse" />
+            <div className="aspect-square bg-muted rounded-lg animate-pulse" />
+            <div className="aspect-square bg-muted rounded-lg animate-pulse" />
+            <div className="aspect-square bg-muted rounded-lg animate-pulse" />
+          </div>
         </div>
 
-        {/* Product Details */}
-        <div className="w-full md:w-1/2 p-8 flex flex-col justify-between">
-          <div>
-            <h2 className="text-2xl font-bold mb-2">{product.name}</h2>
-            <p className="text-gray-600 mb-4">{product.description}</p>
-            <p className="text-green-600 font-semibold text-xl mb-6">${product.price}</p>
+        {/* --- Right Column: Product Details & Actions --- */}
+        <div className="flex flex-col gap-6">
+          <div className="space-y-3">
+            <h1 className="text-3xl lg:text-4xl font-bold tracking-tight">{product.name}</h1>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center">
+                {[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-yellow-500 fill-yellow-500" />)}
+              </div>
+              <span className="text-sm text-muted-foreground">(120 Reviews)</span>
+            </div>
+            <p className="text-lg text-muted-foreground">{product.description}</p>
           </div>
 
-          <button
-            className="bg-red-600 text-white py-3 rounded-xl hover:bg-red-700 transition-all font-semibold"
-            onClick={() => handleAddToCart(token!, product.id!)}
-          >
-            Add to Cart
-          </button>
+          <Separator />
+
+          <div className="space-y-4">
+            <p className="text-3xl font-bold">{formatCurrency(product.price)}</p>
+            {/* Quantity Selector */}
+            <div className="flex items-center gap-4">
+              <Label className="text-sm font-medium">Quantity:</Label>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setQuantity(q => Math.max(1, q - 1))}>
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <span className="w-10 text-center font-bold text-lg">{quantity}</span>
+                <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setQuantity(q => q + 1)}>
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Add to Cart Button */}
+            <Button size="lg" className="w-full" onClick={handleAddToCart} disabled={isAdding}>
+              {isAdding ? (
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              ) : (
+                <ShoppingCart className="mr-2 h-5 w-5" />
+              )}
+              Add to Cart
+            </Button>
+          </div>
+
+          <Separator />
+
+          <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-green-600" />
+              <span>Secure, Encrypted Checkout</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Truck className="h-5 w-5 text-blue-600" />
+              <span>Fast, Reliable Shipping</span>
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Additional Info / Trust Badges */}
+          <Accordion type="single" collapsible className="w-full" defaultValue="item-1">
+            <AccordionItem value="item-1">
+              <AccordionTrigger>Product Details</AccordionTrigger>
+              <AccordionContent className="text-muted-foreground">
+                Detailed specifications about the material, dimensions, and features would go here.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-2">
+              <AccordionTrigger>Shipping & Returns</AccordionTrigger>
+              <AccordionContent className="text-muted-foreground">
+                Information about your shipping policy, delivery times, and return process.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+
+          <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
+            <Button variant="ghost" size="sm"><Share2 className="mr-2 h-4 w-4" /> Share</Button>
+          </div>
         </div>
       </div>
-
-      {/* Success Message */}
-      {successMessage && (
-        <div className="fixed top-20 right-6 bg-green-600 text-white px-6 py-3 rounded-lg shadow-md animate-bounce">
-          {successMessage}
-        </div>
-      )}
     </div>
   );
 };
 
-export default ProductView;
-
-
+// You might need to add a wrapper for Suspense if you're fetching this data on the client
+// but this setup works perfectly for Server Components passing data down.
+export default ItemView;
 

@@ -1,176 +1,128 @@
 
-'use client'
+'use client';
 
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { Order } from '../lib/definition';
-import { useRouter } from 'next/navigation';
-import { useUser } from './userContext';
-import { createOrder, fetchUserOrder, fetchOrderById } from '../lib/data/order';
-
+import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
+// --- Import our official types and API functions ---
+import { Order, CreateOrderPayload } from '../lib/definition';
+import { createOrder, fetchUserOrders, fetchOrderById } from '../lib/data/order';
+import { useUser } from './userContext'; // To check for an authenticated user
 
 interface OrderContextProps {
-    order: Order | null;
-    userOrder: Order[] | null;
-    isLoading: boolean;
-    error: string | null;
-    setError: (error: string | null) => void;
-    createNewOrder: (paymentMtd: string, shippingAddy: string, shippingMtd: string, curr: string) => Promise<Order| null>;
-    getUserOrder: () => Promise<Order[] | null>;
-    getUserOrderById: ( orderId: number) => Promise<Order | null>;
-    successMessage: string | null;
-    setSuccessMessage: (message: string | null) => void;
-
-    showOrderDetails: boolean;
-    setShowOrderDetails: (show: boolean) => void;
-    setIsLoading: (show: boolean) => void;
-    handleCloseOrderDetails: () => void;
+  orders: Order[];
+  isLoading: boolean;
+  error: string | null;
+  fetchOrders: () => Promise<void>;
+  fetchSingleOrder: (orderId: number) => Promise<Order | null>;
+  createNewOrder: (orderData: CreateOrderPayload) => Promise<Order | null>;
 }
 
+const OrderContext = createContext<OrderContextProps | undefined>(undefined);
 
-const OrderContext = createContext<OrderContextProps | null>(null);
+export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [order, setOrder] = useState<Order | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [userOrder, setUserOrder] = useState<Order[] | null>(null);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
-    const [showOrderDetails, setShowOrderDetails] = useState(false);
+  // Get the user object 
+  const { user } = useUser();
 
+  const fetchOrders = useCallback(async () => {
 
-    const { token } = useUser();
-    const router = useRouter();
-
-    const createNewOrder = useCallback(
-        async (paymentMtd: string, shippingAddy: string, shippingMtd: string, curr: string): Promise<Order | null> => {
-            if (!token) {
-                console.warn('No token provided. Skipping create order request.');
-                return null;
-            }
-           
-            setIsLoading(true);
-            setError(null);
-
-           
-            try {
-                const newOrder = await createOrder(token, paymentMtd, shippingAddy, shippingMtd, curr);
-                if (newOrder ) {
-                    setOrder(newOrder)
-                    return newOrder
-                } else {
-                    throw new Error('Failed to create the order');
-
-
-                }
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'An error occurred while creating the order');
-                return null;
-            } finally {
-                setIsLoading(false);
-            }
-        },
-        
-        [token]
-    );
-
-    const getUserOrder = useCallback(
-        async (): Promise<Order[] | null> => {
-            if (!token) {
-                console.warn('No token provided. Skipping fetch user orders request.');
-                return null;
-            }
-
-
-            setIsLoading(true);
-            setError(null);
-
-
-            try {
-                const userOrders = await fetchUserOrder(token);
-                setUserOrder(userOrders);
-                return userOrders;
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'An error occurred while fetching user orders');
-                return null;
-            } finally {
-                setIsLoading(false);
-            }
-        },
-        [token]
-    );
-
-    const getUserOrderById = useCallback(
-        async (orderId: number): Promise<Order | null> => {
-            if (!token) {
-                console.warn('No token provided. Skipping fetch order by ID request.');
-                return null;
-            }
-
-
-            setIsLoading(true);
-            setError(null);
-
-            try {
-
-                const userOrder = await fetchOrderById(token, orderId);
-                return userOrder;
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'An error occurred while fetching order details');
-                return null;
-
-            } finally {
-                setIsLoading(false);
-            }
-        },
-
-        [token]
-    );
-
-    useEffect(()=> {
-        getUserOrder();
-       
-       }, [getUserOrder]);
-
-
-
-
-    const handleCloseOrderDetails = useCallback(() => {
-        setShowOrderDetails(false);
-
-        router.push('/');
-    }, [router]);
-
-    
-
-    return (
-        <OrderContext.Provider value={{
-            order,
-            userOrder,
-            getUserOrder,
-            getUserOrderById,
-            setError,
-            createNewOrder,
-            handleCloseOrderDetails,
-            showOrderDetails,
-            setShowOrderDetails,
-            setSuccessMessage,
-            setIsLoading,
-            isLoading,
-            error,
-            successMessage
-        }}>
-            {children}
-        </OrderContext.Provider>
-    );
-};
-
-
-export const useOrderContext = () => {
-    const context = useContext(OrderContext);
-    if (!context) {
-        throw new Error('useOrderContext must be used within an OrderProvider');
+    if (!user) {
+      setOrders([]); // Clear any previous user's orders
+      return;
     }
-    return context;
+
+    setIsLoading(true);
+    setError(null);
+    try {
+
+      const userOrders = await fetchUserOrders();
+      setOrders(userOrders);
+    } catch (err: any) {
+      setError(err.message || 'An error occurred while fetching your orders.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user]);
+
+  // Fetch all orders when the component mounts or the user changes
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
+  const createNewOrder = useCallback(async (orderData: CreateOrderPayload): Promise<Order | null> => {
+    if (!user) {
+      throw new Error('You must be logged in to create an order.');
+    }
+
+    setIsLoading(true);
+    setError(null);
+    try {
+
+
+      const newOrder = await createOrder(orderData);
+
+      setOrders(prevOrders => [newOrder, ...prevOrders]);
+      return newOrder;
+    } catch (err: any) {
+      setError(err.message || 'An error occurred while creating the order.');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user]);
+
+  const fetchSingleOrder = useCallback(async (orderId: number): Promise<Order | null> => {
+    if (!user) {
+      console.warn('No user logged in. Skipping fetch order by ID request.');
+      return null;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    try {
+      // API call no longer needs a token
+      const fetchedOrder = await fetchOrderById(orderId);
+
+      setOrders(prevOrders => {
+        const index = prevOrders.findIndex(o => o.id === fetchedOrder.id);
+        if (index > -1) {
+          const newOrders = [...prevOrders];
+          newOrders[index] = fetchedOrder;
+          return newOrders;
+        }
+        return [...prevOrders, fetchedOrder];
+      });
+
+      return fetchedOrder;
+    } catch (err: any) {
+      setError(err.message || 'An error occurred while fetching order details.');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user]);
+
+  return (
+    <OrderContext.Provider value={{
+      orders,
+      isLoading,
+      error,
+      fetchOrders,
+      fetchSingleOrder,
+      createNewOrder,
+    }}>
+      {children}
+    </OrderContext.Provider>
+  );
 };
 
+export const useOrder = (): OrderContextProps => {
+  const context = useContext(OrderContext);
+  if (!context) {
+    throw new Error('useOrder must be used within an OrderProvider');
+  }
+  return context;
+};
 

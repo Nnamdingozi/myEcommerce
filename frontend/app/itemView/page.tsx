@@ -1,33 +1,23 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Product } from '@/app/lib/definition';
-import ProductView from '@/app/ui/itemView';
+import { useEffect } from 'react';
+
+import ItemView from '@/app/ui/itemView';
 import { useProduct } from '@/app/context/productContext';
+import { ProductCardSkeleton } from '../ui/product-card-skeleton';
+import { ErrorCard } from '../ui/errorCard';
 
 
-
-// interface Params {
-//   id: string;
-// }
-
-// interface ItemViewPageProps {
-//   params: Promise<Params>;
-// }
 
 
 export default function ProductViewPage({ id }: any) {
   const { error, loading, getProductById, product } = useProduct();
-//   const [id, setId] = useState<string | null>(null);
 
-  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000/api';
 
 
-//   useEffect(() => {
-//     paramsPromise.then(({ id }) => setId(id));
-//   }, [paramsPromise]);
+
 
 
   useEffect(() => {
@@ -49,13 +39,13 @@ export default function ProductViewPage({ id }: any) {
     fetchItemById();
   }, [id, getProductById, baseUrl]);
 
-  if (loading) return <p>Loading products...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <ProductCardSkeleton/>
+  if (error) return <ErrorCard errorMessage='error'/>;
   if (!product) return <p>No products found</p>;
 
   return (
     <>
-      <ProductView
+      <ItemView
         product={product}
       />
 

@@ -1,146 +1,135 @@
-
 'use client';
-import { NewCart } from '../lib/definition';
-import Image from 'next/image';
-import OrderForm from './order';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
+import { NewCart} from '../lib/definition';
+import Image from 'next/image';
+import Link from 'next/link';
+
+// --- Import shadcn/ui components and lucide-react icons ---
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Minus, Plus, Trash2 } from 'lucide-react';
+
+// A simple utility to format currency
+const formatCurrency = (amount: number | string) => {
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+  }).format(Number(amount));
+};
+
+// --- Define the component's props ---
 interface MyCartProps {
-    cart: NewCart[];
-    newQuantity: (id: number, newqty: number) => void;
-    removeItemFromCart: (cartItemId: number) => void;
-    cartSubTotal: number;
-    deleteMessage: string | null;
+  cartItems: NewCart[];
+  onQuantityChange: (itemId: number, newQuantity: number) => void;
+  onRemoveItem: (itemId: number) => void;
+  subtotal: number;
 }
 
 export const MyCart: React.FC<MyCartProps> = ({
-    cart,
-    newQuantity,
-    removeItemFromCart,
-    cartSubTotal,
-    deleteMessage,
+  cartItems,
+  onQuantityChange,
+  onRemoveItem,
+  subtotal,
 }) => {
-    const [isCheckout, setIsCheckout] = useState(false);
-    const router = useRouter();
-    const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const assetBaseUrl = process.env.NEXT_PUBLIC_ASSET_BASE_URL;
 
-   
-    const handleRemoveItem = (itemId: number) => {
-        removeItemFromCart(itemId); 
-    
-    };
+  return (
+    <div className="container mx-auto px-4 py-8 pt-24 md:pt-32">
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold tracking-tight">Your Shopping Cart</h1>
+        <Button asChild variant="outline">
+          <Link href="/orders">View Order History</Link>
+        </Button>
+      </div>
 
-    const handleClick = () => {
-        router.push('/orderPages/orderDisplay');
-    };
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        {/* --- Left Column: Cart Items --- */}
+        <div className="lg:col-span-2 space-y-4">
+          {cartItems.map((item) => {
+            //  Access the nested `product` object
+            const { product } = item; 
+            const imageSrc = product.imageUrl ? `${assetBaseUrl}${product.imageUrl}` : '/images/img-1.jpg';
 
-    return (
-        <div className="flex flex-col mt-14 text-rose-800 relative px-4 md:px-10 h-auto">
-            <button
-                className="absolute top-2 right-10 h-8 border-2 border-red-500 text-red-600 px-4 rounded-lg hover:bg-rose-100 hover:text-red-800 focus:outline-none"
-                onClick={handleClick}
-            >
-                View Orders
-            </button>
-
-            {isCheckout && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                    <div className="relative bg-white p-8 rounded-lg shadow-lg">
-                        <OrderForm />
-                        <button
-                            className="absolute top-3 right-3 text-red-800 hover:text-rose-400 text-2xl"
-                            onClick={() => setIsCheckout(false)}
-                        >
-                            &times;
-                        </button>
-                    </div>
+            return (
+              <Card key={item.id} className="flex items-center p-4">
+                <div className="relative w-24 h-24 rounded-md overflow-hidden border">
+                  <Image src={imageSrc} alt={product.name} fill className="object-cover" />
                 </div>
-            )}
-
-            <div className="w-full border-b-2 border-gray-300 pb-4 mb-4">
-                <h1 className="text-2xl font-bold text-center">My Cart</h1>
-            </div>
-
-            <div className="flex flex-col md:flex-row gap-6">
-                <div className="flex flex-col gap-4 md:w-3/4">
-                    {cart.map((item, index) => {
-                        if (item.id === undefined) {
-                            console.error(`Cart item at index ${index} has undefined id`);
-                            return null;
-                        }
-
-                        const itemQuantity = item.quantity ?? 1;
-                        if (item === undefined) {
-                            return null;
-                        }
-
-                        return (
-                            <div
-                                key={item.id}
-                                className="flex items-center border border-gray-300 rounded-lg p-4 shadow-lg bg-white h-64 mb-7"
-                            >
-                                <Image
-                                    src={`${baseUrl}${item.cartproduct.image_url}`}
-                                    alt={item.cartproduct.name}
-                                    height={200}
-                                    width={200}
-                                    className="rounded-lg"
-                                />
-                                <div className="flex flex-col ml-4 w-full">
-                                    <h2 className="text-lg font-semibold">{item!.cartproduct.name}</h2>
-                                    <p className="text-sm text-gray-600">{item!.cartproduct.description}</p>
-                                    <p className="text-lg font-semibold text-green-600 mt-1">
-                                        Price: ${Number(item.cartproduct.price).toFixed(2)}
-                                    </p>
-
-                                    <div className="flex items-center mt-3">
-                                        <button
-                                            className="h-8 w-8 border border-red-500 text-red-500 rounded-full flex justify-center items-center"
-                                            onClick={() => newQuantity(item.id!, itemQuantity + 1)}
-                                        >
-                                            +
-                                        </button>
-                                        <span className="mx-3">{itemQuantity}</span>
-                                        <button
-                                            className="h-8 w-8 border border-red-500 text-red-500 rounded-full flex justify-center items-center"
-                                            onClick={() => itemQuantity > 1 && newQuantity(item.id!, itemQuantity - 1)}
-                                        >
-                                            -
-                                        </button>
-                                    </div>
-                                </div>
-                                <div className="ml-auto text-right">
-                                    <p className="font-semibold">Total: ${Number(item.total).toFixed(2)}</p>
-                                    <button
-                                        className="mt-4 bg-red-500 text-white px-4 py-1 rounded-lg hover:bg-red-600"
-                                        onClick={() => handleRemoveItem(item.id!)} 
-                                    >
-                                        Remove
-                                    </button>
-                                </div>
-
-                                {deleteMessage && (
-                                    <div className="fixed top-32 right-32 bg-green-700 text-white px-4 py-2 rounded shadow-lg transition-opacity duration-300">
-                                        {deleteMessage} 
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })}
+                <div className="flex-grow ml-4">
+                  <h2 className="font-semibold">{product.name}</h2>
+                  <p className="text-sm text-muted-foreground line-clamp-1">{product.description}</p>
+                  <p className="text-sm font-medium mt-1">{formatCurrency(product.price)}</p>
                 </div>
-
-                <div className="md:w-1/4 bg-white p-6 shadow-lg rounded-lg border border-gray-300 h-64">
-                    <h2 className="text-xl font-bold text-center mb-4">Cart Summary</h2>
-                    <p className="text-lg font-semibold">Subtotal: ${cartSubTotal.toFixed(2)}</p>
-                    <button
-                        className="mt-12 w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600"
-                        onClick={() => setIsCheckout(true)}
-                    >
-                        Checkout - ${cartSubTotal.toFixed(2)}
-                    </button>
+                <div className="flex items-center gap-2 mx-4">
+                
+                  <Button
+                    variant="outline" size="icon" className="h-8 w-8"
+                    onClick={() => onQuantityChange(item.id, item.quantity - 1)}
+                  >
+                    <Minus className="h-4 w-4" />
+                  </Button>
+                  <span className="w-10 text-center font-bold">{item.quantity}</span>
+                  <Button
+                    variant="outline" size="icon" className="h-8 w-8"
+                    onClick={() => onQuantityChange(item.id, item.quantity + 1)}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
                 </div>
-            </div>
+                <div className="text-right">
+                  <p className="font-semibold">{formatCurrency(Number(product.price) * item.quantity)}</p>
+                 
+                  <Button
+                    variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive"
+                    onClick={() => onRemoveItem(item.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span className="sr-only">Remove item</span>
+                  </Button>
+                </div>
+              </Card>
+            );
+          })}
         </div>
-    );
+
+        {/* --- Right Column: Cart Summary --- */}
+        <div className="lg:col-span-1 sticky top-24">
+          <Card>
+            <CardHeader>
+              <CardTitle>Order Summary</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Subtotal</span>
+               
+                <span className="font-semibold">{formatCurrency(subtotal)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Shipping</span>
+                <span className="font-semibold">Calculated at checkout</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Taxes</span>
+                <span className="font-semibold">Calculated at checkout</span>
+              </div>
+              <Separator />
+              <div className="flex justify-between text-lg font-bold">
+                <span>Estimated Total</span>
+                <span>{formatCurrency(subtotal)}</span>
+              </div>
+            </CardContent>
+            <CardFooter className='flex flex-col gap-2'>
+                <Button size="lg" className="w-full" asChild>
+                    <Link href="/checkout">Proceed to Checkout</Link>
+                </Button>
+                <Button size="lg" className="w-full" asChild>
+                    <Link href="/home">Continue Shopping</Link>
+                </Button>
+            </CardFooter>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
 };

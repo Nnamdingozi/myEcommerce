@@ -1,50 +1,35 @@
+// src/routes/authRouter.ts
 
-import express, { Router,  RequestHandler } from 'express';
+import express, { Router } from 'express';
 import * as authController from '../controllers/authController';
-import passport from '../config/passport';
+import passport from '../config/passport'; // Still needed for GitHub strategy
 import { validateLogin, validateRegistration } from '../middlewares/validationMiddleware';
+// Import your standardized authentication middleware
+import { authenticate } from '../middlewares/authMiddleware';
 
 const authRouter: Router = express.Router();
 
-/**
- * @swagger
- * /register:
- *   post:
- *     summary: Create a new user
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               username:
- *                 type: string
- *               email:
- *                 type: string
- *               phone:
- *                 type: string
- *               password:
- *                 type: string
- *               githubId:
- *                 type: string
- *               country_code:
- *                 type: string
- *     responses:
- *       201:
- *         description: User created successfully
- *       400:
- *         description: Bad request
- *       500:
- *         description: Internal server error
- */
+// --- Public Routes ---
+// These routes DO NOT use the `authenticate` middleware because the user
+// doesn't have a token yet. They are trying to get one.
 authRouter.post('/register', validateRegistration, authController.register);
+authRouter.post('/login', validateLogin, authController.login);
 
-authRouter.post('/login', validateLogin, authController.login as RequestHandler);
 
-authRouter.get('/profile', passport.authenticate('jwt', { session: false }), authController.profile as RequestHandler);
-authRouter.get('/github', passport.authenticate('github'));
-authRouter.get('/github/callback', authController.githubCallback as RequestHandler);
-authRouter.get('/me', authController.getMeHandler as RequestHandler);
+// --- GitHub OAuth Routes (Special Case) ---
+// These use passport.authenticate with a different strategy ('github').
+// So, we call it directly here. It's not a JWT authentication.
+authRouter.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
+authRouter.get(
+  '/github/callback', 
+  passport.authenticate('github', { failureRedirect: '/login', session: false }), 
+  authController.githubCallback // Your handler runs only on success
+);
 
+
+// --- Protected JWT Routes ---
+// These routes require a valid JWT. We can use our clean `authenticate` middleware.
+authRouter.get('/profile', authenticate, authController.profile);
+authRouter.get('/me', authenticate, authController.getMeHandler);
+authRouter.post('/logout', authenticate, authController.logoutHandler);
 export default authRouter;

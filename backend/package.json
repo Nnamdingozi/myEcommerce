@@ -5,20 +5,22 @@
   "type": "commonjs",
   "scripts": {
     "build": "tsc",
-    "migrate": "npm run build && npx sequelize-cli db:migrate --config dist/config/config.js",
-    "seed": "npm run build && npx sequelize-cli db:seed:all --config dist/config/config.js",
+    "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
-    "start": "node dist/index.js"
+    "seed": "ts-node prisma/seed.ts",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^6.17.1",
     "axios": "^1.7.4",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "connect-redis": "^7.1.1",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
@@ -32,19 +34,19 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
-    "pg": "^8.15.6",
-    "pg-hstore": "^2.3.4",
+    "pino": "^10.1.0",
+    "pino-pretty": "^13.1.2",
     "react-icons": "^5.3.0",
     "redis": "^4.7.0",
-    "sequelize": "^6.37.7",
-    "sequelize-cli": "^6.6.2",
     "swagger-autogen": "^2.23.7",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.14",
@@ -56,7 +58,9 @@
     "@types/sequelize": "^4.28.20",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
+    "dotenv-cli": "^10.0.0",
     "nodemon": "^3.1.9",
+    "prisma": "^6.17.1",
     "ts-node": "^10.9.2"
   }
 }

@@ -1,0 +1,153 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  username    String   @unique
+  email       String   @unique
+  phone       String   @unique
+  password    String
+  githubId    String?  @unique @map("github_id")
+  countryCode String   @map("country_code")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  cartItems   Cart[]
+  orders      Order[]
+  country     Country  @relation(fields: [countryCode], references: [code], onDelete: Cascade)
+
+  @@map("users")
+}
+
+model Merchant {
+  id           Int       @id @default(autoincrement())
+  merchantName String    @map("merchant_name")
+  email        String    @unique
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  countryCode  String    @map("country_code")
+  country      Country   @relation(fields: [countryCode], references: [code])
+  products     Product[]
+
+  @@map("merchants")
+}
+
+model Product {
+  id          Int           @id @default(autoincrement())
+  name        String
+  price       Decimal
+  description String?
+  imageUrl    String?       @map("image_url")
+  status      ProductStatus
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  merchantId  Int           @map("merchant_id")
+  categoryId  Int           @map("category_id")
+  cartItems   Cart[]        @relation("CartProducts")
+  orderItems  OrderItem[]
+  category    Category      @relation(fields: [categoryId], references: [id])
+  merchant    Merchant      @relation(fields: [merchantId], references: [id])
+
+  @@map("products")
+}
+
+model Order {
+  id                   Int           @id @default(autoincrement())
+  status               OrderStatus
+  paymentStatus        PaymentStatus @default(UNPAID) @map("payment_status")
+  orderDate            DateTime      @default(now()) @map("order_date")
+  totalAmount          Decimal       @default(0) @map("total_amount")
+  paymentMethod        String?       @map("payment_method")
+  shippingAddress      String        @map("shipping_address")
+  shippingMethod       String?       @map("shipping_method")
+  trackingNumber       String?       @map("tracking_number")
+  transactionReference String?       @unique @map("transaction_reference")
+   currency             String        @default("NGN") @db.VarChar(3)
+  createdAt            DateTime      @default(now()) @map("created_at")
+  updatedAt            DateTime      @updatedAt @map("updated_at")
+  userId               Int           @map("user_id")
+  items                OrderItem[]
+  customer             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  orderId   Int      @map("order_id")
+  productId Int      @map("product_id")
+  price     Decimal 
+  order     Order    @relation(fields: [orderId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+model Cart {
+  id        Int      @id @default(autoincrement())
+  quantity  Int      @default(1)
+  total     Decimal  @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  userId    Int      @map("user_id")
+  productId Int      @map("product_id")
+  product   Product  @relation("CartProducts", fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId], name: "userProduct")
+  @@map("carts")
+}
+
+model Country {
+  id            Int        @id @default(autoincrement())
+  code          String     @unique
+  countryName   String     @map("country_name")
+  continentName String?    @map("continent_name")
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+  merchants     Merchant[]
+  users         User[]
+
+  @@map("countries")
+}
+
+model Category {
+  id           Int       @id @default(autoincrement())
+  categoryName String    @map("category_name")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  products     Product[]
+
+  @@map("categories")
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum ProductStatus {
+  AVAILABLE
+  OUT_OF_STOCK
+  ARCHIVED
+}

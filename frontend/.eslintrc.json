@@ -1,3 +1,7 @@
 {
   "extends": "next/core-web-vitals"
+  
 }
+// rules: {
+//   "no-console": "error" // This will cause a linting error for any `console` call
+// }

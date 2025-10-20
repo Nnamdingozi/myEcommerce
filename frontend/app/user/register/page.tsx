@@ -1,102 +1,45 @@
-
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import UserForm from '@/app/ui/userForm';
-import { User } from '@/app/lib/definition';
-import { registerUser, userProfile } from '@/app/lib/data/user';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { toast } from 'sonner'; 
+
+// --- Import our types, context, and UI components ---
+import { RegistrationPayload } from '@/app/lib/definition';
 import { useUser } from '@/app/context/userContext';
+import { registerUser } from '@/app/lib/data/user';
+import UserForm from '@/app/ui/userForm'; 
 
-
-const UserRegistration = () => {
-  const { saveToken, setUser } = useUser(); 
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+export default function RegistrationPage() {
   const router = useRouter();
+  // --- 1. Get the `setUser` function from the context ---
+  const { setUser } = useUser();
 
-  // Function to fetch user profile
-  const fetchUserProfile = async (token: string): Promise<void> => {
+  const handleRegister = async (userInput: RegistrationPayload) => {
     try {
-      const profileData = await userProfile(token); 
-      if (profileData) {
-        console.log('profileData fetched after registration:', profileData)
-        setUser({
-          id: profileData.id,
-          email: profileData.email,
-          username: profileData.username,
-        });
-        router.push('/'); 
-      }
-    } catch (err) {
-      setErrorMessage('Failed to retrieve profile data. Please log in again.');
-    }
-  };
+    
+      const { user } = await registerUser(userInput);
+      
+      // --- 3. Update the global user state with the returned user object ---
+      setUser(user);
+      
+      // Provide success feedback to the user
+      toast.success('Registration successful!', {
+        description: `Welcome, ${user.username}! Redirecting you now...`,
+      });
 
-  // Handle user registration
-  const handleRegister = async (user: User): Promise<void> => {
-    console.log('use object received in register page:', user)
-    setLoading(true);
-    setErrorMessage('');
-    setSuccessMessage('');
+      // Redirect to a protected page after a short delay
+      setTimeout(() => {
+        router.push('/home'); // Or any other protected route
+      }, 1500);
 
-    try {
-      const { token } = await registerUser(user); 
-
-      if (token) {
-        console.log('token received after registration:', token)
-        saveToken(token); 
-        setSuccessMessage('Registration successful! Redirecting...');
-        await fetchUserProfile(token); 
-      }
-    } catch (err) {
-      if (err instanceof Error) {
-        setErrorMessage(err.message || 'Registration failed. Please try again.');
-      } else {
-        setErrorMessage('An unexpected error occurred. Please try again.');
-      }
-    } finally {
-      setLoading(false);
+    } catch (error: any) {
+      console.error('Registration error:', error);
+   
+      throw error;
     }
   };
 
   return (
-    <div className="flex h-auto items-center flex-col">
-      <div className="w-full md:w-1/2 h-full bg-gray-100 flex items-center justify-center p-6">
-        <div className="w-full max-w-md">
-          {errorMessage && (
-            <div className="text-red-600 bg-red-100 p-3 rounded mb-4">
-              <strong>{errorMessage}</strong>
-            </div>
-          )}
-
-          {successMessage && (
-            <div className="text-green-600 bg-green-100 p-3 rounded mb-4">
-              <strong>{successMessage}</strong>
-            </div>
-          )}
-
-          {loading ? (
-            <div className="text-center text-rose-600">Processing...</div>
-          ) : (
-            <UserForm onSubmit={handleRegister} /> 
-          )}
-        </div>
-      </div>
-
-      <div className="w-full md:w-[40%] h-28 bg-gradient-to-r from-rose-100 to-red-800 flex flex-col items-center justify-center p-6 rounded-lg">
-        <p className="text-lg font-semibold text-white mb-4">Already have an account?</p>
-        <Link href="/user/login">
-          <button className="mt-3 bg-rose-100 text-red-800 px-6 py-2 rounded-lg shadow-md transition-colors duration-200 hover:bg-red-800 hover:text-rose-100">
-            Log In
-          </button>
-        </Link>
-      </div>
-    </div>
+    <UserForm onSubmit={handleRegister} />
   );
-};
-
-export default UserRegistration;
-
+}

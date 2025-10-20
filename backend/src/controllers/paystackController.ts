@@ -1,96 +1,67 @@
+// src/controllers/paystackController.ts
 
-import { Request, Response } from 'express';
+import { Request, Response, RequestHandler } from 'express';
 import { initializeTransaction, verifyTransaction } from '../services/paystackCheckoutService';
-import Order from '../database/models/order';
-import { PaystackVerificationResponse, PaystackInitializationResponse } from '../interface/Paystack';
+import { handleErrorResponse } from '../lib/error/handleErrorResponse';
+import { JwtPayload } from './authController'; // Adjust path as needed
 
-
-export const CreateCheckoutHandler = async (req: Request, res: Response): Promise<void> => {
+export const createCheckoutHandler: RequestHandler = async (req: Request, res: Response) => {
   try {
-    const { orderId } = (req.params);
-    const numId = Number(orderId)
+    const orderId = parseInt(req.params.orderId, 10);
+    const user = req.user as JwtPayload;
 
-    if (!orderId) {
-     res.status(400).json({ error: 'Order ID is required' });
-     return;
-    }
-
-    // Initialize transaction
-    const response:  PaystackInitializationResponse = await initializeTransaction(numId);
-
-    if (response && response.data) {
-      const { authorization_url, reference } = response.data;
-
-      if (!authorization_url || !reference) {
-        res
-          .status(500)
-          .json({ error: "Authorization URL or reference missing from Paystack response" });
-          return;
-      }
-
-      // Update order with transaction reference
-      await Order.update({ transaction_reference: reference }, { where: { id: orderId } });
-
-      res.status(200).json({ authorization_url, reference });
-    } else {
-    res.status(404).json({ message: 'Data not created or missing in Paystack response' });
-    }
-  } catch (err: any) {
-    console.error("Error initializing Paystack transaction:", err.message);
-    if (!res.headersSent) {
-      res.status(500).json({ error: err.message });
+    if (isNaN(orderId)) {
+      res.status(400).json({ error: 'A valid order ID is required.' });
       return;
     }
+     if (!user?.id) {
+      res.status(401).json({ error: 'Authentication is required.' });
+      return;
+    }
+
+    const response = await initializeTransaction(orderId, user.id);
+
+    // The service now handles updating the order, so the controller is simpler.
+    // We just return the data Paystack needs for the redirect.
+    res.status(200).json(response.data);
+
+  } catch (err) {
+    handleErrorResponse(err, res);
   }
 };
 
-export const verifyCheckoutHandler = async (req: Request, res: Response): Promise<void> => {
+export const verifyCheckoutHandler: RequestHandler = async (req: Request, res: Response) => {
   try {
     const { reference } = req.query;
-    
-    if (!reference || typeof reference !== 'string') {
-    res.status(400).json({ error: "Transaction reference is required" });
-    return;
-    }
-    
-    // Verify transaction with Paystack
-    const response: PaystackVerificationResponse = await verifyTransaction(reference);
 
+    console.log('[STEP 8 - Controller]: Received request at /checkout/verify.');
+    console.log('[STEP 8 - Controller]: Extracted reference from query:', reference);
+
+    if (!reference || typeof reference !== 'string') {
+      res.status(400).json({ error: "Transaction reference is required." });
+      return;
+    }
+
+    console.log('[STEP 9 - Controller]: Calling verifyTransaction service...');
+    
+    const response = await verifyTransaction(reference);
+
+    // The service has already updated our DB if successful. We just forward the response.
     if (response.data && response.data.status === "success") {
-      const transactionData = response.data;
-      const customerEmail = transactionData.customer.email;
-      const transactionMessage = transactionData.gateway_response;
-      const paidAt = transactionData.paid_at; 
-      
-      // Update order status if payment is successful
-      await Order.update(
-        { payment_status: "paid" },
-        { where: { transaction_reference: reference } }
-      );
-      
       res.status(200).json({
         status: true,
-        message: response.message, 
-        transaction: {
-          reference: transactionData.reference,
-          amount: transactionData.amount,
-          status: transactionData.status,
-          message: transactionMessage,
-          customer_email: customerEmail,
-          paid_at: paidAt,
-        },
+        message: response.message,
+        data: response.data,
       });
     } else {
+      // If verification fails, send a client-friendly error
       res.status(400).json({
         status: false,
-        message: response.message || "Payment verification failed",
+        message: response.message || "Payment verification failed.",
         data: response.data,
       });
     }
-  } catch (err: any) {
-    console.error("Error verifying Paystack transaction:", err.message);
-    if (!res.headersSent) {
-   res.status(500).json({ error: err.message || "Unknown error" });
-    }
+  } catch (err) {
+    handleErrorResponse(err, res);
   }
 };

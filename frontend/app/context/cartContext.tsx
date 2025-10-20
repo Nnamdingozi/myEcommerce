@@ -1,142 +1,180 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
 import { NewCart } from '@/app/lib/definition';
-import { addItemsToCart, fetchUserCart, updateCartItem, deleteUserItem } from '@/app/lib/data/cart';
-import { useUser } from '@/app/context/userContext';
+import { toast } from 'sonner';
+import { useUser } from './userContext';
+import { useRouter } from 'next/navigation';
+
+// Import ALL functions from your new, refactored API service
+import {
+  upsertCartItem,
+  fetchUserCart,
+  updateCartItemQuantity,
+  deleteCartItem
+} from '@/app/lib/data/cart'; // Adjust path as needed
+
 
 interface CartContextType {
   cart: NewCart[];
-  loading: boolean;
+  isLoading: boolean;
   error: string | null;
-  cartSubTotal: number;
-  count: number;
-  fetchCartData: () => Promise<void>;
-  addToCart: (productId: number, quantity?: number) => Promise<NewCart | null | undefined>;
-  removeItemFromCart: (cartItemId: number) => Promise<void>;
-  newQuantity: (cartItemId: number, newQty: number) => Promise<void>;
+  cartSubtotal: number;
+  itemCount: number;
+  fetchCart: () => Promise<void>;
+  upsertToCart: (productId: number, quantity?: number) => Promise<void>;
+  removeFromCart: (cartItemId: number) => Promise<void>;
+  updateQuantity: (cartItemId: number, newQty: number) => Promise<void>;
   clearCart: () => void;
-  deleteMessage: string | null;
-  setCart: React.Dispatch<React.SetStateAction<NewCart[]>>;
 }
 
-const CartContext = createContext<CartContextType | null>(null);
+const CartContext = createContext<CartContextType | undefined>(undefined);
 
-export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<NewCart[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Start true for initial fetch
   const [error, setError] = useState<string | null>(null);
-  const [cartSubTotal, setCartSubTotal] = useState<number>(0);
-  const [deleteMessage, setDeleteMessage] = useState<string | null>(null);
+  const [cartSubtotal, setCartSubtotal] = useState<number>(0);
 
-  const { token } = useUser();
+  const { user } = useUser();
+  const router = useRouter();
 
-  const calculateCartSubTotal = useCallback(
-    (cart: NewCart[]) => cart.reduce((sum, item) => sum + parseFloat(item.total?.toString() || '0'), 0),
-    []
-  );
+  // --- Core Logic ---
 
-  const fetchCartData = useCallback(async () => {
-    if (!token) return;
+  const fetchCart = useCallback(async () => {
+    if (!user) {
+      setCart([]);
+      return;
+    }
 
-    setLoading(true);
+    setIsLoading(true);
     setError(null);
     try {
-      const items: NewCart[] = await fetchUserCart(token) || [];
+      const items = await fetchUserCart();
       setCart(items);
-    } catch (err) {
-      setError('Failed to fetch cart items');
+    } catch (err: any) {
+      setError(err.message || 'Failed to fetch cart items');
+      toast.error('Could not load your cart.');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
-  }, [token]);
+  }, [user]);
 
-  const addToCart = useCallback(
-    async (productId: number, quantity: number = 1): Promise<NewCart | null> => {
-      if (!token) {
-        alert('Log in to Add Items to Cart');
-        return null;
-      }
-
-      setLoading(true);
-      setError(null);
-      try {
-        const newItem = await addItemsToCart(token, productId, quantity);
-        if (!newItem) throw new Error('Failed to add item to cart');
-        setCart((prevCart) => [...prevCart, newItem]);
-        return newItem;
-      } catch (err) {
-        setError('Failed to add item to cart');
-        console.error(err);
-        alert('Failed to add item to cart');
-        return null;
-      } finally {
-        setLoading(false);
-      }
-    },
-    [token]
-  );
-
-  const removeItemFromCart = useCallback(
-    async (cartItemId: number): Promise<void> => {
-      if (!token) return;
-
-      setLoading(true);
-      setError(null);
-      try {
-        const deleted = await deleteUserItem(token, cartItemId);
-        if (deleted) {
-          setDeleteMessage(deleted);
-          setCart((prevCart) => prevCart.filter((item) => item.id !== cartItemId));
-        } else {
-          setError('Failed to delete item from cart');
-        }
-      } catch (err) {
-        setError('Failed to remove item from cart');
-        console.error(err);
-        setDeleteMessage('Failed to delete cart item');
-      } finally {
-        setLoading(false);
-      }
-    },
-    [token]
-  );
-
+  // Initial fetch w
   useEffect(() => {
-    if (deleteMessage !== null) {
-      const timer = setTimeout(() => setDeleteMessage(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [deleteMessage]);
+    fetchCart();
+  }, [fetchCart]);
 
-  const newQuantity = useCallback(
-    async (cartItemId: number, newQty: number): Promise<void> => {
-      if (newQty < 1 || !token) return;
+  const upsertToCart = useCallback(
+    async (productId: number, quantity: number = 1) => {
+      if (!user) {
+        toast.error('Please log in to add items to your cart.');
+        router.push('/user/login');
 
-      setLoading(true);
+      }
+
+      setIsLoading(true);
       setError(null);
       try {
-        const updatedItem = await updateCartItem(token, cartItemId, newQty);
-        setCart((prevCart) =>
-          prevCart.map((item) =>
-            item.id === cartItemId
-              ? { ...item, quantity: updatedItem?.quantity, total: updatedItem?.total }
-              : item
-          )
+        const result = await upsertCartItem(productId, quantity);
+
+        setCart((prevCart) => {
+          const existingItemIndex = prevCart.findIndex(item => item.productId === productId);
+
+          if (existingItemIndex > -1) {
+
+            const newCart = [...prevCart];
+            newCart[existingItemIndex] = result;
+            return newCart;
+          } else {
+
+            return [...prevCart, result];
+          }
+        });
+
+      } catch (err: any) {
+        setError(err.message || 'Failed to add item to cart');
+        // Re-throw the error so UI components can react (e.g., show a toast)
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [user]
+  );
+
+  const removeFromCart = useCallback(
+    async (cartItemId: number) => {
+
+      try {
+        await deleteCartItem(cartItemId);
+        // On success, filter the item out of the local state
+        setCart((prevCart) => prevCart.filter((item) => item.id !== cartItemId));
+      } catch (err: any) {
+        setError(err.message || 'Failed to remove item from cart');
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [user, deleteCartItem]
+  );
+
+
+  const updateQuantity = useCallback(
+    async (itemId: number, newQty: number) => {
+      if (!user) {
+        toast.error('Please log in to modify your cart.');
+        throw new Error('User not authenticated.');
+      }
+
+      if (newQty < 1) {
+        return removeFromCart(itemId);
+      }
+
+      if (!user) {
+        toast.error('Please log in to modify your cart.');
+        throw new Error('User not authenticated.');
+      }
+
+
+      setCart(prevCart =>
+        prevCart.map(item =>
+          item.id === itemId ? { ...item, quantity: newQty } : item
+        )
+      );
+
+      try {
+        // Call the API service
+        const updatedItem = await updateCartItemQuantity(itemId, newQty);
+
+        setCart(prevCart =>
+          prevCart.map((item) => (item.id === itemId ? updatedItem : item))
         );
-      } catch (err) {
-        setError('Failed to update item quantity');
-        console.error(err);
-      } finally {
-        setLoading(false);
+      } catch (err: any) {
+        toast.error(err.message || 'Failed to update quantity.');
+
+        fetchCart();
       }
     },
-    [token]
+    [user, removeFromCart, fetchCart]
   );
 
+
+
+
+  // --- Derived State Calculations ---
+
   useEffect(() => {
-    setCartSubTotal(calculateCartSubTotal(cart));
-  }, [cart, calculateCartSubTotal]);
+    // Calculate subtotal whenever the cart changes
+    const subtotal = cart.reduce((sum, item) => {
+      // Safely calculate line item total. Assumes product price is included.
+      const price = item.product?.price ? parseFloat(item.product.price.toString()) : 0;
+      return sum + (price * item.quantity);
+    }, 0);
+    setCartSubtotal(subtotal);
+  }, [cart]);
+
 
   const clearCart = useCallback(() => {
     setCart([]);
@@ -146,17 +184,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     <CartContext.Provider
       value={{
         cart,
-        loading,
+        isLoading,
         error,
-        cartSubTotal,
-        count: cart.length,
-        fetchCartData,
-        addToCart,
-        removeItemFromCart,
-        newQuantity,
+        cartSubtotal,
+        itemCount: cart.reduce((sum, item) => sum + item.quantity, 0), // Total number of items
+        fetchCart,
+        upsertToCart,
+        removeFromCart,
+        updateQuantity,
         clearCart,
-        deleteMessage,
-        setCart
       }}
     >
       {children}
@@ -164,9 +200,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
-export const useCart = () => {
+export const useCart = (): CartContextType => {
   const context = useContext(CartContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useCart must be used within a CartProvider');
   }
   return context;

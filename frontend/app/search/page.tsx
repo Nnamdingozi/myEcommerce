@@ -1,129 +1,152 @@
+'use client';
 
-"use client";
+import { useEffect, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { useEffect, useState } from "react";
+// --- Import our types, contexts, and UI components ---
+import { Product } from '@/app/lib/definition';
+import { useProduct } from '@/app/context/productContext';
+import { useCart } from '@/app/context/cartContext';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ShoppingCart, Star, Frown } from 'lucide-react';
 
-import { ProductDetails } from "@/app/lib/definition";
-import { useProduct } from "@/app/context/productContext";
-import { useCart } from "@/app/context/cartContext";
+// A simple utility to format currency
+const formatCurrency = (amount: number | string) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'NGN',
+  }).format(Number(amount));
+};
 
-import Image from "next/image";
+const assetBaseUrl = process.env.NEXT_PUBLIC_ASSET_BASE_URL || 'http://localhost:5000';
 
-const SearchResultsPage: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<ProductDetails[]>([]);
-  const [successMessage, setSuccessMessage] = useState("");
+const SearchResultsContent: React.FC = () => {
+  const searchParams = useSearchParams();
+  const query = searchParams.get('query') || '';
+  
+  const [searchResults, setSearchResults] = useState<Product[]>([]);
+  const [feedbackMessage, setFeedbackMessage] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  
+  const { products } = useProduct();
+  const { upsertToCart } = useCart();
 
-
-  const { addToCart, cart = [] } = useCart();
-  const { products = [] } = useProduct() as { products: ProductDetails[] };
-  const [isClient, setIsClient] = useState(false); // Track if we're on the client
-
-  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
-
-  // Check if the code is running on the client side
+  // Filter products whenever the query or the main product list changes
   useEffect(() => {
-    setIsClient(true); // Set to true after component mounts
-  }, []);
-
-  // Get search query after the component mounts
-  useEffect(() => {
-    if (isClient) {
-      const query = new URLSearchParams(window.location.search).get("query") || "";
-      setSearchQuery(query);
-    }
-  }, [isClient]);
-
-  // Filter products based on the search query
-  useEffect(() => {
-    if (searchQuery.trim() !== "") {
+    if (query.trim() !== '' && products.length > 0) {
+      const lowercasedQuery = query.toLowerCase();
       const results = products.filter(
         (product) =>
-          product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          product.description.toLowerCase().includes(searchQuery.toLowerCase())
+          product.name.toLowerCase().includes(lowercasedQuery) ||
+          product.description?.toLowerCase().includes(lowercasedQuery)
       );
       setSearchResults(results);
+    } else {
+      setSearchResults([]);
     }
-  }, [searchQuery, products]);
+  }, [query, products]);
 
-  const handleAddToCart = async (productId: number) => {
-   
+  const handleAddToCart = async (e: React.MouseEvent, productId: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     try {
-      const productAlreadyInCart = cart.some((item) => item.id === productId);
-      if (!productAlreadyInCart) {
-        await addToCart(productId);
-      }
-
+      await upsertToCart(productId, 1);
       const product = searchResults.find((p) => p.id === productId);
-      if (product) {
-        setSuccessMessage(`${product.name} added to cart successfully!`);
-      }
-
-      setTimeout(() => {
-        setSuccessMessage("");
-      }, 3000);
-    } catch (error) {
-      console.error("Error adding item to cart:", error);
+      setFeedbackMessage({ type: 'success', message: `${product?.name} added to cart!` });
+    } catch (error: any) {
+      setFeedbackMessage({ type: 'error', message: error.message || 'Failed to add item.' });
+    } finally {
+      setTimeout(() => setFeedbackMessage(null), 3000);
     }
   };
 
-  if (!isClient) {
-    return null; // Ensure nothing renders on the server side
-  }
-
   return (
-    <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4 mt-16">
+    <div className="container py-12 mt-16">
+      <h1 className="text-xl font-bold tracking-tight mb-8">
+        Search Results for: <span className="text-primary">{query}</span>
+      </h1>
+
       {searchResults.length > 0 ? (
-        searchResults.map((product) => (
-          <div
-            key={product.id}
-            className="bg-gray-50 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 rounded-lg overflow-hidden border border-gray-200 h-[420px] flex flex-col"
-          >
-            <Image
-              src={
-                product.image_url
-                  ? product.image_url.startsWith("http")
-                    ? product.image_url
-                    : `${baseUrl}${product.image_url}`
-                  : "/images/default-placeholder.jpg"
-              }
-              alt={product.name}
-              className="w-full h-1/2 object-cover rounded-t-lg"
-              width={500}
-              height={500}
-            />
-            <div className="p-4 flex-grow flex flex-col justify-between">
-              <div className="flex flex-col items-start mb-4">
-                <h2 className="text-lg font-semibold text-gray-800">{product.name}</h2>
-                <p className="text-gray-600 text-sm line-clamp-3">{product.description}</p>
-                <p className="text-green-500 font-bold mt-2">${product.price}</p>
-              </div>
-              <button
-                className="bg-red-700 text-white w-full py-2 mt-2 rounded-lg hover:bg-red-600 transition-colors duration-200"
-                onClick={() => handleAddToCart( product.id)}
-              >
-                Add to Cart
-              </button>
-            </div>
-          </div>
-        ))
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {searchResults.map((product) => {
+      
+            const imageSrc = product.imageUrl ? `${assetBaseUrl}${product.imageUrl}` : '/images/default-placeholder.jpg';
+
+            return (
+              <Link key={product.id} href={`/itemView/${product.id}`} passHref>
+                <Card className="group w-full h-full flex flex-col overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                  <CardHeader className="p-0 relative">
+                    <Image
+                      src={imageSrc}
+                      alt={product.name}
+                      width={500}
+                      height={500}
+                      className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                     {product.status && (
+                      <Badge 
+                        className="absolute top-2 right-2"
+                        variant={product.status === 'OUT_OF_STOCK' ? 'destructive' : 'default'}
+                      >
+                        {product.status.replace('_', ' ')}
+                      </Badge>
+                    )}
+                  </CardHeader>
+                  <CardContent className="p-4 flex-grow flex flex-col">
+                    <CardTitle className="text-lg font-semibold leading-tight mb-2 line-clamp-2">{product.name}</CardTitle>
+                    {/* Placeholder for ratings */}
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground mb-2">
+                        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                        <span>4.5</span>
+                    </div>
+                
+                    <p className="text-sm text-muted-foreground line-clamp-3 flex-grow">{product.description}</p>
+                  </CardContent>
+                  <CardFooter className="p-4 pt-0 flex items-center justify-between">
+            
+                    <p className="text-xl font-bold text-foreground">{formatCurrency(product.price)}</p>
+                    <Button size="sm" onClick={(e) => handleAddToCart(e, product.id)}>
+                      <ShoppingCart className="mr-2 h-4 w-4" />
+                      Add
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </Link>
+            );
+          })}
+        </div>
       ) : (
-        <div className="col-span-full text-center text-gray-600">No products found.</div>
+        <div className="col-span-full flex flex-col items-center justify-center text-center text-muted-foreground py-20">
+            <Frown className="w-16 h-16 mb-4 text-gray-400" />
+            <h2 className="text-2xl font-semibold">No Products Found</h2>
+            <p className="mt-2">We couldn't find any products matching your search for "{query}".</p>
+        </div>
       )}
 
-      {successMessage && (
-        <div className="fixed top-32 right-16 bg-green-700 text-white px-4 py-2 rounded shadow-lg transition-opacity duration-300">
-          {successMessage}
+      {/* Feedback Notification */}
+      {feedbackMessage && (
+        <div 
+          className={`fixed top-24 right-8 px-6 py-3 rounded-lg shadow-xl transition-all duration-300
+            ${feedbackMessage.type === 'success' ? 'bg-green-600' : 'bg-red-600'} text-white`}
+        >
+          {feedbackMessage.message}
         </div>
       )}
     </div>
   );
 };
 
+// Use Suspense for client-side hooks like useSearchParams
+const SearchResultsPage: React.FC = () => {
+    return (
+        <Suspense fallback={<div>Loading search results...</div>}>
+            <SearchResultsContent />
+        </Suspense>
+    );
+};
+
 export default SearchResultsPage;
-
-
-
-
-
-
