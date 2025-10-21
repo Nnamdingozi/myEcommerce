@@ -1,4 +1,74 @@
-.env
+# .gitignore (The ONLY .gitignore file in your project)
 
+# =================================================================
+# == General / Universal Ignores
+# =================================================================
+
+# Dependencies for ALL projects
+# The trailing slash ensures it only matches folders.
 node_modules/
-node_modules/
+.pnp/
+.pnp.js
+.yarn/install-state.gz
+
+# Environment variables
+# Ignore all .env files but keep the example template.
+.env
+.env.*
+!.env.example
+
+# Log files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor specific
+.vscode/
+.idea/
+
+# Misc
+*.pem
+
+
+# =================================================================
+# == Frontend Specific (Next.js)
+# =================================================================
+
+# Build output & cache
+.next/
+out/
+build/ # This is often used by create-react-app, but good to have
+.swc/
+
+# Vercel deployment folder
+.vercel/
+
+# TypeScript cache files
+*.tsbuildinfo
+next-env.d.ts
+
+
+# =================================================================
+# == Backend Specific (Node.js / Prisma / TypeScript)
+# =================================================================
+
+# Build output
+dist/
+
+# Prisma generated client
+# Path is relative to this .gitignore file's location (the root)
+backend/src/generated/
+
+
+# =================================================================
+# == Testing
+# =================================================================
+
+# Test coverage reports
+coverage/
