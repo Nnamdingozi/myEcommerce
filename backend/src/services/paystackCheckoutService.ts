@@ -2,7 +2,7 @@
 
 import axios, { AxiosResponse } from "axios";
 import { PrismaClient } from '@prisma/client';
-import { PaystackInitializationResponse, PaystackVerificationResponse } from "../interface/Paystack";
+import { PaystackInitResponse , PaystackVerificationData } from "../lib/definition";
 import logger from "../lib/logger";
 
 const prisma = new PrismaClient();
@@ -13,7 +13,7 @@ if (!secretKey) {
   throw new Error("Paystack secret key is missing in environment variables.");
 }
 
-export const initializeTransaction = async (orderId: number, userId: number): Promise<PaystackInitializationResponse> => {
+export const initializeTransaction = async (orderId: number, userId: number): Promise<PaystackInitResponse> => {
   try {
     // 1. Fetch the order and its associated user in one query 
     const order = await prisma.order.findUnique({
@@ -36,7 +36,7 @@ export const initializeTransaction = async (orderId: number, userId: number): Pr
     const callbackUrl = `${process.env.FRONTEND_URL}/checkout/verify`;
 
     // 2. Make the call to Paystack's API (this logic remains the same)
-    const response: AxiosResponse<PaystackInitializationResponse> = await axios.post(
+    const response: AxiosResponse<PaystackInitResponse> = await axios.post(
       `${baseUrl}/transaction/initialize`,
       {
         email: order.customer.email,
@@ -69,7 +69,7 @@ export const initializeTransaction = async (orderId: number, userId: number): Pr
   }
 };
 
-export const verifyTransaction = async (reference: string): Promise<PaystackVerificationResponse> => {
+export const verifyTransaction = async (reference: string): Promise<PaystackVerificationData> => {
   try {
     if (!reference) {
       throw new Error("Transaction reference is required");
@@ -78,7 +78,7 @@ export const verifyTransaction = async (reference: string): Promise<PaystackVeri
     console.log('[STEP 12 - Service]: Calling Paystack API to verify reference:', reference);
 
     // 1. Call Paystack's API to verify
-    const response: AxiosResponse<PaystackVerificationResponse> = await axios.get(
+    const response: AxiosResponse<PaystackVerificationData> = await axios.get(
       `${baseUrl}/transaction/verify/${reference}`,
       {
         headers: { Authorization: `Bearer ${secretKey}` },
