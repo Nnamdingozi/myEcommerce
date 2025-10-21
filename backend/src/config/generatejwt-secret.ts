@@ -1,13 +1,12 @@
 
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { IUserPayload } from '../interface/IUser';
-
+import { JwtPayload } from '../controllers/authController';
 dotenv.config();
 
 
 
-const generateToken = (user: IUserPayload): string => {
+const generateToken = (user: JwtPayload): string => {
   if (!process.env.JWT_SECRET) {
     throw new Error('JWT_SECRET is not defined in environment variables.');
   }
