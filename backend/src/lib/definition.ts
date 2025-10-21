@@ -13,7 +13,9 @@ export type PaystackInitResponse = {
 
   export type PaystackVerificationData = {
     id: number;
-    domain: string;
+    domain: string;  
+    status: true,
+    message: string,
     data: {
     status: 'success' | 'failed' | 'abandoned'; 
     reference: string;
