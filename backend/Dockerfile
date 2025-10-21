@@ -28,6 +28,9 @@ COPY --from=builder /app/start-prod.sh .
 # Make sure the script is executable inside the container
 RUN chmod +x ./start-prod.sh
 
+# Copy the SSL certificate into the final image
+COPY --from=builder /app/certs ./certs
+
 EXPOSE 5000
 
 # --- THIS IS THE FINAL CMD ---
