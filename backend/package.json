@@ -4,12 +4,11 @@
   "main": "index.ts",
   "type": "commonjs",
   "scripts": {
-      "dev": "nodemon src/index.ts",
-      "build": "tsc",
-      "start": "node dist/index.js",
-      "migrate:deploy": "prisma migrate deploy",
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "migrate:deploy": "prisma migrate deploy",
     "seed": "ts-node prisma/seed.ts"
-    
   },
   "keywords": [],
   "author": "",
