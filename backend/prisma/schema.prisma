@@ -3,7 +3,7 @@ generator client {
   provider      = "prisma-client-js"
   // This tells Prisma to generate the engine for your local OS ("native")
   // AND for the Alpine Linux environment used by Docker/Render.
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+  binaryTargets = ["native", "linux-mussl-openssl-3.0.x"]
 }
 
 datasource db {
