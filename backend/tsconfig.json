@@ -1,16 +1,33 @@
 {
   "compilerOptions": {
-    "sourceMap": true,
-    "outDir": "dist",
-    "strict": true,
-    "lib": ["esnext"],
+    /* Base Options */
     "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "es2017",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+
+    /* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+
+    /* Module Options */
     "module": "CommonJS",
     "moduleResolution": "node",
-    "target": "es2017",
-    "resolveJsonModule": true,
+    
+    /* Pathing Options - THIS IS THE FIX */
+    "baseUrl": ".",
+    "outDir": "dist", // The output directory
+    "rootDir": "src", // The root directory of your source files
+
+    /* Source Map Options */
+    "sourceMap": true,
+    
+    /* Type Roots */
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": ["src/**/*.ts", "prisma/seed.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist"]
 }

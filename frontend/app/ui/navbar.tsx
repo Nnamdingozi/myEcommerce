@@ -57,7 +57,7 @@ const Navbar: React.FC = () => {
     router.push(`/search?query=${encodeURIComponent(productName)}`);
     setSearchQuery('');
     setFilteredProducts([]);
-    setIsSearchFocused(false);
+    setIsSearchFocused(false);,
   };
 
   return (
