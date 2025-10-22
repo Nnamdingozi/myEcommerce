@@ -1,6 +1,6 @@
 // src/lib/prisma.ts
 
-import { PrismaClient } from '../../prisma/src/generated/prisma';
+import { PrismaClient }  from '@prisma/client';
 
 // This is the standard Prisma singleton pattern.
 // It creates one instance of PrismaClient and exports it.

@@ -1,9 +1,8 @@
 // src/services/userService.ts
 
-import { PrismaClient, User } from '@prisma/client';
-import { Prisma } from '@prisma/client';
+import prisma from '../lib/prisma'; // Import our single, shared Prisma client instance
+import { User, Prisma } from '@prisma/client'; 
 
-const prisma = new PrismaClient();
 
 // Get all users
 export const getAllUsers = async (): Promise<User[]> => {

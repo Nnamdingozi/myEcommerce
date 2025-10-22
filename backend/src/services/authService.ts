@@ -1,9 +1,8 @@
 
 import bcrypt from 'bcryptjs';
-import { PrismaClient, User } from '@prisma/client';
+import prisma from '../lib/prisma';
+import { User } from '@prisma/client'; 
 
-
-const prisma = new PrismaClient();
 
 // This interface is for external profiles (e.g., from GitHub)
 export interface IOAuthProfile {

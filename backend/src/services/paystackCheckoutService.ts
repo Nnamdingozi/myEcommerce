@@ -1,11 +1,10 @@
 // src/services/paystackService.ts
 
 import axios, { AxiosResponse } from "axios";
-import { PrismaClient } from '@prisma/client';
+import prisma from '../lib/prisma'; // Import our single, shared Prisma client instance
 import { PaystackInitResponse , PaystackVerificationData } from "../lib/definition";
 import logger from "../lib/logger";
 
-const prisma = new PrismaClient();
 const secretKey = process.env.PAYSTACK_SECRET_KEY;
 const baseUrl = "https://api.paystack.co";
 

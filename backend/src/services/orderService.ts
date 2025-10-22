@@ -1,9 +1,8 @@
 // src/services/orderService.ts
 
-import { PrismaClient, Order } from '@prisma/client';
-import { Prisma } from '@prisma/client';
+import prisma from '../lib/prisma';
+import { Prisma, Order } from '@prisma/client'; 
 
-const prisma = new PrismaClient();
 
 // Define a type for the input data needed to create an order
 

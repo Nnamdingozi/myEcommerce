@@ -1,8 +1,9 @@
 
+
 // src/services/cartService.ts
 
 import prisma from '../lib/prisma'; // Import our single, shared Prisma client instance
-import { Cart, Product } from '../../prisma/src/generated/prisma'; // Import the auto-generated types
+import { Cart, Product } from '@prisma/client'; 
 import logger from '../lib/logger';
 
 // Define a type for what a cart item looks like when it includes the product details.
