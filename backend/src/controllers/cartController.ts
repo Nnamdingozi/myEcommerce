@@ -141,7 +141,16 @@ export const updateItemHandler = async (req: Request, res: Response) => {
     }
 
     // --- 3. VALIDATE: URL Parameter and Request Body ---
-    const itemId = parseInt(req.params.id, 10);
+// ---  Assert type is string and not undefined ---
+    const { id } = req.params;
+
+    if (!id) {
+      res.status(400).json({ error: 'Missing item ID in URL.' });
+      return;
+    } 
+    const itemId = parseInt(id, 10);
+
+
     const { quantity } = req.body;
     
    console.log(`[HANDLER - updateItem]: Payload received for user ${userId}:`, { itemId, quantity });

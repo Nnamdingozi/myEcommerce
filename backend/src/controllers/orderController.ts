@@ -64,7 +64,15 @@ export const getAllOrdersHandler: RequestHandler = async (req, res) => {
 export const getOrderByIdHandler: RequestHandler = async (req, res) => {
   try {
     const user = req.user as JwtPayload;
-    const orderId = parseInt(req.params.orderId, 10);
+
+    //---  Assert type is string and not undefined ---
+    const { id } = req.params;
+
+    if (!id) {
+      res.status(400).json({ error: 'Missing item ID in URL.' });
+      return;
+    } 
+    const orderId = parseInt(id, 10);
 
     if (!user?.id) {
       res.status(401).json({ message: 'Authentication required' });

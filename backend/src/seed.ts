@@ -1,7 +1,7 @@
 // prisma/seed.ts
 
 
-import { PrismaClient, ProductStatus } from './src/generated/prisma'; // Use your custom path
+import { PrismaClient, ProductStatus } from '../prisma/src/generated/prisma'; 
 import bcrypt from 'bcrypt';
 
 

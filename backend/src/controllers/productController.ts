@@ -54,8 +54,17 @@ export const getProductsHandler: RequestHandler = async (req, res) => {
 
 export const getProductByIdHandler: RequestHandler = async (req, res) => {
   try {
-    const id = parseInt(req.params.id, 10);
-    const product = await getProductById(id);
+
+     //---  Assert type is string and not undefined ---
+     const { id } = req.params;
+
+     if (!id) {
+       res.status(400).json({ error: 'Missing item ID in URL.' });
+       return;
+     } 
+     const prodId = parseInt(id, 10);
+    
+    const product = await getProductById(prodId);
 
     if (!product) {
       res.status(404).json({ message: "Product not found" });
@@ -69,8 +78,17 @@ export const getProductByIdHandler: RequestHandler = async (req, res) => {
 
 export const updateProductHandler: RequestHandler = async (req, res) => {
   try {
-    const id = parseInt(req.params.id, 10);
-    const updatedProduct = await updateProduct(id, req.body);
+
+        //---  Assert type is string and not undefined ---
+        const { id } = req.params;
+
+        if (!id) {
+          res.status(400).json({ error: 'Missing item ID in URL.' });
+          return;
+        } 
+        const prodId = parseInt(id, 10);
+
+    const updatedProduct = await updateProduct(prodId, req.body);
     res.status(200).json(updatedProduct);
   } catch (err) {
     handleErrorResponse(err, res);
@@ -79,8 +97,15 @@ export const updateProductHandler: RequestHandler = async (req, res) => {
 
 export const deleteProductHandler: RequestHandler = async (req, res) => {
   try {
-    const id = parseInt(req.params.id, 10);
-    await deleteProduct(id);
+        //---  Assert type is string and not undefined ---
+        const { id } = req.params;
+
+        if (!id) {
+          res.status(400).json({ error: 'Missing item ID in URL.' });
+          return;
+        } 
+        const prodId = parseInt(id, 10);
+    await deleteProduct(prodId);
     res.status(204).send(); // Standard response for successful deletion
   } catch (err) {
     handleErrorResponse(err, res);

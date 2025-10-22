@@ -7,7 +7,16 @@ import { JwtPayload } from './authController'; // Adjust path as needed
 
 export const createCheckoutHandler: RequestHandler = async (req: Request, res: Response) => {
   try {
-    const orderId = parseInt(req.params.orderId, 10);
+
+     //---  Assert type is string and not undefined ---
+     const { id } = req.params;
+
+     if (!id) {
+       res.status(400).json({ error: 'Missing item ID in URL.' });
+       return;
+     } 
+     const orderId = parseInt(id, 10);
+
     const user = req.user as JwtPayload;
 
     if (isNaN(orderId)) {
