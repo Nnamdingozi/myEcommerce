@@ -1,9 +1,8 @@
 // src/services/productService.ts
 
-import { PrismaClient, Product, Category} from '@prisma/client';
-import { Prisma } from '@prisma/client';
+import prisma from '../lib/prisma'; // Import our single, shared Prisma client instance
+import { Category, Product, Prisma} from '@prisma/client'; 
 
-const prisma = new PrismaClient();
 
 // Create a new product
 export const createProduct = async (

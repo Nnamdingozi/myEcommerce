@@ -9,7 +9,7 @@ import {
 } from '../services/cartService';
 import { handleErrorResponse } from '../lib/error/handleErrorResponse';
 import { User as PrismaUser } from '@prisma/client'; 
-import logger from '../lib/logger';
+
 
 
 export const upsertItemHandler = async (req: Request, res: Response) => {

@@ -1,7 +1,7 @@
 // prisma/seed.ts
 
 
-import { PrismaClient, ProductStatus } from '../prisma/src/generated/prisma'; 
+import { PrismaClient, ProductStatus } from '@prisma/client'; 
 import bcrypt from 'bcrypt';
 
 

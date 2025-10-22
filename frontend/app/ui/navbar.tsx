@@ -46,7 +46,7 @@ const Navbar: React.FC = () => {
     }
     const timer = setTimeout(() => {
       const filtered = products.filter(
-        (product) => product.name?.toLowerCase().includes(searchQuery.toLowerCase())
+        (product) =>  product.name?.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredProducts(filtered.slice(0, 5)); // Limit results to 5
     }, 300);
@@ -57,7 +57,7 @@ const Navbar: React.FC = () => {
     router.push(`/search?query=${encodeURIComponent(productName)}`);
     setSearchQuery('');
     setFilteredProducts([]);
-    setIsSearchFocused(false);,
+    setIsSearchFocused(false);
   };
 
   return (
