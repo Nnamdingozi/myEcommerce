@@ -20,7 +20,7 @@ RUN npm install --production
 # Copy build artifacts from the builder stage
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/prisma/schema.prisma ./prisma/schema.prisma
+COPY --from=builder /app/prisma ./prisma
 
 # --- THIS IS THE NEW PART ---
 # Copy the start script from the builder stage
