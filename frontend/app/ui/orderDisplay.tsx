@@ -61,7 +61,7 @@ export default function UserOrderDisplay({ userOrders }: UserOrderDisplayProps) 
         <div className="flex flex-col items-center justify-center text-center text-muted-foreground py-20">
             <Package className="w-16 h-16 mb-4 text-gray-400" />
             <h2 className="text-2xl font-semibold">No Orders Yet</h2>
-            <p className="mt-2">It looks like you haven't placed any orders. Start shopping to see them here!</p>
+            <p className="mt-2">It looks like you have not placed any orders. Start shopping to see them here!</p>
         </div>
     )
   }

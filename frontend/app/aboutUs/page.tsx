@@ -54,7 +54,7 @@ const AboutUsPage = () => {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold tracking-tight">Why Choose Us?</h2>
           <p className="mt-2 max-w-xl mx-auto text-muted-foreground">
-            We're committed to providing an unparalleled shopping experience.
+            We are committed to providing an unparalleled shopping experience.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">

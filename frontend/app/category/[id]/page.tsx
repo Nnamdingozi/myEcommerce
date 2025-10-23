@@ -72,7 +72,7 @@ export default function CategoryPage() {
       };
       findCategoryName();
     }
-  }, [categoryId, fetchCategories]);
+  }, [categoryId,  getProductsByCategoryId]);
 
 
 // --- 4. Handle the Loading State ---

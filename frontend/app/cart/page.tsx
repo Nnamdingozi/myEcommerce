@@ -48,7 +48,7 @@ const CartPage: React.FC = () => {
       <div className="container flex flex-col items-center justify-center text-center text-muted-foreground min-h-[60vh] pt-28">
         <ShoppingCart className="w-20 h-20 mb-6 text-gray-300" />
         <h2 className="text-2xl font-semibold">Your Cart is Empty</h2>
-        <p className="mt-2 mb-6">Looks like you haven't added anything to your cart yet.</p>
+        <p className="mt-2 mb-6">Looks like you have not added anything to your cart yet.</p>
         <Frown className="w-5 h-5 mb-6 text-gray-300"/>
         <Link href="/home" passHref>
           <Button>Start Shopping</Button>

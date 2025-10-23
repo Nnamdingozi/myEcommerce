@@ -123,7 +123,7 @@ const SearchResultsContent: React.FC = () => {
         <div className="col-span-full flex flex-col items-center justify-center text-center text-muted-foreground py-20">
             <Frown className="w-16 h-16 mb-4 text-gray-400" />
             <h2 className="text-2xl font-semibold">No Products Found</h2>
-            <p className="mt-2">We couldn't find any products matching your search for "{query}".</p>
+            <p className="mt-2">We could not find any products matching your search for &quot;{query}&quot;.</p>
         </div>
       )}
 
