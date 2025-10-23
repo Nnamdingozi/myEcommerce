@@ -39,12 +39,19 @@ export const register: RequestHandler = async (req: Request, res: Response): Pro
     };
 
     const token = generateToken(userPayload);
-    res.cookie('token', token, {
-      httpOnly: true, // Prevents JavaScript access
-      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production (HTTPS)
-      sameSite: 'strict', // Helps prevent CSRF attacks
-      maxAge: 24 * 60 * 60 * 1000, // Cookie expiration in milliseconds (e.g., 1 day)
-    });
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    const cookieOptions = {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'lax' as const,
+      domain: isProduction ? '.onrender.com' : undefined,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    };
+
+    // 3. Set the cookie in the response
+    res.cookie('token', token, cookieOptions);
+
     res.status(201).json({
       user: authService.getUserDetails(newUser),
     });
@@ -135,15 +142,19 @@ export const login: RequestHandler = (req, res, next) => {
     const payload: JwtPayload = { id: user.id, email: user.email };
     const token = generateToken(payload);
     
-    // --- THIS IS THE KEY CHANGE ---
-    // Set the token in an HttpOnly cookie instead of the response body.
-    res.cookie('token', token, {
-      httpOnly: true, // Prevents JavaScript access
-      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production (HTTPS)
-      sameSite: 'strict', // Helps prevent CSRF attacks
-      maxAge: 24 * 60 * 60 * 1000, // Cookie expiration in milliseconds (e.g., 1 day)
-    });
-    
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    const cookieOptions = {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'lax' as const,
+      domain: isProduction ? '.onrender.com' : undefined,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    };
+
+    // 3. Set the cookie in the response
+    res.cookie('token', token, cookieOptions);
+
     // Send back only the user data, not the token
     res.status(200).json({
       user: authService.getUserDetails(user),
