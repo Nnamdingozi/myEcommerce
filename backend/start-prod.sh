@@ -4,6 +4,7 @@
 # It runs database migrations and then starts the Node.js server.
 
 echo "Running production start script..."
+set -e
 
 # Run Prisma migrations
 echo "Applying database migrations..."

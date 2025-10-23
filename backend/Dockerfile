@@ -41,6 +41,8 @@ COPY --from=builder /app/node_modules ./node_modules
 # Copy the compiled application code
 COPY --from=builder /app/dist ./dist
 
+COPY --from=builder /app/prisma ./prisma
+
 # Copy the start script
 COPY --from=builder /app/start-prod.sh .
 RUN chmod +x ./start-prod.sh

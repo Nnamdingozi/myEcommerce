@@ -1,31 +1,19 @@
-# Ignore node modules
+# .dockerignore (in your backend/ directory)
+
+# This is the most important rule. It prevents your local node_modules
+# from being copied into the Docker image, which would cause conflicts.
 node_modules
 
-# Ignore logs
-npm-debug.log
-yarn-error.log
-pnpm-debug.log
+# Ignore the local build output folder.
+dist
 
-# Ignore environment variables files
+# Ignore local environment files. These should be set in Render's UI.
 .env
-.env.local
-.env.development
-.env.test
-.env.production
+.env.*
 
-# Ignore Docker-related files
-Dockerfile
-.dockerignore
-
-# Ignore Git files
-.git
-.gitignore
-
-# Ignore IDE/editor configuration files
-.vscode
-.idea
-*.sublime-project
-*.sublime-workspace
+# Ignore log files
+*.log
+npm-debug.log*
 
 # Ignore OS-generated files
 .DS_Store
