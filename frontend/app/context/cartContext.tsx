@@ -100,7 +100,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setIsLoading(false);
       }
     },
-    [user]
+    [user, router]
   );
 
   const removeFromCart = useCallback(
@@ -117,7 +117,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setIsLoading(false);
       }
     },
-    [user, deleteCartItem]
+    []
   );
 
 
