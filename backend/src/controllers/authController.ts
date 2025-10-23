@@ -6,6 +6,9 @@ import authService from '../services/authService';
 import generateToken from '../config/generatejwt-secret';
 import { handleErrorResponse } from '../lib/error/handleErrorResponse';
 
+// backend/src/controllers/authController.ts
+import { CookieOptions } from 'express';
+
 import { User as PrismaUser } from '@prisma/client';
 // Define the shape of our JWT payload for type safety
 export interface JwtPayload {
@@ -39,18 +42,31 @@ export const register: RequestHandler = async (req: Request, res: Response): Pro
     };
 
     const token = generateToken(userPayload);
-    const isProduction = process.env.NODE_ENV === 'production';
+   
+const isProduction = process.env.NODE_ENV === 'production';
 
-    const cookieOptions = {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: 'lax' as const,
-      domain: isProduction ? '.onrender.com' : undefined,
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-    };
 
-    // 3. Set the cookie in the response
-    res.cookie('token', token, cookieOptions);
+// 2. Declare the options object with the official type and use `let`.
+let cookieOptions: CookieOptions = {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'none', 
+  domain: isProduction ? '.onrender.com' : undefined, 
+  maxAge: 24 * 60 * 60 * 1000, // 1 day
+};
+
+// 3. In development, we override the settings for localhost HTTP.
+if (!isProduction) {
+  cookieOptions = {
+    ...cookieOptions, 
+    secure: false,
+    sameSite: 'lax',
+    domain: 'localhost', 
+  };
+}
+
+// 4. Set the cookie in the response using the finalized options object.
+res.cookie('token', token, cookieOptions);
 
     res.status(201).json({
       user: authService.getUserDetails(newUser),
@@ -79,29 +95,6 @@ export const profile: RequestHandler = (req: Request, res: Response) => {
   res.json(req.user);
 };
 
-// export const getMeHandler: RequestHandler = async (req: Request, res: Response) => {
-//   try {
-//     // The user object on req comes from our JWT payload
-//     const jwtPayload = req.user as JwtPayload;
-//     if (!jwtPayload?.id) {
-//       res.status(401).json({ error: 'Unauthorized - Invalid token' });
-//       return;
-//     }
-
-//     // Use the dedicated service to fetch the full user profile
-//     const fullUser = await getUserById(jwtPayload.id);
-
-//     if (!fullUser) {
-//       res.status(404).json({ error: 'User not found' });
-//       return;
-//     }
-    
-//     // Return only the safe, public details
-//     res.status(200).json({ user: authService.getUserDetails(fullUser) });
-//   } catch (err) {
-//     handleErrorResponse(err, res);
-//   }
-// };
 
 export const getMeHandler: RequestHandler = async (req: Request, res: Response) => {
   try {
@@ -144,17 +137,28 @@ export const login: RequestHandler = (req, res, next) => {
     
     const isProduction = process.env.NODE_ENV === 'production';
 
-    const cookieOptions = {
+
+    // 2. Declare the options object with the official type and use `let`.
+    let cookieOptions: CookieOptions = {
       httpOnly: true,
-      secure: isProduction,
-      sameSite: 'lax' as const,
-      domain: isProduction ? '.onrender.com' : undefined,
+      secure: true,
+      sameSite: 'none', 
+      domain: isProduction ? '.onrender.com' : undefined, 
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     };
-
-    // 3. Set the cookie in the response
+    
+    // 3. In development, we override the settings for localhost HTTP.
+    if (!isProduction) {
+      cookieOptions = {
+        ...cookieOptions, 
+        secure: false,
+        sameSite: 'lax',
+        domain: 'localhost', 
+      };
+    }
+    
+    // 4. Set the cookie in the response using the finalized options object.
     res.cookie('token', token, cookieOptions);
-
     // Send back only the user data, not the token
     res.status(200).json({
       user: authService.getUserDetails(user),
