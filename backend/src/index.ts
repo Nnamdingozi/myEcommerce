@@ -30,17 +30,25 @@ const allowedOrigins = [
   'http://localhost:3000',
   'https://myecommerce-frontend.onrender.com',
 ];
-const corsOptions = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+
+app.use(cors({
+  origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
+      callback(null, origin); // return the actual origin instead of true
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error('CORS not allowed for this origin'));
     }
   },
   credentials: true,
-};
-app.use(cors(corsOptions));
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+// very important: handle preflight OPTIONS requests globally
+app.options('*', cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
 
 // Body parsers 
 app.use(express.json());
