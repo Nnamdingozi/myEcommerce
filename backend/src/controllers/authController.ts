@@ -143,7 +143,6 @@ export const login: RequestHandler = (req, res, next) => {
       httpOnly: true,
       secure: true,
       sameSite: 'none', 
-      domain: isProduction ? '.onrender.com' : undefined, 
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     };
     
@@ -153,7 +152,6 @@ export const login: RequestHandler = (req, res, next) => {
         ...cookieOptions, 
         secure: false,
         sameSite: 'lax',
-        domain: 'localhost', 
       };
     }
     
