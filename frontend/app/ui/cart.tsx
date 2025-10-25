@@ -124,7 +124,7 @@ export const MyCart: React.FC<MyCartProps> = ({
                     <Link href="/checkout">Proceed to Checkout</Link>
                 </Button>
                 <Button size="lg" className="w-full" asChild>
-                    <Link href="/home">Continue Shopping</Link>
+                    <Link href="/">Continue Shopping</Link>
                 </Button>
             </CardFooter>
           </Card>

@@ -50,7 +50,7 @@ const CartPage: React.FC = () => {
         <h2 className="text-2xl font-semibold">Your Cart is Empty</h2>
         <p className="mt-2 mb-6">Looks like you have not added anything to your cart yet.</p>
         <Frown className="w-5 h-5 mb-6 text-gray-300"/>
-        <Link href="/home" passHref>
+        <Link href="/" passHref>
           <Button>Start Shopping</Button>
         </Link>
       </div>

@@ -166,7 +166,7 @@ const Navbar: React.FC = () => {
             <SheetContent side="right" className="w-3/4">
                 <div className="flex flex-col gap-6 pt-10 text-gray-800">
                 <Link href="/" className="font-bold" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
-                <Link href="/home" className="font-bold" onClick={() => setIsMobileMenuOpen(false)}>All Products</Link>
+                <Link href="/" className="font-bold" onClick={() => setIsMobileMenuOpen(false)}>All Products</Link>
                 <Link href="/contact" className="font-bold" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
                 {/* Add other mobile links here */}
                 </div>

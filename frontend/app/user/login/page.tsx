@@ -22,7 +22,7 @@ export default function LoginPage() {
       setUser(user);
       
       // Redirect to a protected page on successful login
-      router.push('/home'); 
+      router.push('/'); 
     } catch (error: any) {
       console.error('Login error:', error);
 
