@@ -35,6 +35,7 @@ app.use((req, res, next) => {
 const allowedOrigins = [
   'http://localhost:3000',
   'https://myecommerce-frontend.onrender.com',
+  'https://my-ecommerce-livid.vercel.app', 
 ];
 
 const corsOptions = {
