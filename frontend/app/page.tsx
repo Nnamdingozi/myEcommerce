@@ -5,14 +5,14 @@ import { useEffect, useState } from 'react';
 import Hero from '@/app/ui/hero';
 import Products from '@/app/ui/products';
 import Categories from '@/app/ui/categories';
-import { useProduct } from '../context/productContext';
+import { useProduct } from './context/productContext';
 import { fetchCategories } from '@/app/lib/data/product';
-import { Category } from '../lib/definition';
+import { Category } from './lib/definition';
 import { ProductCardSkeleton } from '@/app/ui/product-card-skeleton';
 
 // --- Import Card and an skeleton ---
-import { HeroSkeleton } from '../ui/hero-skeleton';
-import { ErrorCard } from '../ui/errorCard';
+import { HeroSkeleton } from './ui/hero-skeleton';
+import { ErrorCard } from './ui/errorCard';
 
 export default function Home() {
   const { products, getProducts, loading, error } = useProduct(); 

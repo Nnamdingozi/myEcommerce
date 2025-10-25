@@ -15,6 +15,7 @@ import { JwtPayload } from '../controllers/authController'; // Reuse the payload
 
 dotenv.config();
 
+
 // Define the type for the "done" callback for clarity and consistency.
 type PassportDoneCallback = (error: any, user?: User | false, options?: { message: string }) => void;
 
