@@ -29,7 +29,7 @@ export default function RegistrationPage() {
 
       // Redirect to a protected page after a short delay
       setTimeout(() => {
-        router.push('/home'); // Or any other protected route
+        router.push('/'); // Or any other protected route
       }, 1500);
 
     } catch (error: any) {
