@@ -58,7 +58,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       setUser(null);
       // Redirect to  home page
-      router.push('/home');
+      router.push('/');
     }
   }, [router]);
 

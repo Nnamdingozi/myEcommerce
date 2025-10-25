@@ -98,7 +98,7 @@ const OrderConfirmationDisplay: React.FC<OrderConfirmationProps> = ({ order }) =
             <Link href="/orderPages/orderDisplay">View Order History</Link>
           </Button>
           <Button className="w-full" variant="outline" asChild>
-            <Link href="/home">Continue Shopping</Link>
+            <Link href="/">Continue Shopping</Link>
           </Button>
         </CardFooter>
       </Card>
