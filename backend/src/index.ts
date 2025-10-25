@@ -23,6 +23,12 @@ import { handleErrorResponse } from './lib/error/handleErrorResponse';
 
 const app = express();
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://myecommerce-frontend.onrender.com');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
+
 // --- Middleware Setup ---
 
 // CORS configuration 
@@ -31,24 +37,20 @@ const allowedOrigins = [
   'https://myecommerce-frontend.onrender.com',
 ];
 
-app.use(cors({
-  origin: function (origin, callback) {
+const corsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
     if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, origin); // return the actual origin instead of true
+      callback(null, true);
     } else {
-      callback(new Error('CORS not allowed for this origin'));
+      callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+};
 
-// very important: handle preflight OPTIONS requests globally
-app.options('*', cors({
-  origin: allowedOrigins,
-  credentials: true,
-}));
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // important for preflight
+
 
 // Body parsers 
 app.use(express.json());

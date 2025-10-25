@@ -43,27 +43,16 @@ export const register: RequestHandler = async (req: Request, res: Response): Pro
 
     const token = generateToken(userPayload);
    
-const isProduction = process.env.NODE_ENV === 'production';
+    const isProduction = process.env.NODE_ENV === 'production';
 
+    const cookieOptions: CookieOptions = {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    };
+    
 
-// 2. Declare the options object with the official type and use `let`.
-let cookieOptions: CookieOptions = {
-  httpOnly: true,
-  secure: true,
-  sameSite: 'none', 
-  domain: isProduction ? '.onrender.com' : undefined, 
-  maxAge: 24 * 60 * 60 * 1000, // 1 day
-};
-
-// 3. In development, we override the settings for localhost HTTP.
-if (!isProduction) {
-  cookieOptions = {
-    ...cookieOptions, 
-    secure: false,
-    sameSite: 'lax',
-    domain: 'localhost', 
-  };
-}
 
 // 4. Set the cookie in the response using the finalized options object.
 res.cookie('token', token, cookieOptions);
