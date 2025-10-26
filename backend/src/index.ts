@@ -40,11 +40,26 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+    // `origin` will be the URL of the frontend making the request.
+    // In production, this will be your Vercel URL.
+    
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      return callback(null, true);
     }
+
+    // Check if the origin is in our explicit list
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    const isVercelPreview = new URL(origin).hostname.endsWith('.vercel.app');
+    if (isVercelPreview) {
+      return callback(null, true);
+    }
+
+    // If the origin is not in the list and not a Vercel preview, block it.
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
 };
