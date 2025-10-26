@@ -43,6 +43,8 @@ COPY --from=builder /app/dist ./dist
 
 COPY --from=builder /app/prisma ./prisma
 
+COPY --from=builder /app/public ./public
+
 # Copy the start script
 COPY --from=builder /app/start-prod.sh .
 RUN chmod +x ./start-prod.sh
