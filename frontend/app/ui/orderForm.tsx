@@ -67,7 +67,7 @@ const newOrderId = newOrder.id
         }
       } else {
         // For other payment methods (e.g., Cash), redirect to the order confirmation page
-        router.push(`/orderPages/success/${newOrderId}`);
+        router.push('/orderPages/success');
       }
     } catch (error: any) {
       toast.error(error.message || 'An error occurred while creating the order.');

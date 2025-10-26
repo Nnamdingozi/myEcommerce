@@ -14,12 +14,14 @@ interface OrderContextProps {
   fetchOrders: () => Promise<void>;
   fetchSingleOrder: (orderId: number) => Promise<Order | null>;
   createNewOrder: (orderData: CreateOrderPayload) => Promise<Order | null>;
+  mostRecentOrder: Order | null; 
 }
 
 const OrderContext = createContext<OrderContextProps | undefined>(undefined);
 
 export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [mostRecentOrder, setMostRecentOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -64,6 +66,7 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       const newOrder = await createOrder(orderData);
 
       setOrders(prevOrders => [newOrder, ...prevOrders]);
+      setMostRecentOrder(newOrder); 
       return newOrder;
     } catch (err: any) {
       setError(err.message || 'An error occurred while creating the order.');
@@ -112,6 +115,7 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       fetchOrders,
       fetchSingleOrder,
       createNewOrder,
+      mostRecentOrder
     }}>
       {children}
     </OrderContext.Provider>
