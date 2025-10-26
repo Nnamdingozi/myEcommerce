@@ -37,7 +37,7 @@ export const registrationSchema = yup.object({
 
   githubId: yup.string().nullable(),
 
-  country_code: yup.string().required('Country code is required'),
+  countryCode: yup.string().required('Country code is required'),
 
   createdAt: yup.date().default(() => new Date()).notRequired(), 
   updatedAt: yup.date().default(() => new Date()).notRequired(), 
