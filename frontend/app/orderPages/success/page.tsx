@@ -5,6 +5,7 @@ import { useEffect, useState, Suspense } from 'react';
 import { useParams } from 'next/navigation';
 import { useOrder } from '@/app/context/orderContext';
 import { Order } from '@/app/lib/definition';
+import { useRouter } from 'next/navigation';
 
 // --- Import UI Components ---
 import OrderConfirmationDisplay from '@/app/ui/orderComfirmation';
@@ -29,39 +30,30 @@ const ConfirmationSkeleton = () => (
 );
 
 const OrderConfirmationContent = () => {
-  const params = useParams();
-  const orderId = params.id ? Number(params.id) : null;
-
-  const { fetchSingleOrder, isLoading, error } = useOrder();
-  const [order, setOrder] = useState<Order | null>(null);
+  
+  const { mostRecentOrder, isLoading, error } = useOrder();
+const router = useRouter()
 
   useEffect(() => {
-    if (orderId) {
-      const loadOrder = async () => {
-        try {
-          const fetchedOrder = await fetchSingleOrder(orderId);
-          setOrder(fetchedOrder);
-        } catch (err) {
-          // The context will also set its own error, but we can be explicit
-          console.error("Failed to fetch order for confirmation page:", err);
-        }
-      };
-      loadOrder();
+    if (!isLoading && !mostRecentOrder) {
+      // Redirect to the home page after a short delay
+      const timer = setTimeout(() => router.replace('/'), 3000);
+      return () => clearTimeout(timer);
     }
-  }, [orderId, fetchSingleOrder]);
+  }, [mostRecentOrder, router, isLoading]);
 
   // --- Handle Loading State ---
-  if (isLoading || (!order && !error)) {
+  if (isLoading || (!mostRecentOrder && !error)) {
     return <ConfirmationSkeleton />;
   }
 
   // --- Handle Error State ---
-  if (error || !order) {
+  if (error || !mostRecentOrder) {
     return <ErrorCard errorMessage={error || 'Could not find the specified order.'} title="Order Not Found" />;
   }
 
   // --- Success State ---
-  return <OrderConfirmationDisplay order={order} />;
+  return <OrderConfirmationDisplay order={mostRecentOrder} />;
 };
 
 // Main page component wraps the logic in Suspense

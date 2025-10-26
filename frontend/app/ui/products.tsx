@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Product } from '@/app/lib/definition';
 import { useCart } from '@/app/context/cartContext';
+import { useEffect } from 'react';
 
 // --- Import UI components, icons, and toast ---
 import { Button } from '@/components/ui/button';
@@ -29,6 +30,12 @@ const assetBaseUrl = process.env.NEXT_PUBLIC_ASSET_BASE_URL;
 const Products: React.FC<ProductProps> = ({ products }) => {
   const { upsertToCart } = useCart();
 
+  useEffect(() => {
+    if (products && products.length > 0) {
+      console.log("RAW PRODUCTS DATA RECEIVED:", products);
+    }
+  }, [products]);
+
   const handleAddToCart = async (e: React.MouseEvent, productId: number) => {
     e.preventDefault();
     e.stopPropagation();
@@ -47,7 +54,7 @@ const Products: React.FC<ProductProps> = ({ products }) => {
     <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4 mt-8 md:mt-16">
       {products.map((product) => {
         const imageSrc = product.imageUrl 
-          ? `${assetBaseUrl}/${product.imageUrl}` 
+          ? `${assetBaseUrl}${product.imageUrl}` 
           : '/images/img-1.jpg';
 
         return (
