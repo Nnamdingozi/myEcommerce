@@ -47,7 +47,7 @@ const Products: React.FC<ProductProps> = ({ products }) => {
     <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4 mt-8 md:mt-16">
       {products.map((product) => {
         const imageSrc = product.imageUrl 
-          ? `${assetBaseUrl}${product.imageUrl}` 
+          ? `${assetBaseUrl}/${product.imageUrl}` 
           : '/images/img-1.jpg';
 
         return (

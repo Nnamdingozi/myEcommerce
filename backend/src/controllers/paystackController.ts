@@ -9,17 +9,17 @@ export const createCheckoutHandler: RequestHandler = async (req: Request, res: R
   try {
 
      //---  Assert type is string and not undefined ---
-     const { id } = req.params;
+     const { orderId } = req.params;
 
-     if (!id) {
+     if (!orderId) {
        res.status(400).json({ error: 'Missing item ID in URL.' });
        return;
      } 
-     const orderId = parseInt(id, 10);
+     const parseOrderId = parseInt(orderId, 10);
 
     const user = req.user as JwtPayload;
 
-    if (isNaN(orderId)) {
+    if (isNaN( parseOrderId)) {
       res.status(400).json({ error: 'A valid order ID is required.' });
       return;
     }
@@ -28,7 +28,7 @@ export const createCheckoutHandler: RequestHandler = async (req: Request, res: R
       return;
     }
 
-    const response = await initializeTransaction(orderId, user.id);
+    const response = await initializeTransaction( parseOrderId, user.id);
 
     // The service now handles updating the order, so the controller is simpler.
     // We just return the data Paystack needs for the redirect.
