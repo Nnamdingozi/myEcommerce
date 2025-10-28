@@ -1,6 +1,4 @@
 # FamilyShop E-Commerce Platform
-**
-!![Family Shop Screenshot](Screenshot.jpg)**!
 
 ## 🖥️ Preview
 <p classname=" align-middle">
