@@ -1,11 +1,6 @@
 # FamilyShop E-Commerce Platform
 
-![FamilyShop Homepage Screenshot](screenshot.png)
-
-## 🖥️ Preview
-<p align="center">
-  <img src="./screenshot.png" alt="Project Screenshot" width="600"/>
-</p>
+![FamilyShop Homepage Screenshot](link-to-your-screenshot.png)
 
 A complete, full-stack e-commerce application built from the ground up with a modern, type-safe technology stack. This project showcases a complete migration from a legacy stack (Sequelize) to a professional, production-grade architecture using Prisma, Next.js, and Docker, deployed on Vercel and Render.
 
