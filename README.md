@@ -1,7 +1,5 @@
 # FamilyShop E-Commerce Platform
 
-![FamilyShop Homepage Screenshot](./Screenshot.jpg)
-
 ## 🖥️ Preview
 <p classname="align-middle justify-center">
   <img src="./Screenshot.jpg" alt="Project Screenshot" width="600"/>
